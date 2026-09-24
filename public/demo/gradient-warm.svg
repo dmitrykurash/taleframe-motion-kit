@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+<defs>
+<linearGradient id="base" x2="0" y2="1"><stop stop-color="#fff0e4"/><stop offset="1" stop-color="#ffe4ec"/></linearGradient>
+<radialGradient id="orange"><stop stop-color="#ff6726"/><stop offset=".45" stop-color="#ff6726" stop-opacity=".62"/><stop offset="1" stop-color="#ff6726" stop-opacity="0"/></radialGradient>
+<radialGradient id="pink"><stop stop-color="#ff3a7c"/><stop offset=".45" stop-color="#ff3a7c" stop-opacity=".55"/><stop offset="1" stop-color="#ff3a7c" stop-opacity="0"/></radialGradient>
+<radialGradient id="amber"><stop stop-color="#ffbf2e"/><stop offset=".5" stop-color="#ffbf2e" stop-opacity=".5"/><stop offset="1" stop-color="#ffbf2e" stop-opacity="0"/></radialGradient>
+<radialGradient id="light"><stop stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+</defs>
+<path fill="url(#base)" d="M0 0h1080v1920H0z"/>
+<ellipse cx="820" cy="720" rx="820" ry="900" fill="url(#orange)"/>
+<ellipse cx="200" cy="1300" rx="840" ry="900" fill="url(#pink)"/>
+<ellipse cx="760" cy="1820" rx="720" ry="620" fill="url(#amber)" opacity=".85"/>
+<ellipse cx="260" cy="280" rx="600" ry="540" fill="url(#light)" opacity=".85"/>
+</svg>

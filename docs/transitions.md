@@ -1,6 +1,8 @@
-# Change scenes with a transition
+# Taleframe shader transitions
 
-Open **Transition-Gallery** in the preview to see every option. Use a quiet transition when the audience needs to read the screen. A fast whip or a textured wipe works well between larger sections.
+These transitions blend two **pictures**: images, video footage, or canvas drawings. Open **Transition-Gallery** in the preview to see every option. Most of them come from Taleframe's own painted, storybook look (watercolor, ink, paper paint, sand, capillary, marbling, engraving); they suit the handmade style family and footage-driven films.
+
+Between React shots (UI, typography, product scenes) use the [scene transitions](scene-transitions.md) instead: `zoom`, `portal`, `expand`, `slice`, and `glitch` work on live scenes, keep type sharp, and carry motion blur. In either family, cut first and use a designed transition only when it has a reason; see [film language](film-language.md#5-cutting-and-transitions).
 
 The kit includes Taleframe’s native WebGL2 transition shaders. They are bundled here; you do not need to install Taleframe or keep another project on your computer.
 

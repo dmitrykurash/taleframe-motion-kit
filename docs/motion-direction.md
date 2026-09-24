@@ -1,6 +1,6 @@
 # Motion direction
 
-Build a consistent visual language around the subject. Smooth camera travel, readable type, and well-timed holds are useful across many styles; a specific palette, font, or effect is a project choice.
+Build a consistent visual language around the subject. Smooth camera travel, readable type, and well-timed holds are useful across many styles; a specific palette, font, or effect is a project choice. Read [film language](film-language.md) first: it sets the rules for launch films (no keynote look, a committed style, type and UI taking turns, kinetic type, cuts before transitions). This page covers the craft inside a shot.
 
 ## A reason for each movement
 
@@ -12,7 +12,9 @@ Count the entry, reveal, reading hold, and exit in each scene's duration. Text t
 
 ## Coordinates and timing
 
-`LogicalStage` uses 1920 × 1080 logical units and supports 16:9 outputs. A 4K composition scales the stage 2×. Portrait and square films need a custom layout, not a stretched stage.
+`LogicalStage` picks its logical size from the output's aspect ratio: 1920 × 1080 for 16:9, 1080 × 1920 for 9:16, 1080 × 1080 for 1:1, and 1080 × 1350 for 4:5. A 4K or 2160 × 3840 composition scales its stage 2×; other ratios throw. Each ratio needs its own layout; nothing is cropped or stretched to fit. Read the stage with `useStage()` and pass it to `focusCamera` in portrait and square films; scene transitions read it themselves.
+
+In a vertical film, product UI is set larger than on a desktop stage so its type reads on a phone: `Kit-Reel` places a 720 × 1000 window at 1.35× and pushes to 1.5× while a prompt is typed. Keep headlines inside the middle 1300 px of the 1920 px height, clear of the captions and buttons that social apps draw over the top and bottom.
 
 Use seconds from `frame / fps` for scene timing. Keep related action times together and share them between cursor, UI state, and camera. `CameraLayer` transforms around the stage center. Put the cursor inside that layer when its path is measured in the same coordinates as the UI; `focusCamera` calculates how to place a chosen target on screen.
 
@@ -23,8 +25,14 @@ Shared motion curves:
 | `travel` | Deliberate ease in and out | Camera moves and exits |
 | `arrive` | Fast entry, long settle | A new object entering |
 | `glide` | Gentle start with a long settle | An already visible object moving |
+| `curves.punchIn` | Accelerates hard to full speed | Moves into a cut or out of frame |
+| `curves.punchOut` | Arrives at full speed, settles long | Landings after a cut, type rising into place |
+| `curves.snap` | Strong in–out | A push between two rests |
+| `overshoot(bounce)` | Fast opening with optional overshoot | Playful styles only |
 
-Keep most moves compatible instead of choosing a new easing for every object. See [components](components.md) for signatures and units.
+Keep most moves compatible instead of choosing a new easing for every object. Nothing important moves linearly. See [components](components.md) for signatures and units.
+
+A move faster than about 30 logical pixels per frame strobes without motion blur. Render such moves inside `MotionBlur` (see [scene transitions](scene-transitions.md#motion-blur-elsewhere)); a 180° shutter (`shutter: .5`) matches film.
 
 ## Camera and cursor
 
@@ -34,13 +42,13 @@ For a settings scene, a useful sequence is title → current option → pointer 
 
 ## Typing and text
 
-Natural typing uses fixed but uneven keystroke intervals, occasional small hesitations, and short spaces. `useTyping` measures the actual font and exposes a smoothly tracked width. Use that width for camera follow; starting a separate ease for each phrase produces a repeated accelerate/stop pattern.
+Natural typing uses fixed but uneven keystroke intervals, occasional small hesitations, and short spaces. `useTyping` measures the actual font and exposes a smoothly tracked width. Use that width for camera follow; starting a separate ease for each phrase produces a repeated accelerate/stop pattern. Typing belongs inside UI; headlines use [kinetic type](kinetic-type.md).
 
-`WordReveal` expands a centered phrase as words arrive. `CharacterReveal` uses short overlapping entries; an 8ms stagger gives a nearly simultaneous reveal. A small initial blur can soften the entry, then resolves to crisp text. These are defaults to adjust, not rules for every treatment.
+Type shots use the kinetic components: `MaskReveal` for most headlines, `Slam`, `WordRoll`, `WordSequence`, `Counter`, `Scramble`, and `TrackIn` where the style calls for them. `WordReveal` and `CharacterReveal` are quiet options for calm, editorial moments; a small centered line fading in on an empty frame is the look to avoid.
 
 Load fonts before measuring. Use genuine weight files where needed. Character positioning preserves Latin pair kerning and uses grapheme segmentation; for connected scripts such as Arabic or Indic, prefer whole-word animation so shaping remains intact. Set deliberate line breaks when the copy needs two lines.
 
-An uncluttered text beat often needs only its heading and background. Additional captions, labels, or decoration should earn their place in the story.
+An uncluttered type shot often needs only its heading and a strong ground. Additional captions, labels, or decoration should earn their place in the story, and headlines do not sit on top of UI shots unless the brief asks for it.
 
 ## Background depth
 
@@ -50,7 +58,7 @@ Overscan keeps the enlarged image's edges outside the frame. For a centered full
 
 ## Transitions and effects
 
-Choose transitions to connect scenes. A painted spread can suit organic imagery, while a simpler move can keep a UI workflow coherent. The effect should not hide the action the viewer came to see. Read the [transition guide](transitions.md) for supported options and the [effects guide](effects.md) for processing order and settings.
+Cut first. When a designed transition is justified, use a [scene transition](scene-transitions.md) between React shots (`zoom`, `portal`, `expand`, `slice`, `glitch`) or a [Taleframe shader transition](transitions.md) between pictures and footage. A painted spread suits an organic, handmade film; a UI workflow usually wants a cut, an `expand` from the clicked control, or a `portal` through a card. The transition should not hide the action the viewer came to see. The [effects guide](effects.md) covers processing order and settings.
 
 Use texture and distortion selectively. A background may benefit from a treatment that makes small UI text unreadable. When preparing painted imagery, soften the source before painting if needed, then preserve the brush detail. Grain and stop motion are independent choices, not implied by a watercolor look.
 

@@ -1,29 +1,48 @@
-import React from 'react';
+import React, {createContext, useContext} from 'react';
 import {AbsoluteFill, Img, useVideoConfig} from 'remotion';
 import {ease, mix, progress} from './motion';
 import {assetUrl} from './typography';
 
+/** Landscape logical stage, the default everywhere. */
 export const STAGE_WIDTH = 1920;
 export const STAGE_HEIGHT = 1080;
+export type StageSize = {width: number; height: number};
+export const LANDSCAPE: StageSize = {width: 1920, height: 1080};
+/** Logical stages per aspect ratio. The short side of portrait, square and 4:5 stages is 1080 units. */
+export const STAGES = {landscape: LANDSCAPE, portrait: {width: 1080, height: 1920}, square: {width: 1080, height: 1080},
+  feed: {width: 1080, height: 1350}} as const satisfies Record<string, StageSize>;
 export type Camera = {x: number; y: number; scale: number};
 export type CameraKeyframe = Camera & {time: number};
 export const REST_CAMERA: Camera = {x: 0, y: 0, scale: 1};
 
-/** A single 16:9 logical coordinate system keeps motion identical in 1080p and 4K.
- * Portrait needs a new layout, not a crop of this landscape composition. */
-export function LogicalStage({children, background = '#fff'}: {children: React.ReactNode; background?: string}) {
-  const {width, height} = useVideoConfig();
-  if (Math.abs(width / height - 16 / 9) > .0001) throw new Error('LogicalStage requires a 16:9 output. Build a portrait layout explicitly.');
-  return <AbsoluteFill style={{background}}><div style={{position: 'absolute', inset: 0,
-    width: STAGE_WIDTH, height: STAGE_HEIGHT, overflow: 'hidden', transform: `scale(${width / STAGE_WIDTH})`,
-    transformOrigin: '0 0'}}>{children}</div></AbsoluteFill>;
+/** The logical stage for an output size: 16:9, 9:16, 1:1, or 4:5. Other ratios need their own layout. */
+export function stageFor(width: number, height: number): StageSize {
+  const ratio = width / height;
+  const match = Object.values(STAGES).find(stage => Math.abs(stage.width / stage.height - ratio) < .0005);
+  if (!match) throw new Error(`No logical stage for a ${width} × ${height} output. Use 16:9, 9:16, 1:1, or 4:5.`);
+  return match;
 }
 
-/** Coordinates are measured on the untransformed logical stage. */
+const StageContext = createContext<StageSize>(LANDSCAPE);
+/** Size of the enclosing LogicalStage in logical units (1920 × 1080 outside one). */
+export const useStage = () => useContext(StageContext);
+
+/** A fixed logical coordinate system keeps motion identical at every output resolution.
+ * 16:9 outputs get a 1920 × 1080 stage, 9:16 a 1080 × 1920 stage, 1:1 1080 × 1080, and 4:5 1080 × 1350.
+ * Each aspect ratio needs its own layout; nothing is cropped or stretched. */
+export function LogicalStage({children, background = '#fff'}: {children: React.ReactNode; background?: string}) {
+  const {width, height} = useVideoConfig();
+  const stage = stageFor(width, height);
+  return <AbsoluteFill style={{background}}><div style={{position: 'absolute', inset: 0,
+    width: stage.width, height: stage.height, overflow: 'hidden', transform: `scale(${width / stage.width})`,
+    transformOrigin: '0 0'}}><StageContext.Provider value={stage}>{children}</StageContext.Provider></div></AbsoluteFill>;
+}
+
+/** Coordinates are measured on the untransformed logical stage. Pass `stage` for portrait or square films. */
 export function focusCamera(target: {x: number; y: number}, scale: number,
-  screen = {x: STAGE_WIDTH / 2, y: STAGE_HEIGHT / 2}): Camera {
-  return {scale, x: screen.x - STAGE_WIDTH / 2 - (target.x - STAGE_WIDTH / 2) * scale,
-    y: screen.y - STAGE_HEIGHT / 2 - (target.y - STAGE_HEIGHT / 2) * scale};
+  screen?: {x: number; y: number}, stage: StageSize = LANDSCAPE): Camera {
+  const cx = stage.width / 2, cy = stage.height / 2, at = screen ?? {x: cx, y: cy};
+  return {scale, x: at.x - cx - (target.x - cx) * scale, y: at.y - cy - (target.y - cy) * scale};
 }
 
 export function cameraAt(time: number, keyframes: readonly CameraKeyframe[]): Camera {

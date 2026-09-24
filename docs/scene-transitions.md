@@ -1,0 +1,162 @@
+# Scene transitions
+
+Five transitions for live React scenes: UI, typography, product shots. They work directly on the shots you build with the kit, keep type and UI vector-sharp at any zoom, and carry true motion blur. Open **Scene-Transitions** in Studio to see all five between realistic launch-film shots.
+
+They are different from the [Taleframe shader transitions](transitions.md), which operate on pictures (images, footage, canvas drawings) and include the painted looks. Use scene transitions between React shots; use the shaders for footage and stills or when a film is deliberately painterly.
+
+Read [film language](film-language.md) first: most cuts in a launch film are hard cuts, and a designed transition needs a reason.
+
+| `kind` | Use it for | Default length |
+|---|---|---|
+| `zoom` | Accelerate into a point of the outgoing shot, cut on the blur, land in the next shot. Loud and classic. | 0.5 s, centered on the cut |
+| `portal` | Fly through a word, a card, or a dot of the outgoing shot into the next shot. | 1.1 s, starts at the cut |
+| `expand` | The next shot grows out of the element that was just clicked, while the current one pushes back and dims. | 0.7 s, starts at the cut |
+| `slice` | Bands of the frame push across with a stagger, optionally led by brand-color bars. | 0.6 s, centered on the cut |
+| `glitch` | A short digital hit around a hard cut: RGB split, tearing, smeared rows, stutter. | 0.42 s, centered on the cut |
+
+## Build a film from shots
+
+`Shots` plays a list of full-stage scenes. Each shot ends at `until` (film seconds); the next shot follows with a hard cut unless it has an `enter` transition. Put it inside a `LogicalStage`.
+
+```tsx
+import {LogicalStage, Shots} from '../kit';
+
+<LogicalStage background="#0c0d10">
+  <Shots shots={[
+    {until: 2.1, content: <HeadlineShot start={0}/>},
+    {until: 5.4, content: <DashboardShot start={2.1}/>,
+      enter: {kind: 'portal', text: 'Relay', fontSize: 520, fontWeight: 1000}},
+    {until: 7.0, content: <ComposerShot start={5.4}/>},                    // hard cut
+    {until: 9.2, content: <ResultShot start={7.0}/>,
+      enter: {kind: 'expand', source: {x: 1352, y: 578, width: 210, height: 76, radius: 38}, color: '#ff5a1f'}},
+    {content: <ClosingShot start={9.2}/>, enter: {kind: 'zoom', focus: {x: 960, y: 540}}},
+  ]}/>
+</LogicalStage>
+```
+
+- A transition window is placed on the cut by `align`: `'center'` (half before, half after), `'start'` (begins at the cut), or `'end'`. `duration` is in seconds. `Shots` throws a clear error when a window does not fit between the neighboring cuts.
+- Both shots keep playing through the window, so the incoming shot is already on screen before its cut when a window is centered. Design it to be composed at that moment, or start its entrance so that it lands as the transition does.
+- `useShot()` inside a shot returns `{index, name, start, end, local}`, where `local` is seconds since the shot's cut.
+
+For a single transition without a shot list, use `SceneTransition` directly:
+
+```tsx
+<SceneTransition kind="slice" from={<StatShot/>} to={<GridShot/>} start={4.2} duration={.6}
+  lead={['#ff5a1f', '#d6ff3b']}/>
+```
+
+Before `start` it renders `from` exactly; after the window it renders `to` exactly.
+
+## Shots must be opaque scenes that read the clock
+
+- Each shot fills the 1920 × 1080 stage with an opaque background.
+- Read time inside the shot with `useTime()` or `useShot()`, not from a value computed outside and passed in. Motion blur renders the shot at several instants inside one frame; a shot that reads the clock animates correctly in every sample.
+- Keep `<Audio>` outside shots. A transition renders both shots (and motion blur renders them several times), so audio inside a shot would play more than once.
+- Use `OffthreadVideo` or an image sequence for footage inside a shot; a playing HTML `<Video>` element is not frame-accurate when it is copied.
+
+## Options
+
+Positions and sizes are logical stage units, the same space as `LogicalStage`, `CameraLayer`, and `focusCamera`. All options are optional unless noted.
+
+Common: `shutter` (motion-blur exposure as a fraction of a frame; 0.5 is a 180° shutter, 0 turns blur off) and `quality` (most copies averaged in the fastest frame). `zoom`, `portal`, and `expand` also take `backdrop`, the color behind anything that would expose empty space.
+
+### `zoom`
+
+| Option | Default | Meaning |
+|---|---|---|
+| `focus` | stage center | Point of the outgoing shot the camera rushes toward: the element the next idea is about |
+| `landing` | stage center | Point of the incoming shot the camera settles on |
+| `push` | 2.4 | Scale the outgoing shot reaches at the cut |
+| `land` | 1.6 | Scale the incoming shot starts from before settling to 1 |
+| `roll` | 0 | Degrees of roll into the cut; the landing unwinds it. 2–5 adds energy |
+| `cut` | 0.5 | Where the cut falls inside the window |
+| `flash` / `flashColor` | 0.18 / white | Light burst at the cut |
+| `chroma` | 0.35 | Radial color fringing at peak speed |
+
+Each frame shows only one shot: samples near the cut continue that shot's own motion instead of mixing the two into gray. Aim `focus` at the element that matters (a card, a button, a number) so the push reads as intent.
+
+### `portal`
+
+Give exactly one of `text`, `rect`, or `circle`.
+
+| Option | Default | Meaning |
+|---|---|---|
+| `text` | — | A word. Its letters rise out of a baseline mask with the incoming shot inside them, then the camera flies through the thickest stroke |
+| `at`, `fontFamily`, `fontSize`, `fontWeight`, `letterSpacing` | center, baseline at 62 % height; DM Sans, 440, 900, −0.04 em | The word's position (baseline center) and type. Heavy weights make the best portals |
+| `rect` | — | `{x, y, width, height, radius}` of a card, screen, or tile in the outgoing shot. The incoming shot appears nested inside it, then the camera pushes until the rect is the frame |
+| `circle` | — | `{x, y, radius}` of a dot or round control |
+| `reveal` | 0.38 text, 0.2 rect, 0.22 circle | Fraction of the window spent opening the portal before the flight |
+| `into` | thickest stroke | Override the point the camera flies into (must be inside a letter) |
+| `depth` | 1.22 | The incoming shot starts this much larger inside the portal and settles to 1 |
+
+Choose a word and colors so the incoming shot is legible inside the letters against the outgoing shot. The camera path is computed from the rendered glyphs after the font loads.
+
+### `expand`
+
+| Option | Default | Meaning |
+|---|---|---|
+| `source` | 140 px square at center | `{x, y, width, height, radius}` of the element the new shot grows out of, usually the control that was just clicked |
+| `shape` | `'rect'` | `'circle'` grows a circle from the source center |
+| `color` | none | Fill of the source element. The window starts in this color and dissolves into the incoming shot |
+| `push` | 1.08 | Scale the outgoing shot moves to. Above 1 pushes toward the camera (like a home screen as an app opens); below 1 recedes |
+| `dim` / `defocus` | 0.4 / 8 | Darkening and depth blur of the outgoing shot |
+| `bounce` | 0 | 0 settles without overshoot; up to 1 overshoots about 8 % for playful styles |
+
+Match `source` and `color` to the element's position and color at the moment of the click, and put the click just before the window starts (`align: 'start'`).
+
+### `slice`
+
+| Option | Default | Meaning |
+|---|---|---|
+| `orientation` | `'horizontal'` | Horizontal bands travel left/right; vertical bands travel up/down |
+| `bands` | 5 | Number of bands |
+| `direction` | `'left'` / `'up'` | Where the outgoing shot leaves |
+| `alternate` | false | Alternate the direction band by band |
+| `stagger` | 0.07 | Delay between bands as a fraction of the window |
+| `order` | `'sequence'` | `'reverse'`, `'center'`, or `'random'` (seeded) |
+| `lead`, `leadWidth` | none, 150 | Solid color bars that run ahead of the incoming shot, first color leading |
+| `seed` | 11 | Order for `'random'` |
+
+Each band carries a directional blur matched to its speed.
+
+### `glitch`
+
+| Option | Default | Meaning |
+|---|---|---|
+| `intensity` | 0.75 | Overall strength |
+| `cut` | 0.5 | Where the hard cut falls inside the window |
+| `rate` | 24 | Pattern changes per second, independent of the film's fps |
+| `split` | 34 | Largest RGB split in logical pixels |
+| `color` | white | Flickering block color (drawn in difference mode) |
+| `stutter` | true | Briefly repeat earlier instants of each shot |
+| `seed` | 7 | Pattern seed |
+
+Keep it short and rare, and make sure the incoming shot is already composed at the cut, so the hit reveals a finished frame.
+
+## Motion blur elsewhere
+
+`MotionBlur` gives the same temporal blur to any fast move inside a shot, such as a whip pan of the camera or a slam of type:
+
+```tsx
+<MotionBlur shutter={.5} samples={12}>
+  {time => <MyShot time={time}/>}
+</MotionBlur>
+```
+
+The render function receives each sample time and must draw a complete opaque picture. Everything below that reads `useTime()` is shifted to the sample time automatically. Blur only the frames that move fast; `samplesForStreak(pixels)` returns a sensible count, and 1 means no blur.
+
+## Performance and checks
+
+A transition frame renders both shots, and motion blur renders them up to `quality` times. Most frames of a film are unaffected. Keep shots reasonably light (no thousands of DOM nodes).
+
+Scene transitions are composited by the browser, so they render many times faster with hardware graphics. Use `--gl angle` for films built from React shots; keep the default software renderer (`swangle`) only when the film also uses Taleframe shader transitions or effects and their exact repeatability matters. On the test Mac the 22-second reel took minutes with `angle` and over twenty with `swangle`.
+
+Render stills at the start, middle, and end of every window before a long export, and run the transition check:
+
+```sh
+npm run stills -- Scene-Transitions --gl angle --times 1.6,4.9,5.6,9.0,12.8,15.7,19.6 --out out/scene-transition-stills
+npm run check:scenes -- --gl angle
+npm run render -- Scene-Transitions --gl angle --out out/scene-transitions.mp4
+```
+
+The first and last frames of each window equal the two shots exactly. Everything derives from frame time and fixed seeds, so direct seeks and repeated renders give the same pixels.

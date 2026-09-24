@@ -24,6 +24,7 @@ if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 32) throw
 const inputProps = options.props ? JSON.parse(await fs.readFile(path.resolve(options.props), 'utf8')) : {};
 if (!inputProps || Array.isArray(inputProps) || typeof inputProps !== 'object') throw new Error('Props must be a JSON object.');
 const chromiumOptions = {gl: options.gl || 'swangle'};
+if (!options.gl) console.log('Using software WebGL (--gl swangle) for repeatable shader output. Films built from React shots and scene transitions, without Taleframe shaders or effects, render many times faster with --gl angle.');
 const output = path.resolve(options.out || (mode === 'video' ? `out/${id}.mp4` : `out/${id}-stills`));
 if (mode === 'video' && !output.endsWith('.mp4')) throw new Error('Video output must end in .mp4.');
 await fs.mkdir(mode === 'video' ? path.dirname(output) : output, {recursive: true});

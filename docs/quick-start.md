@@ -7,7 +7,7 @@ npm ci
 npm run studio
 ```
 
-Studio lists the registered compositions. `Starter` and `UI-Demo` provide a fictional app sequence; `Launch-Film` shows a different custom film structure. The three galleries let you inspect motion, transitions, and effects before choosing a treatment.
+Studio lists the registered compositions. `Product-Explainer`, `Product-Launch`, and `Kit-Reel` are three films about an unnamed AI workspace and about the kit itself: a UX explainer, a dark launch, and a 9:16 social reel. `Launch-Film` is the reference editorial launch film: an editorial style sheet, type and UI shots taking turns, kinetic type, a card portal, and an expand from a clicked button. `Scene-Transitions` shows the five scene transitions between launch-film shots. `Starter` and `UI-Demo` provide a calmer fictional app walkthrough. The other galleries let you inspect motion recipes, shader transitions, and effects before choosing a treatment.
 
 ## Customize the starter
 
@@ -22,11 +22,13 @@ The schema accepts even 16:9 dimensions from 640 × 360 through 7680 × 4320 and
 Copy `examples/launch.json` and edit its name, opening lines, outcome lines, website, accent color, and output settings. It is an 18-second example:
 
 ```sh
-npm run stills -- Launch-Film --props examples/launch.json --times 1.5,6.5,11.8,15.5 --out out/launch-stills
-npm run render -- Launch-Film --props examples/launch.json --out out/launch.mp4
+npm run stills -- Launch-Film --props examples/launch.json --gl angle --times 1.5,4.5,6.2,10,13.4,17 --out out/launch-stills
+npm run render -- Launch-Film --props examples/launch.json --gl angle --out out/launch.mp4
 ```
 
-The three workflow cards, background shapes, small closing motif, scene order, and timings live in `src/examples/LaunchFilm.tsx`. Ask your agent to adapt those when the story or brand needs it. JSON is a shortcut for the listed fields, not a full scene editor.
+The style sheet, shot list, board and note UI, transitions, and timings live in `src/examples/LaunchFilm.tsx`. Ask your agent to adapt those when the story, product, or style needs it. JSON is a shortcut for the listed fields, not a full scene editor. Headlines are sized to fit the frame with the actual font.
+
+Films built from React shots render much faster with hardware graphics; add `--gl angle` to `render` and `stills` unless the film uses Taleframe shaders or effects (see [When a render fails](#when-a-render-fails)).
 
 ## Inspect stills
 
@@ -57,6 +59,16 @@ npm run render -- Launch-Film --out out/launch.mp4
 npm run stills -- Motion-Catalogue --times 3.5 --out out/catalogue
 ```
 
+The three demo films are built from React shots, so render them with `--gl angle`. Each takes well under a minute on a recent Mac:
+
+```sh
+npm run render -- Product-Explainer --gl angle --out out/product-explainer.mp4
+npm run render -- Product-Launch --gl angle --out out/product-launch.mp4
+npm run render -- Kit-Reel --gl angle --out out/kit-reel.mp4
+```
+
+`Kit-Reel` is 1080 × 1920. Stills and previews work the same way for vertical films.
+
 ## Use actual app UI
 
 Put new assets under `public/` and a new scene under `src/`. Read [app adapters](app-adapters.md) before connecting real UI components. Register the composition in `src/index.tsx`, then use its name in the same commands. Use [components](components.md) to reuse text and camera behavior instead of rewriting it.
@@ -73,7 +85,7 @@ This softens the source before painting. See the [watercolor still tool](../tool
 
 The first render downloads Remotion's dedicated Chrome. Allow that download and keep the machine online for dependency installation; local assets can render offline once setup is complete. Chrome may require normal system dependencies on Linux.
 
-The CLI uses software WebGL2 (`swangle`) by default for repeatable shader output, including watercolor. Hardware ANGLE can be faster, but some paint details vary slightly on repeated frames. To try hardware rendering on your machine:
+The CLI uses software WebGL2 (`swangle`) by default for repeatable shader output, including watercolor. Hardware ANGLE is much faster, especially for films built from React shots with [scene transitions](scene-transitions.md) and motion blur; use `--gl angle` for those. Some Taleframe paint details vary slightly on repeated frames under ANGLE. To try hardware rendering on your machine:
 
 ```sh
 npm run stills -- Transition-Gallery --times 1 --out out/gpu-check --gl angle

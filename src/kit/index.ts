@@ -1,4 +1,6 @@
 export * from './motion';
+export * from './clock';
+export * from './MotionBlur';
 export * from './typing';
 export * from './typography';
 export * from './text';
@@ -12,3 +14,5 @@ export {listTransitions, getTransitionParams, defaultParams, resolveParams} from
 export {TRANSITION_CATALOG} from '../taleframe/transitions/catalog';
 export * from './TaleframeEffects';
 export * from './imageSequence';
+export * from './scene';
+export * from './kinetic';

@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {useCurrentFrame, useVideoConfig} from 'remotion';
+import {useTime} from './clock';
 import {arrive, glide, progress, travel} from './motion';
 import {graphemes, keystrokeSchedule, trackedWidth, typedAt} from './typing';
 import {FontStyle, useTextMetrics} from './typography';
@@ -9,7 +9,7 @@ export type RevealProps = FontStyle & {
   exit?: number; exitDuration?: number; blur?: number; rise?: number; color?: string;
   style?: React.CSSProperties;
 };
-export function useTime() { const {fps} = useVideoConfig(); return useCurrentFrame() / fps; }
+export {useTime};
 
 /** A line whose characters reveal in an almost simultaneous, tightly staggered wave. */
 export function CharacterReveal({text, start = 0, time, stagger = .008, duration = .50,
