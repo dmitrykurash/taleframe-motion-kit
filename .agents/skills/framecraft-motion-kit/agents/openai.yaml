@@ -1,4 +1,0 @@
-interface:
-  display_name: "Framecraft Motion Kit"
-  short_description: "Create launches, UI demos, and motion reels"
-  default_prompt: "Use $framecraft-motion-kit to create an editable film from my brief and supplied assets."

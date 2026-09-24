@@ -1,4 +1,4 @@
-# Framecraft Motion Kit
+# Taleframe
 
 A reusable library for product launches, app demonstrations, and motion reels. Build films with real UI, guided cameras, natural typing, animated text, and transitions and effects from Taleframe.
 
@@ -6,20 +6,20 @@ The kit is a Remotion project with editable examples and instructions for coding
 
 ![Launch-film example](docs/images/launch-film.png)
 
-[Watch the sample films](https://github.com/dmitrykurash/framecraft-motion-kit/releases/tag/v1.0.0) or open the examples in Studio.
+[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.0.1) or open the examples in Studio.
 
 ## Start with an agent
 
 Clone this private repository with an account that has access, then open the folder in your coding tool:
 
 ```sh
-git clone https://github.com/dmitrykurash/framecraft-motion-kit.git
-cd framecraft-motion-kit
+git clone https://github.com/dmitrykurash/taleframe-motion-kit.git
+cd taleframe-motion-kit
 ```
 
 Give your agent this prompt, replacing the bracketed details:
 
-> Read AGENTS.md and use the Framecraft Motion Kit skill in this repository. Create a [25-second product launch / UI demonstration / motion reel] for [product or subject]. The audience is [audience]. Show [two or three features or ideas]. UI source, screenshots, or recordings are at [paths]; brand assets are at [paths]. Use [style or references], with clear text and purposeful camera movement. Deliver [resolution, aspect ratio, frame rate], an MP4 preview, editable source, and the render command. Use the supplied UI to support product claims. Make reasonable implementation choices and complete the film, including visual checks.
+> Read AGENTS.md and use the Taleframe skill in this repository. Create a [25-second product launch / UI demonstration / motion reel] for [product or subject]. The audience is [audience]. Show [two or three features or ideas]. UI source, screenshots, or recordings are at [paths]; brand assets are at [paths]. Use [style or references], with clear text and purposeful camera movement. Deliver [resolution, aspect ratio, frame rate], an MP4 preview, editable source, and the render command. Use the supplied UI to support product claims. Make reasonable implementation choices and complete the film, including visual checks.
 
 Add a review point if you want to approve a storyboard or visual direction first. The kit does not force one approval process or one style on every film.
 
@@ -69,7 +69,7 @@ The supplied examples use DM Sans and Instrument Serif. Replace fonts, colors, a
 | Location | Purpose |
 |---|---|
 | [AGENTS.md](AGENTS.md) | Entry point for coding agents |
-| [Production skill](.agents/skills/framecraft-motion-kit/SKILL.md) | Workflow and decision guidance |
+| [Production skill](.agents/skills/taleframe-motion-kit/SKILL.md) | Workflow and decision guidance |
 | [src/kit](src/kit/index.ts) | Shared animation components and helpers |
 | [src/examples](src/examples) | Editable film examples |
 | [examples/brief.md](examples/brief.md) | A short brief template |

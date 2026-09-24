@@ -1,6 +1,6 @@
-# Working in Framecraft Motion Kit
+# Working in Taleframe
 
-For launches, app demos, and motion reels, read [.agents/skills/framecraft-motion-kit/SKILL.md](.agents/skills/framecraft-motion-kit/SKILL.md). If your tool does not discover local skills, read that file directly. Rendering does not require a specific coding-agent service.
+For launches, app demos, and motion reels, read [.agents/skills/taleframe-motion-kit/SKILL.md](.agents/skills/taleframe-motion-kit/SKILL.md). If your tool does not discover local skills, read that file directly. Rendering does not require a specific coding-agent service.
 
 - Read the brief and relevant example before editing. Put new-project content and UI adapters in their own files; keep shared components brand-neutral.
 - Use the actual app's source, screenshots, or recordings for product demonstrations. Sample UI in the starter is illustrative. Do not invent a feature or claim that the app cannot support.

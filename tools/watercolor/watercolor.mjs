@@ -48,7 +48,7 @@ for (const [key, value] of Object.entries(settings)) {
     throw new Error(`Invalid watercolor setting: ${key}. Allowed numeric settings: ${allowed.join(', ')}.`);
 }
 await fs.mkdir(path.dirname(output), {recursive: true});
-const scratch = await fs.mkdtemp(path.join(os.tmpdir(), 'framecraft-watercolor-'));
+const scratch = await fs.mkdtemp(path.join(os.tmpdir(), 'taleframe-watercolor-'));
 const source = `source${path.extname(input)}`;
 let effectiveSettings;
 const browserLog = ({text}) => {

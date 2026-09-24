@@ -1,0 +1,4 @@
+interface:
+  display_name: "Taleframe"
+  short_description: "Create launches, UI demos, and motion reels"
+  default_prompt: "Use $taleframe-motion-kit to create an editable film from my brief and supplied assets."

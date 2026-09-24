@@ -1,11 +1,11 @@
 ---
-name: framecraft-motion-kit
-description: Create or revise product launches, app demonstration videos, and motion reels with Framecraft Motion Kit. Use its Remotion components, camera and cursor choreography, animated typography, and Taleframe transitions and effects to deliver editable films and verified exports.
+name: taleframe-motion-kit
+description: Create or revise product launches, app demonstration videos, and motion reels with Taleframe. Use its Remotion components, camera and cursor choreography, animated typography, and Taleframe transitions and effects to deliver editable films and verified exports.
 ---
 
-# Framecraft Motion Kit
+# Taleframe
 
-Turn a brief and supplied assets into an editable film and a verified video. This skill belongs to the full Framecraft Motion Kit repository. Keep it with the components, examples, assets, and render scripts; copying the skill alone does not install the renderer.
+Turn a brief and supplied assets into an editable film and a verified video. This skill belongs to the full Taleframe repository. Keep it with the components, examples, assets, and render scripts; copying the skill alone does not install the renderer.
 
 ## Choose the film around the brief
 

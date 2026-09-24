@@ -15,7 +15,7 @@ export function MotionCatalogue() {
     time: cycle, fontFamily: '"DM Sans Variable", sans-serif', fontSize: 34});
   const camera = {x: -Math.max(0, typed.width - 320) * .65, y: 0, scale: 1.08};
   return <LogicalStage background="#f4f3ef">
-    <div style={{position: 'absolute', left: 80, top: 62, fontFamily: '"Instrument Serif", serif', color: '#252525', fontSize: 58}}>Framecraft Motion Kit</div>
+    <div style={{position: 'absolute', left: 80, top: 62, fontFamily: '"Instrument Serif", serif', color: '#252525', fontSize: 58}}>Taleframe</div>
     <div style={{position: 'absolute', left: 82, top: 144, fontFamily: '"DM Sans Variable", sans-serif', fontSize: 21, color: '#777970'}}>
       Four reusable recipes. One frame-based motion system.
     </div>
