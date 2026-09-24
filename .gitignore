@@ -1,0 +1,7 @@
+node_modules/
+out/
+.cache/
+.DS_Store
+.env
+.env.*
+*.log

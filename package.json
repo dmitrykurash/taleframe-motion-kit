@@ -1,0 +1,43 @@
+{
+  "name": "framecraft-motion-kit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.tsx",
+    "render": "node scripts/render.mjs video",
+    "stills": "node scripts/render.mjs stills",
+    "preview": "node scripts/preview.mjs",
+    "verify": "node scripts/verify.mjs",
+    "check": "tsc --noEmit && tsx --test tests/*.test.ts",
+    "watercolor": "node tools/watercolor/watercolor.mjs",
+    "frames": "node scripts/frames.mjs",
+    "sequence": "node scripts/sequence.mjs",
+    "check:transitions": "node tests/transitions-gpu.mjs",
+    "check:effects": "node scripts/check-effects.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "description": "Make polished launch videos, UI demos, and motion reels with your coding agent.",
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "5.3.0",
+    "@fontsource/instrument-serif": "5.2.8",
+    "@remotion/bundler": "4.0.527",
+    "@remotion/cli": "4.0.527",
+    "@remotion/renderer": "4.0.527",
+    "lucide-react": "1.47.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.527"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "origin": "Taleframe local working snapshot",
+  "note": "Self-contained static paint adapter retained from the earlier production tool. Engine signatures are adapted to the portable types. The optional realtime effects component uses its own newer snapshot.",
+  "files": [
+    {
+      "vendored": "tools/watercolor/paint/brushGrid.ts",
+      "source": "src/engine/postprocess/paint/brushGrid.ts",
+      "sha256": "bcd73d24d183ef0bf1d5fc937b8326e5f0c9cef87f125e39bad6d834b29b1e0c",
+      "sourceSha256": "4c61dfd6b14bf07268e8719eb038b85cc2faa09061edc9e9fdb396c4bf5d0434"
+    },
+    {
+      "vendored": "tools/watercolor/paint/material.ts",
+      "source": "src/engine/postprocess/paint/material.ts",
+      "sha256": "ba8e1cab99ad4422f75bc3f361ca418437c902b60edd4763030f83b69df4cd91",
+      "sourceSha256": "a94ffb9059c474f57dfb9568a4ce10d30e1f0a1d6fcf264674d08437b3cd8df4"
+    },
+    {
+      "vendored": "tools/watercolor/paint/model.ts",
+      "source": "src/engine/postprocess/paint/model.ts",
+      "sha256": "08e2c729f2d8dfae6dd0675ac94d2edeb3e4ff6aee073aa1a84cd4a2c909ede2",
+      "sourceSha256": "08e2c729f2d8dfae6dd0675ac94d2edeb3e4ff6aee073aa1a84cd4a2c909ede2"
+    },
+    {
+      "vendored": "tools/watercolor/paint/painterly.ts",
+      "source": "src/engine/postprocess/paint/painterly.ts",
+      "sha256": "988d9fcbf200aa958a87438ebe7cfbb8aacded63ee98b75f71242488c4949271",
+      "sourceSha256": "988d9fcbf200aa958a87438ebe7cfbb8aacded63ee98b75f71242488c4949271"
+    },
+    {
+      "vendored": "tools/watercolor/paint/render.ts",
+      "source": "src/engine/postprocess/paint/render.ts",
+      "sha256": "1f8eda2437f39ed444b1fd0d5e96ce82cefb1d456052411f5b42cb226492d396",
+      "sourceSha256": "14de4ac9449a6ca2373ba35d33d2c939dc18e4cd0bfe8d16c67141d8da288898"
+    },
+    {
+      "vendored": "tools/watercolor/paint/shaders.ts",
+      "source": "src/engine/postprocess/paint/shaders.ts",
+      "sha256": "f45f182d946952aac809940ef2b4f7dbe76670f280b85354d855173fd346a692",
+      "sourceSha256": "f45f182d946952aac809940ef2b4f7dbe76670f280b85354d855173fd346a692"
+    },
+    {
+      "vendored": "tools/watercolor/paint/types.ts",
+      "source": "portable adapter",
+      "sha256": "6407d926888c8e078cb4ad4064975552ae74bf49f32219636694620b5e391454",
+      "sourceSha256": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "appName": "Harbor",
+  "prompt": "Turn our meeting notes into three tasks to review.",
+  "replyTitle": "Next steps, ready to review.",
+  "replyItems": [
+    "Maya: share the revised project brief",
+    "Leo: confirm the pilot launch date",
+    "Team: review open questions by Friday"
+  ],
+  "heading": "Clear next steps. Calmer work.",
+  "closingTagline": [
+    "Every meeting.",
+    "A clear way forward."
+  ],
+  "website": "harbor.example",
+  "accent": "#294963",
+  "fontFamily": "\"DM Sans Variable\", sans-serif",
+  "headingFontFamily": "\"Instrument Serif\", serif",
+  "fonts": [],
+  "output": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "settingsTitle": "Keep a review before publishing"
+}

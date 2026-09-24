@@ -1,0 +1,23 @@
+/** Human-readable labels. The native parameter schemas retain their original labels. */
+export const TRANSITION_CATALOG = [
+  {id: 'crossfade', name: 'Crossfade', description: 'A clean dissolve between two scenes.'},
+  {id: 'dip', name: 'Overlap', description: 'Pause briefly at an even blend of the two pictures.'},
+  {id: 'engraving', name: 'Engraving', description: 'Reveal the scene through fine engraved lines.'},
+  {id: 'whip', name: 'Whip', description: 'A fast directional move with blur.'},
+  {id: 'prism', name: 'Prism', description: 'A refracted, glass-like reveal.'},
+  {id: 'ink', name: 'Ink', description: 'An organic ink spread.'},
+  {id: 'watercolor', name: 'Watercolor', description: 'Water drops spread into the next picture.'},
+  {id: 'waterspill', name: 'Water spill', description: 'A directional wash crosses the frame.'},
+  {id: 'paperpaint', name: 'Paper paint', description: 'A painted sweep over a paper surface.'},
+  {id: 'sand', name: 'Sand', description: 'A textured granular reveal.'},
+  {id: 'capillary', name: 'Capillary', description: 'Thin branching flows carry the new picture.'},
+  {id: 'marbling', name: 'Marbling', description: 'The pictures flow into a marbled pattern.'},
+  {id: 'ripple', name: 'Ripple', description: 'Expanding waves reveal the next scene.'},
+  {id: 'contour', name: 'Contour', description: 'The image contours guide the reveal.'},
+  {id: 'godrays', name: 'Light rays', description: 'A bright radial sweep through light.'},
+  {id: 'fold', name: 'Fold', description: 'Fold the picture into the next scene.', legacy: true},
+  {id: 'halftone', name: 'Halftone', description: 'Reveal through a printed dot pattern.', legacy: true},
+  {id: 'signal', name: 'Signal', description: 'The picture becomes a relief of light scan lines.', legacy: true},
+  {id: 'ribbon', name: 'Ribbon', description: 'Uneven bands cut between pictures in opposing directions.', legacy: true},
+  {id: 'frost', name: 'Frost', description: 'An icy crystalline reveal.', legacy: true},
+] as const;

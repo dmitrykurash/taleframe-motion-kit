@@ -1,0 +1,157 @@
+{
+  "sourceProject": "Taleframe",
+  "baseCommit": "f08bf18d5abb3c0b77c8d15f041d48e3d6c17eeb",
+  "snapshotNote": "These transition modules come from an uncommitted local snapshot on top of the stated base commit. Source hashes identify the precise copied files; they are not asserted to match that commit.",
+  "files": {
+    "capillary/index.ts": {
+      "source": "src/engine/transitions/capillary/index.ts",
+      "sourceSha256": "5103112b6865c160685278c61c225d0b81a7daacf721c48c1be2e9580e80f524",
+      "mode": "exact",
+      "vendoredSha256": "5103112b6865c160685278c61c225d0b81a7daacf721c48c1be2e9580e80f524"
+    },
+    "contour/index.ts": {
+      "source": "src/engine/transitions/contour/index.ts",
+      "sourceSha256": "83e51f33032766b62200b87449ca39309b9ce783458aeae347daac613b617ca8",
+      "mode": "exact",
+      "vendoredSha256": "83e51f33032766b62200b87449ca39309b9ce783458aeae347daac613b617ca8"
+    },
+    "crossfade/index.ts": {
+      "source": "src/engine/transitions/crossfade/index.ts",
+      "sourceSha256": "8c7f35f550be99bbce004c69bd0f7497373d1370a98ff9ad025c1f5fb4de9118",
+      "mode": "exact",
+      "vendoredSha256": "8c7f35f550be99bbce004c69bd0f7497373d1370a98ff9ad025c1f5fb4de9118"
+    },
+    "dip/index.ts": {
+      "source": "src/engine/transitions/dip/index.ts",
+      "sourceSha256": "982bdebbf31b4834d7c79f13e3c7d27e28874ec0f9eb2ac764a59cd14e854ecb",
+      "mode": "exact",
+      "vendoredSha256": "982bdebbf31b4834d7c79f13e3c7d27e28874ec0f9eb2ac764a59cd14e854ecb"
+    },
+    "engraving/index.ts": {
+      "source": "src/engine/transitions/engraving/index.ts",
+      "sourceSha256": "21c25408f93689945d4dc570bd69584e57316a641526bcd092116d00adfbab0b",
+      "mode": "exact",
+      "vendoredSha256": "21c25408f93689945d4dc570bd69584e57316a641526bcd092116d00adfbab0b"
+    },
+    "fold/index.ts": {
+      "source": "src/engine/transitions/fold/index.ts",
+      "sourceSha256": "5096ca36d6a0f5c06921be90ff49d7353b82e640cdac0774a2f9d036a6f9faf4",
+      "mode": "exact",
+      "vendoredSha256": "5096ca36d6a0f5c06921be90ff49d7353b82e640cdac0774a2f9d036a6f9faf4"
+    },
+    "frost/index.ts": {
+      "source": "src/engine/transitions/frost/index.ts",
+      "sourceSha256": "9ac3d8159702a769b5b662171cb14046cfc3ef646642f105299c71c1c7d294a4",
+      "mode": "exact",
+      "vendoredSha256": "9ac3d8159702a769b5b662171cb14046cfc3ef646642f105299c71c1c7d294a4"
+    },
+    "godrays/index.ts": {
+      "source": "src/engine/transitions/godrays/index.ts",
+      "sourceSha256": "c69e73102546beb2bfba45649ccc226f48d1ea736374b0ad293d649a6127e7db",
+      "mode": "exact",
+      "vendoredSha256": "c69e73102546beb2bfba45649ccc226f48d1ea736374b0ad293d649a6127e7db"
+    },
+    "halftone/index.ts": {
+      "source": "src/engine/transitions/halftone/index.ts",
+      "sourceSha256": "ac843c7409d40377de4db134de09c28127f47a889e98fbca3b017fe5599f9c27",
+      "mode": "exact",
+      "vendoredSha256": "ac843c7409d40377de4db134de09c28127f47a889e98fbca3b017fe5599f9c27"
+    },
+    "ink/index.ts": {
+      "source": "src/engine/transitions/ink/index.ts",
+      "sourceSha256": "ef3330198c14bf95ffa8cf548b2c09237ee67c1a4865683860ba1c9bb5e80165",
+      "mode": "exact",
+      "vendoredSha256": "ef3330198c14bf95ffa8cf548b2c09237ee67c1a4865683860ba1c9bb5e80165"
+    },
+    "marbling/index.ts": {
+      "source": "src/engine/transitions/marbling/index.ts",
+      "sourceSha256": "e8bf56eaee7afc697d873369175a27ca18a2347e27a68e78eb50aa9bdc0b89e5",
+      "mode": "exact",
+      "vendoredSha256": "e8bf56eaee7afc697d873369175a27ca18a2347e27a68e78eb50aa9bdc0b89e5"
+    },
+    "paperpaint/index.ts": {
+      "source": "src/engine/transitions/paperpaint/index.ts",
+      "sourceSha256": "9fcaaab1aa82e1b995e9e42ce973d8530c352a3ffa7d5f5cad77c112b2fc8dcd",
+      "mode": "exact",
+      "vendoredSha256": "9fcaaab1aa82e1b995e9e42ce973d8530c352a3ffa7d5f5cad77c112b2fc8dcd"
+    },
+    "prism/index.ts": {
+      "source": "src/engine/transitions/prism/index.ts",
+      "sourceSha256": "6fa8730f4ba106b4e2b28640f4b6eb231a2aae8e6bf3551f3e14a3c2dca4f2e2",
+      "mode": "exact",
+      "vendoredSha256": "6fa8730f4ba106b4e2b28640f4b6eb231a2aae8e6bf3551f3e14a3c2dca4f2e2"
+    },
+    "ribbon/index.ts": {
+      "source": "src/engine/transitions/ribbon/index.ts",
+      "sourceSha256": "248bd29a41162bd41ecaae798674e47a60c90e13a8ec1e0455f09b2872eb01a6",
+      "mode": "exact",
+      "vendoredSha256": "248bd29a41162bd41ecaae798674e47a60c90e13a8ec1e0455f09b2872eb01a6"
+    },
+    "ripple/index.ts": {
+      "source": "src/engine/transitions/ripple/index.ts",
+      "sourceSha256": "2859b918b6ab629814d84bfb2643dba3bf64d0ca6f472c57f7b3e6a468eac8f7",
+      "mode": "exact",
+      "vendoredSha256": "2859b918b6ab629814d84bfb2643dba3bf64d0ca6f472c57f7b3e6a468eac8f7"
+    },
+    "sand/index.ts": {
+      "source": "src/engine/transitions/sand/index.ts",
+      "sourceSha256": "a6c358e10a59d857f4df7648563ae696955782863d4b672210e2a70a487d1480",
+      "mode": "exact",
+      "vendoredSha256": "a6c358e10a59d857f4df7648563ae696955782863d4b672210e2a70a487d1480"
+    },
+    "signal/index.ts": {
+      "source": "src/engine/transitions/signal/index.ts",
+      "sourceSha256": "2dbfc7c8bf8a745c217ec57ea7ca64c14e3eb09a2337789410e980b7ea0243ac",
+      "mode": "exact",
+      "vendoredSha256": "2dbfc7c8bf8a745c217ec57ea7ca64c14e3eb09a2337789410e980b7ea0243ac"
+    },
+    "watercolor/index.ts": {
+      "source": "src/engine/transitions/watercolor/index.ts",
+      "sourceSha256": "69d37a336bcf0f8e690ddd53e5b5d9699d0a029283d0ad4da7ce5818112e52db",
+      "mode": "exact",
+      "vendoredSha256": "69d37a336bcf0f8e690ddd53e5b5d9699d0a029283d0ad4da7ce5818112e52db"
+    },
+    "waterspill/index.ts": {
+      "source": "src/engine/transitions/waterspill/index.ts",
+      "sourceSha256": "d959de873a62bff2cce252e0fd59de8587a2bf01c9dbf06a8ccdce6c37e3e94c",
+      "mode": "exact",
+      "vendoredSha256": "d959de873a62bff2cce252e0fd59de8587a2bf01c9dbf06a8ccdce6c37e3e94c"
+    },
+    "whip/index.ts": {
+      "source": "src/engine/transitions/whip/index.ts",
+      "sourceSha256": "eed39282a0eb4935131804db08a458527563a9925ffac89ab2aa5fd7ca979a83",
+      "mode": "exact",
+      "vendoredSha256": "eed39282a0eb4935131804db08a458527563a9925ffac89ab2aa5fd7ca979a83"
+    },
+    "kit.ts": {
+      "source": "src/engine/transitions/kit.ts",
+      "sourceSha256": "6460e21639edd7c4a3e96cab83699f987f9858d12c3e14d33f516791924d3e76",
+      "mode": "adapted: standalone imports/contracts; strict export errors; GL resource cleanup",
+      "vendoredSha256": "49f78a7f6c219afe6d77d7d277479eeb25b812e333305858689317ee604b783a"
+    },
+    "host.ts": {
+      "source": "src/engine/transitions/host.ts",
+      "sourceSha256": "1dfa4760ca4210cbc83c23cb45cce7d45b8224fc2ffda38136d5d9e68e3ea508",
+      "mode": "adapted: standalone imports/contracts; strict export errors; GL resource cleanup",
+      "vendoredSha256": "0639969f71e78222c9e79e9f31b7e690bf6ed4699fca9a377d455116652d3b60"
+    },
+    "types.ts": {
+      "source": "src/engine/transitions/types.ts",
+      "sourceSha256": "15ffcfc1b295f635fe4219b9658c1ace4efd815c428efc7d1ee27beebb7e3997",
+      "mode": "adapted: standalone imports/contracts; strict export errors; GL resource cleanup",
+      "vendoredSha256": "3b0fe0ca45975692414fda70369f276192f0ec2f097f29da3d326babe93fba6f"
+    },
+    "registry.ts": {
+      "source": "src/engine/transitions/registry.ts",
+      "sourceSha256": "af30641774c7d9ec362eec5b12b55e647a91333dc24169968482255e7824a4cf",
+      "mode": "adapted: standalone imports/contracts; strict export errors; GL resource cleanup",
+      "vendoredSha256": "49583465eeee4e0635e9a551727a90a374a077733a27ef308e108385bc5a81e1"
+    },
+    "easing.ts": {
+      "source": "src/engine/anim/easing.ts",
+      "sourceSha256": "ff40227387216a435ef4b70b9347edbbff2969bea1709ba6651e8b9eaaabe25f",
+      "mode": "adapted: local Ease type import",
+      "vendoredSha256": "ba016682510908fac44785b27093c1c13036af1f9c282950a92ac65990bf7728"
+    }
+  }
+}

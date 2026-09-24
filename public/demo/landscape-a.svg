@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#e4ece1"/><stop offset="1" stop-color="#efe2c9"/></linearGradient><linearGradient id="hill"><stop stop-color="#23463f"/><stop offset="1" stop-color="#6d8170"/></linearGradient></defs>
+<path fill="url(#sky)" d="M0 0h1920v1080H0z"/><circle cx="1390" cy="275" r="148" fill="#e39857"/>
+<path d="M0 720Q230 180 530 430T1080 400T1920 640V1080H0Z" fill="#adb49a"/>
+<path d="M0 890Q450 470 800 625T1500 525T1920 735V1080H0Z" fill="#879878"/>
+<path d="M0 905Q310 830 595 955T1190 820T1920 800V1080H0Z" fill="url(#hill)"/>
+<path d="M1320 660Q1090 790 1240 862T990 1080h330q200-150 23-246T1450 637Z" fill="#ddcfaa"/>
+<g stroke="#263f36" stroke-width="9" fill="none"><path d="M250 850V525m0 120-70-60m70 105 100-105m-100 5-40-73"/><path d="M1660 1020V760m0 110-70-65m70 100 66-55"/></g>
+<g fill="#48614e"><ellipse cx="250" cy="500" rx="132" ry="180"/><ellipse cx="160" cy="588" rx="72" ry="95"/><ellipse cx="341" cy="570" rx="65" ry="100"/><ellipse cx="1660" cy="755" rx="90" ry="125"/></g>
+</svg>

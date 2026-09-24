@@ -1,0 +1,26 @@
+{
+  "appName": "Relay",
+  "prompt": "Turn these notes into a launch checklist.",
+  "replyTitle": "A clear next step.",
+  "replyItems": [
+    "Review the release notes",
+    "Check the onboarding flow",
+    "Prepare the launch announcement"
+  ],
+  "heading": "From an idea to action.",
+  "closingTagline": [
+    "Good ideas.",
+    "Ready to move."
+  ],
+  "website": "relay.example",
+  "accent": "#ed7556",
+  "fontFamily": "\"DM Sans Variable\", sans-serif",
+  "headingFontFamily": "\"Instrument Serif\", serif",
+  "fonts": [],
+  "output": {
+    "width": 3840,
+    "height": 2160,
+    "fps": 60
+  },
+  "settingsTitle": "Choose how your work gets published"
+}

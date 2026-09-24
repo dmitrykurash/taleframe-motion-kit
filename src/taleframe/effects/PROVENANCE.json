@@ -1,0 +1,193 @@
+{
+  "origin": "Taleframe local source snapshot",
+  "baseCommit": "f08bf18d5abb3c0b77c8d15f041d48e3d6c17eeb",
+  "snapshotIncludesUncommittedChanges": true,
+  "note": "Hashes identify the exact local source copied. Only runtime effects and narrow type/time adapters are included. No editor state, asset library, or temporal optical-flow preparation is included.",
+  "files": [
+    {
+      "source": "src/engine/postprocess/model.ts",
+      "destination": "native/model.ts",
+      "sourceSha256": "f1841c0d6bce8c768da0f7db5272af30441faaa507c0f00e9a6bdc8ec8a23e09",
+      "vendoredSha256": "f1841c0d6bce8c768da0f7db5272af30441faaa507c0f00e9a6bdc8ec8a23e09",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/render.ts",
+      "destination": "native/render.ts",
+      "sourceSha256": "a509bebe8a50d24e8524524543b6600578ebb34f3a1f25bca934de1ee13a7b89",
+      "vendoredSha256": "b63cb44fd855cefa38f1e08253f4888c479e75d23e4e46666d7b28251904f0ab",
+      "changes": [
+        "import '../compose/types' -> '../types'",
+        "import '../anim/keyframes' -> '../types'",
+        "Remove editor-only text protection cleanup; DOM overlays are composited separately in this kit."
+      ]
+    },
+    {
+      "source": "src/engine/postprocess/passes.ts",
+      "destination": "native/passes.ts",
+      "sourceSha256": "9ec69c45c7741d2c6357d11b5ddfb4e86f74941951fce1eeff0332aa06da9167",
+      "vendoredSha256": "9ec69c45c7741d2c6357d11b5ddfb4e86f74941951fce1eeff0332aa06da9167",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/cpu.ts",
+      "destination": "native/cpu.ts",
+      "sourceSha256": "60ee69441cb08c1f28c6f291dd65d725cb3485780c5196d1be3fcb053720f187",
+      "vendoredSha256": "60ee69441cb08c1f28c6f291dd65d725cb3485780c5196d1be3fcb053720f187",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/chromatic.ts",
+      "destination": "native/chromatic.ts",
+      "sourceSha256": "379374ee9b60fa6acbbc846c767dd4ea61fae51a0ad4ca7dae3d7c58506e2cb1",
+      "vendoredSha256": "379374ee9b60fa6acbbc846c767dd4ea61fae51a0ad4ca7dae3d7c58506e2cb1",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/noise.ts",
+      "destination": "native/noise.ts",
+      "sourceSha256": "ec265bb6c09a7bb4208c1d709a832fff377b47b550d25637bfaefb239363b514",
+      "vendoredSha256": "ec265bb6c09a7bb4208c1d709a832fff377b47b550d25637bfaefb239363b514",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/order.ts",
+      "destination": "native/order.ts",
+      "sourceSha256": "dcfeac32cea23d74c79ff251aedd24011797b064231861ae5b9a9ccfe30d6fdd",
+      "vendoredSha256": "dcfeac32cea23d74c79ff251aedd24011797b064231861ae5b9a9ccfe30d6fdd",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/sharedWorkerContext.ts",
+      "destination": "native/sharedWorkerContext.ts",
+      "sourceSha256": "7b52d28b6e577f925e55f69cb6d4d4c189607ae3698625456294adf1e72a8485",
+      "vendoredSha256": "7b52d28b6e577f925e55f69cb6d4d4c189607ae3698625456294adf1e72a8485",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/paint/model.ts",
+      "destination": "native/paint/model.ts",
+      "sourceSha256": "08e2c729f2d8dfae6dd0675ac94d2edeb3e4ff6aee073aa1a84cd4a2c909ede2",
+      "vendoredSha256": "08e2c729f2d8dfae6dd0675ac94d2edeb3e4ff6aee073aa1a84cd4a2c909ede2",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/paint/render.ts",
+      "destination": "native/paint/render.ts",
+      "sourceSha256": "14de4ac9449a6ca2373ba35d33d2c939dc18e4cd0bfe8d16c67141d8da288898",
+      "vendoredSha256": "3a75880f96ad7cb854bca21593c7414226d9522fe118b766075617459732f091",
+      "changes": [
+        "import '../../compose/types' -> '../../types'",
+        "import '../../anim/keyframes' -> '../../types'"
+      ]
+    },
+    {
+      "source": "src/engine/postprocess/paint/material.ts",
+      "destination": "native/paint/material.ts",
+      "sourceSha256": "a94ffb9059c474f57dfb9568a4ce10d30e1f0a1d6fcf264674d08437b3cd8df4",
+      "vendoredSha256": "699109e8a7a0694b2cbed6a703de0141e756235a5eb8b2748d66111d917e31ee",
+      "changes": [
+        "import '../../anim/keyframes' -> '../../types'"
+      ]
+    },
+    {
+      "source": "src/engine/postprocess/paint/brushGrid.ts",
+      "destination": "native/paint/brushGrid.ts",
+      "sourceSha256": "4c61dfd6b14bf07268e8719eb038b85cc2faa09061edc9e9fdb396c4bf5d0434",
+      "vendoredSha256": "fd5748876275a84a07dd6d924593343f85e4c08dc10f29efa06b21f4aba5c582",
+      "changes": [
+        "import '../../anim/keyframes' -> '../../types'"
+      ]
+    },
+    {
+      "source": "src/engine/postprocess/paint/shaders.ts",
+      "destination": "native/paint/shaders.ts",
+      "sourceSha256": "f45f182d946952aac809940ef2b4f7dbe76670f280b85354d855173fd346a692",
+      "vendoredSha256": "f45f182d946952aac809940ef2b4f7dbe76670f280b85354d855173fd346a692",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/paint/painterly.ts",
+      "destination": "native/paint/painterly.ts",
+      "sourceSha256": "988d9fcbf200aa958a87438ebe7cfbb8aacded63ee98b75f71242488c4949271",
+      "vendoredSha256": "988d9fcbf200aa958a87438ebe7cfbb8aacded63ee98b75f71242488c4949271",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/paint/temporal/types.ts",
+      "destination": "native/paint/temporal/types.ts",
+      "sourceSha256": "805674325097b8eb507196c26597800052a2faf48359de12ae7ff0604a9b1367",
+      "vendoredSha256": "805674325097b8eb507196c26597800052a2faf48359de12ae7ff0604a9b1367",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/helios/model.ts",
+      "destination": "native/helios/model.ts",
+      "sourceSha256": "3c01cd831dca64e1e97e9e5d672343c8fa85c343587efb549bf7b6a04ed2b4d3",
+      "vendoredSha256": "3c01cd831dca64e1e97e9e5d672343c8fa85c343587efb549bf7b6a04ed2b4d3",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/helios/render.ts",
+      "destination": "native/helios/render.ts",
+      "sourceSha256": "66ec90f482f07b8184bf8a22f93221c74ba4dc235767492aacf917098ad02ddc",
+      "vendoredSha256": "426ad85167741c531eb461c366a095e3e4b731226b29cd099e35014929c99548",
+      "changes": [
+        "import '../../compose/types' -> '../../types'"
+      ]
+    },
+    {
+      "source": "src/engine/postprocess/helios/shaders.ts",
+      "destination": "native/helios/shaders.ts",
+      "sourceSha256": "f5c4fed00c74bb5495babe80ca8222642b500548e4515268a2adafda83b4db75",
+      "vendoredSha256": "f5c4fed00c74bb5495babe80ca8222642b500548e4515268a2adafda83b4db75",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/stopmotion/model.ts",
+      "destination": "native/stopmotion/model.ts",
+      "sourceSha256": "384092bb602358a604558ad97e3369af9e330477619b88db82ef8018540d7508",
+      "vendoredSha256": "384092bb602358a604558ad97e3369af9e330477619b88db82ef8018540d7508",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/stopmotion/timing.ts",
+      "destination": "native/stopmotion/timing.ts",
+      "sourceSha256": "123ec468ebb9390668114120d7bdc42bfb191a63d0526c4dc73723da91bee0c2",
+      "vendoredSha256": "123ec468ebb9390668114120d7bdc42bfb191a63d0526c4dc73723da91bee0c2",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/stopmotion/visual.ts",
+      "destination": "native/stopmotion/visual.ts",
+      "sourceSha256": "1640cdd5d7511005c4e0f54031f21e5b1c51d4ad28f19df6d4dca0ffff53ba97",
+      "vendoredSha256": "1640cdd5d7511005c4e0f54031f21e5b1c51d4ad28f19df6d4dca0ffff53ba97",
+      "changes": []
+    },
+    {
+      "source": "src/engine/postprocess/stopmotion/shader.ts",
+      "destination": "native/stopmotion/shader.ts",
+      "sourceSha256": "053d8daa1257f075db3ff5c2cc266693377e8fb662f82ecdc308130e85c9b1df",
+      "vendoredSha256": "053d8daa1257f075db3ff5c2cc266693377e8fb662f82ecdc308130e85c9b1df",
+      "changes": []
+    },
+    {
+      "source": "src/engine/time.ts",
+      "destination": "time.ts",
+      "sourceSha256": "0f1684d05ed0ee75158eb782dc4fa4913548557eaf59ca7fc4820174632fe34a",
+      "vendoredSha256": "b50433b3fa9624cfb201ff5dc5a31b4759bf9ac1157c659cc6e059097f9771e2",
+      "changes": [
+        "Exact subset: frameStart, frameAt, frameCeil, frameFloor; use local Fps/SAMPLE_RATE definitions."
+      ]
+    },
+    {
+      "source": "src/engine/types.ts",
+      "destination": "types.ts",
+      "sourceSha256": "4ddf7b7189bd3d0641fa801f390121444569c22e7d46c3b78bbe5cf7a538714f",
+      "vendoredSha256": "1717baae822bc098591633ff7d7b092a7975525e61975c047f63ca62082afa53",
+      "changes": [
+        "Minimal host subset: Fps, SAMPLE_RATE, PostEffects and PostEffectKey. Canvas context and affine tuple aliases replace editor imports. Project includes only width, height and postEffects. EffectsSettings adds a partial public configuration."
+      ]
+    }
+  ]
+}

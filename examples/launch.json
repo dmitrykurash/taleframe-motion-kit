@@ -1,0 +1,8 @@
+{
+  "name": "Field Notes",
+  "opening": ["Make room for", "what comes next."],
+  "outcome": ["A small step.", "A clear direction."],
+  "website": "fieldnotes.example",
+  "accent": "#e26840",
+  "output": {"width": 1920, "height": 1080, "fps": 30}
+}
