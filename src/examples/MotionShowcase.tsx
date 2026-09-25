@@ -1,6 +1,6 @@
 import React from 'react';
 import {AbsoluteFill} from 'remotion';
-import {Breathe, CameraLayer, CircleText, Cursor, Echo, Enter, Handheld, KineticText, LogicalStage, Mark, Marquee, MotionBlur, Plane, Shine,
+import {Breathe, CameraLayer, CircleText, Cursor, Enter, Handheld, KineticText, LogicalStage, Mark, Marquee, MotionBlur, ParticleText, Plane, Shine,
   Shots, Space, SpeedRamp, SplitText, TextSwap, WordSequence, arc, arrive, camera3DAt, curves, focusCamera, gridDelay, mix, moveCamera,
   progress, rampTime, useTime, useTyping, type Camera, type PresetName, type RampKey, type Shot} from '../kit';
 import {COLUMN, WINDOW, composerFrame, interviewAnswer, researchAnswer, researchSources, stagePoint, studioRows} from './workspace/layout';
@@ -10,7 +10,7 @@ import {AgentStep, Answer, AppWindow, Composer, FileCard, Permission, Result, Si
 
 /* Style sheet · minimal catalog (docs/film-language.md)
  * Palette   white and black cards, the product in light mode, one blue, two soft gradient fields; a small label names each technique.
- * Type      Inter for statements, Instrument Serif italic for accents, Geist Mono for labels and code, DM Sans Black for loud words.
+ * Type      Inter Medium for statements, Instrument Serif italic for accents, Geist Mono for labels and code; nothing outlined.
  * Motion    every shot shows one technique; UI shots hold still enough to read the move.
  * Cuts      chapter one is made of the eight new scene transitions; chapters two and three cut on the beat. */
 
@@ -41,9 +41,9 @@ const Card = ({background, children, align = 'center'}: {background: string; chi
 function Opening() {
   return <Card background={white} align="flex-start">
     <div style={{display: 'flex', alignItems: 'baseline'}}>
-      <KineticText lines={['More ']} enter="rise" start={.05} fontFamily={fonts.sans} fontWeight={700} fontSize={170} letterSpacing={-.045} color={ink}/>
-      <TextSwap texts={['transitions.', 'motion.', 'type.']} at={[.45, 1.45, 2.35]} enter="flip" by="character" stagger={.028}
-        fontFamily={fonts.sans} fontWeight={700} fontSize={170} letterSpacing={-.045} color={theme.accent}/>
+      <KineticText lines={['More ']} enter="rise" start={.05} fontFamily={fonts.sans} fontWeight={500} fontSize={170} letterSpacing={-.045} color={ink}/>
+      <TextSwap texts={['transitions.', 'motion.', 'type.']} at={[.45, 1.45, 2.35]} by="character" stagger={.02}
+        fontFamily={fonts.sans} fontWeight={500} fontSize={170} letterSpacing={-.045} color={theme.accent}/>
     </div>
   </Card>;
 }
@@ -63,7 +63,7 @@ function InterviewShot() {
   </AbsoluteFill>;
 }
 
-function WordCard({text, background, color, start, enter, by = 'character', font = fonts.sans, weight = 800, size = 300, italic = false}: {text: string;
+function WordCard({text, background, color, start, enter, by = 'character', font = fonts.sans, weight = 500, size = 300, italic = false}: {text: string;
   background: string; color: string; start: number; enter: PresetName; by?: 'word' | 'character'; font?: string; weight?: number; size?: number; italic?: boolean}) {
   return <Card background={background}>
     <KineticText lines={[[{text, fontStyle: italic ? 'italic' : 'normal'}]]} by={by} enter={enter} start={start} stagger={.04} fontFamily={font}
@@ -233,7 +233,7 @@ function HitShot() {
   return <Handheld amount={4} impacts={beats} hit={30}>
     <AbsoluteFill style={{background: ink}}>
       <WordSequence words={['Every', 'beat', 'hits.']} times={beats} palettes={[[ink, white], [ink, white], [theme.accent, white]]}
-        fontFamily={fonts.display} fontWeight={1000} fontSize={320} letterSpacing={-.05}/>
+        fontFamily={fonts.sans} fontWeight={600} fontSize={320} letterSpacing={-.05}/>
     </AbsoluteFill>
   </Handheld>;
 }
@@ -244,14 +244,14 @@ function PresetWall({names, start}: {names: PresetName[]; start: number}) {
   return <AbsoluteFill style={{background: white, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(3, 1fr)', padding: '60px 90px'}}>
     {names.map((name, i) => <div key={name} style={{display: 'grid', placeItems: 'center'}}>
       <KineticText lines={[name]} by={name === 'track' || name === 'wipe' ? 'word' : 'character'} enter={name} start={start - .02 + i * .32} stagger={.045}
-        fontFamily={fonts.sans} fontWeight={name === 'weight' ? 900 : 700} fontSize={128} letterSpacing={-.04} color={ink} seed={i + 3}/>
+        fontFamily={fonts.sans} fontWeight={name === 'weight' ? 900 : 500} fontSize={128} letterSpacing={-.04} color={ink} seed={i + 3}/>
     </div>)}
   </AbsoluteFill>;
 }
 
 function OrderShot() {
   const line = (text: string, order: 'start' | 'center' | 'random', at: number, color = ink) => <KineticText lines={[text]} by="character" enter="pop"
-    order={order} stagger={.03} start={at} fontFamily={fonts.sans} fontWeight={700} fontSize={130} letterSpacing={-.04} color={color}/>;
+    order={order} stagger={.03} start={at} fontFamily={fonts.sans} fontWeight={500} fontSize={130} letterSpacing={-.04} color={color}/>;
   return <Card background={white} align="flex-start">
     {line('from the start.', 'start', T.order - .02)}
     {line('from the center.', 'center', T.order + .8, theme.accent)}
@@ -262,15 +262,15 @@ function OrderShot() {
 function SwapShot() {
   return <Card background={white} align="flex-start">
     <div style={{display: 'flex', alignItems: 'baseline'}}>
-      <KineticText lines={['Make it ']} enter="soft" start={T.swap - .04} fontFamily={fonts.sans} fontWeight={700} fontSize={190} letterSpacing={-.045} color={ink}/>
-      <TextSwap texts={['fast.', 'simple.', 'yours.']} at={[T.swap + .25, T.swap + 1.05, T.swap + 1.85]} enter="flip" by="character"
+      <KineticText lines={['Make it ']} enter="soft" start={T.swap - .04} fontFamily={fonts.sans} fontWeight={500} fontSize={190} letterSpacing={-.045} color={ink}/>
+      <TextSwap texts={['fast.', 'simple.', 'yours.']} at={[T.swap + .25, T.swap + 1.05, T.swap + 1.85]}
         fontFamily={fonts.serif} fontWeight={400} fontSize={220} letterSpacing={-.01} color={theme.accent} style={{fontStyle: 'italic'}}/>
     </div>
   </Card>;
 }
 
 function MarkShot() {
-  const font = {fontFamily: fonts.sans, fontWeight: 700, fontSize: 138, letterSpacing: -.04, color: ink};
+  const font = {fontFamily: fonts.sans, fontWeight: 500, fontSize: 138, letterSpacing: -.04, color: ink};
   return <Card background={white} align="flex-start">
     <Enter preset="soft" start={T.mark - .04} distance={140}><Mark {...font} kind="marker" at={T.mark + .45} markColor="#ffd84d"
       lines={[[{text: 'Ship in '}, {text: 'minutes', mark: true}, {text: ','}]]}/></Enter>
@@ -281,17 +281,17 @@ function MarkShot() {
   </Card>;
 }
 
-function EchoShot() {
-  return <Card background={ink}>
-    <Echo text="LOUD" copies={6} offset={{x: 0, y: .15}} start={T.echo + .1} duration={1.3} mode="collapse" fontFamily={fonts.display}
-      fontWeight={1000} fontSize={330} letterSpacing={-.05} color={white} echoColor="#7c9cff"/>
-  </Card>;
+function DustShot() {
+  return <AbsoluteFill style={{background: ink}}>
+    <ParticleText text="Particles." mode="dissolve" start={T.echo + .55} duration={1.35} count={6500} fontFamily={fonts.sans} fontWeight={500}
+      fontSize={250} letterSpacing={-.045} color={white} accent="#7c9cff"/>
+  </AbsoluteFill>;
 }
 
 function MarqueeShot() {
   return <AbsoluteFill style={{background: white, overflow: 'hidden'}}>
-    <Marquee text="Launch films in code" rows={5} speed={340} angle={-8} start={T.marquee - 2} fontFamily={fonts.sans} fontWeight={800}
-      fontSize={150} letterSpacing={-.045} color={ink}/>
+    <Marquee text="Launch films in code" rows={9} speed={340} angle={-8} start={T.marquee - 2} fontFamily={fonts.sans} fontWeight={500}
+      fontSize={165} letterSpacing={-.045} color={ink}/>
   </AbsoluteFill>;
 }
 
@@ -304,7 +304,7 @@ function BreatheShot() {
 
 function SplitShot() {
   return <Card background={ink}>
-    <SplitText text="SPLIT" start={T.split - .02} exitAt={T.circle - .5} fontFamily={fonts.display} fontWeight={1000} fontSize={330}
+    <SplitText text="Split." start={T.split - .02} exitAt={T.circle - .5} fontFamily={fonts.sans} fontWeight={500} fontSize={330}
       letterSpacing={-.05} color={white}/>
   </Card>;
 }
@@ -324,7 +324,7 @@ function CircleShot() {
 function ShineShot() {
   return <Card background={ink}>
     <Enter preset="blur" start={T.shine - .04} distance={200}>
-      <Shine text="Premium." at={T.shine + .55} duration={1.25} fontFamily={fonts.sans} fontWeight={700} fontSize={240} letterSpacing={-.05}
+      <Shine text="Premium." at={T.shine + .55} duration={1.25} fontFamily={fonts.sans} fontWeight={500} fontSize={240} letterSpacing={-.05}
         color="#5d5d66" shineColor={white} width={.14}/>
     </Enter>
   </Card>;
@@ -333,8 +333,8 @@ function ShineShot() {
 function EndCard() {
   return <AbsoluteFill style={{background: white, justifyContent: 'center', alignItems: 'center', gap: 42}}>
     <KineticText lines={['Taleframe']} by="character" enter="blur" start={T.end - .02} stagger={.04} align="center" fontFamily={fonts.sans}
-      fontWeight={650} fontSize={190} letterSpacing={-.05} color={ink}/>
-    <KineticText lines={['13 scene transitions · 18 type presets · 7 type effects']} by="word" enter="soft" start={T.end + .8} stagger={.05}
+      fontWeight={500} fontSize={190} letterSpacing={-.05} color={ink}/>
+    <KineticText lines={['14 scene transitions · 18 type presets · 8 type effects']} by="word" enter="soft" start={T.end + .8} stagger={.05}
       align="center" fontFamily={fonts.sans} fontWeight={450} fontSize={46} letterSpacing={-.015} color={theme.secondary}/>
   </AbsoluteFill>;
 }
@@ -342,8 +342,8 @@ function EndCard() {
 export const showcaseShots: Shot[] = [
   {name: 'open', until: T.s1, content: <Opening/>},
   {name: 'interviews', until: T.s2, content: <InterviewShot/>},
-  {name: 'fast', until: T.s3, content: <WordCard text="Fast." background={ink} color={white} start={T.s2 - .08} enter="slide"/>,
-    enter: {kind: 'whip', direction: 'left'}},
+  {name: 'fast', until: T.s3, content: <WordCard text="Side by side." background={ink} color={white} start={T.s2 - .3} enter="slide" size={150}/>,
+    enter: {kind: 'divide', duration: 1.3}},
   {name: 'research', until: T.s4, content: <ResearchShot/>, enter: {kind: 'stack'}},
   {name: 'grid', until: T.s5, content: <AbsoluteFill style={{background: cool}}><WordCard text="Piece by piece." background="transparent" color={white}
     start={T.s4 + .2} enter="wave" size={200}/></AbsoluteFill>, enter: {kind: 'tiles', pattern: 'diagonal'}},
@@ -363,7 +363,7 @@ export const showcaseShots: Shot[] = [
   {name: 'order', until: T.swap, content: <OrderShot/>},
   {name: 'swap', until: T.mark, content: <SwapShot/>},
   {name: 'mark', until: T.echo, content: <MarkShot/>},
-  {name: 'echo', until: T.marquee, content: <EchoShot/>},
+  {name: 'dust', until: T.marquee, content: <DustShot/>},
   {name: 'marquee', until: T.breathe, content: <MarqueeShot/>},
   {name: 'breathe', until: T.split, content: <BreatheShot/>},
   {name: 'split', until: T.circle, content: <SplitShot/>},
@@ -373,11 +373,11 @@ export const showcaseShots: Shot[] = [
 ];
 
 /** What each part of the film shows, from the moment it starts. */
-const labels: [number, string | null][] = [[0, null], [5.05, 'Transition · whip'], [7.1, 'Transition · stack'], [8.6, 'Transition · tiles'],
+const labels: [number, string | null][] = [[0, null], [4.65, 'Transition · divide'], [7.1, 'Transition · stack'], [8.6, 'Transition · tiles'],
   [10.8, 'Transition · split'], [12.25, 'Transition · focus'], [14, 'Transition · liquid'], [15.8, 'Transition · tilt'], [17.45, 'Transition · cards'],
   [18.75, 'Space · Plane · 3D camera · depth of field'], [T.pop, 'Enter · pop → drop · radial stagger'], [T.camera, 'moveCamera · crash → whip · MotionBlur'],
   [T.ramp, 'arc · SpeedRamp'], [T.hit, 'Handheld · impact'], [T.wallA, 'KineticText · 18 presets'], [T.order, 'KineticText · stagger order'],
-  [T.swap, 'TextSwap · flip'], [T.mark, 'Mark · marker · strike · circle'], [T.echo, 'Echo'], [T.marquee, 'Marquee'], [T.breathe, 'Breathe · variable weight'],
+  [T.swap, 'TextSwap · roll'], [T.mark, 'Mark · marker · strike · circle'], [T.echo, 'ParticleText · dissolve'], [T.marquee, 'Marquee'], [T.breathe, 'Breathe · variable weight'],
   [T.split, 'SplitText'], [T.circle, 'CircleText'], [T.shine, 'Shine'], [T.end, null]];
 
 function Label() {

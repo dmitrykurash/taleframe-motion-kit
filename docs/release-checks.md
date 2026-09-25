@@ -77,3 +77,13 @@ Checked on 25 September 2026 on the same Mac.
 - The 66-second Motion-Showcase (1920 × 1080, 30 fps, 1980 frames) rendered with `--gl angle` in about 36 seconds, decodes fully, and matches its render settings. Every frame of all eight new transition windows and the first frames after every cut were inspected in the encoded file.
 - Found and fixed during these checks: `MotionBlur` inside a speed ramp kept a full-speed shutter, so slow motion still streaked (the clock now carries its rate, and the shutter follows it); a close-up of the composer in Product-Explainer showed a band of the sidebar at the frame edge (the framing now clears it); several type shots opened on a few empty frames after their cut (their first move now starts on the cut).
 
+## Motion-design abilities (version 1.3)
+
+Checked on 25 September 2026 on the same Mac.
+
+- Removed after review: the `whip` scene transition and the `Echo` type effect. Changed defaults: type is medium (500) and filled unless a weight or outlines are asked for; `TextSwap` rolls the old text up out of its mask as the new one rises; `Marquee` rows are filled.
+- `npm run check` passed TypeScript and all 46 tests, including springs that follow new targets without jumps, liquid spans whose leading edge runs ahead, rubber-band limits, bounce impacts and squash, morph geometry and colors, the bento grid camera (full frame on the outgoing cell, the whole grid in the middle, full frame on the incoming cell), the split-screen divider, the split's move through the opening, field waves, and a seeded pen loop that goes all the way around its word.
+- `npm run check:scenes -- --gl angle` rendered all 17 transition windows of Scene-Transitions, Motion-Showcase, and Motion-Reel at three points each; every revisited frame was identical after out-of-order seeks, including the grid of eight live shots with canvases and particles.
+- Motion-Reel (1920 × 1080, 60 fps, 1800 frames) rendered with `--gl angle` in about 32 seconds.
+- Found and fixed during these checks: hand-drawn marks used a normalized dash on a non-scaling stroke, which Chrome measures in different units, so loops and boxes stopped a third of the way round (they now draw point by point); dissolving particle type left the letters' antialiased edges behind (the swept region is now cleared whole); `bounce` returned no impact times before its drop began; the palette's search row was clipped once the card shrank to its results.
+

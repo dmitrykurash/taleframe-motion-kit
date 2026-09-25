@@ -52,8 +52,9 @@ A named company or film is a reference for traits, not assets. List three to fiv
 | Cinematic | cinematic, story, emotional, documentary | Graded footage, film grain. Tracked small caps or an elegant serif | Weighty, slow, long holds, `TrackIn` titles | Hard cuts, light leaks, dissolves (the one family where they belong) | 3–6 s |
 | Handmade, painted | watercolor, storybook, warm, paper, craft | Paper whites, pigment colors. Serif or lettered type | Held poses (stop motion), gentle drift | Taleframe shader transitions: watercolor, ink, paper paint, sand | 3–5 s |
 | Retro, brutalist | Y2K, retro, brutalist, zine, raw, pixel | Primaries or harsh contrast. Extreme grotesk, mono, pixel faces | Stepped timing, hard cuts, halftone | `glitch`, `slice`, halftone and signal shaders | 0.5–1.5 s |
+| Motion-design reel | showreel, motion designer, Dribbble, UI motion, "all code" | Near-black and warm paper, one or two electric accents. Medium grotesk, a variable-width face for type walls, mono labels | Springs with a touch of overshoot, one shape morphing through states, trails, fields, particles, everything on a beat grid | Hard cuts on beats, circle `expand`, `divide`, `grid` | 0.5–2 s |
 
-Worked examples: `Product-Launch` is minimal premium in black, `Product-Explainer` is the same family in white with explainer pacing, `Kit-Reel` puts loud word beats inside a minimal 9:16 reel, `Launch-Film` is editorial, and `Scene-Transitions` is technical. Each file opens with its style sheet.
+Worked examples: `Product-Launch` is minimal premium in black, `Product-Explainer` is the same family in white with explainer pacing, `Kit-Reel` puts loud word beats inside a minimal 9:16 reel, `Motion-Reel` is a motion-design reel, `Launch-Film` is editorial, and `Scene-Transitions` is technical. Each file opens with its style sheet.
 
 ## 3. Structure: shots, turns, and beats
 
@@ -80,12 +81,13 @@ Components and recipes are in the [kinetic type guide](kinetic-type.md). The rul
 - **Readable.** After the last word lands, hold at least 0.4 s plus 0.06 s per character. Never start the exit while the line is still arriving.
 - **Leave with direction.** Exit up and out, cut away, or hand off to a transition. Do not fade in place.
 - **Blur only in motion.** Wrap fast type moves in `MotionBlur`; type at rest is crisp.
+- **Medium by default, always filled.** Set display type in a medium weight unless the style asks for heavier; never outline type unless the brief asks for it.
 - **Avoid:** typewriter headlines (typing belongs to UI), letter-by-letter fades on long lines, extruded 3D text, spins outside playful styles, bevels, glows, drop shadows, rainbow gradients, and text that drifts in from the frame edge at constant speed.
 
 ## 5. Cutting and transitions
 
 - **The default is a hard cut** on action or on the beat. Most cuts in a launch film are cuts.
-- **Use a designed transition when it carries meaning or energy:** the click causes the next screen (`expand`), the word becomes the product (`portal` with text), the product accelerates into the claim (`zoom`), a section change on a beat (`slice`, `tiles`, `split`), a technical hit (`glitch`), a detail of the UI becomes its own screen (`portal` with a rect), the camera's move carries across the cut (`whip`), the next step arrives on top of the last (`stack`), a calm change of scene (`focus`), shots that belong to one set (`cards`), a spatial reveal (`tilt`), an organic or dreamy change (`liquid`).
+- **Use a designed transition when it carries meaning or energy:** the click causes the next screen (`expand`), the word becomes the product (`portal` with text), the product accelerates into the claim (`zoom`), a section change on a beat (`slice`, `tiles`, `split`), a technical hit (`glitch`), a detail of the UI becomes its own screen (`portal` with a rect), two ideas compared or handed over (`divide`), a recap or a show of range (`grid`), the next step arrives on top of the last (`stack`), a calm change of scene (`focus`), shots that belong to one set (`cards`), a spatial reveal (`tilt`), an organic or dreamy change (`liquid`).
 - **Budget:** two or three transition kinds per film, never the same kind twice in a row, and on average no more than one designed transition every four seconds.
 - **Timing:** 0.3–0.8 s for most, up to 1.5 s for a word portal. Accelerate into the cut, land with a long settle, and keep motion blur on.
 - **Continuity:** the outgoing shot is already moving toward the transition; the incoming shot is composed (or deliberately mid-entrance) when it is revealed and starts its own secondary motion as the transition lands.
@@ -93,10 +95,11 @@ Components and recipes are in the [kinetic type guide](kinetic-type.md). The rul
 
 | From → to | Good choices |
 |---|---|
-| UI → type | hard cut, `zoom` into the element the claim is about, `slice`, `whip` |
+| UI → type | hard cut, `zoom` into the element the claim is about, `slice`, `divide` |
 | Type → UI | hard cut, `portal` through the word, `tilt` |
 | Click → result | `expand` from the clicked control; `stack` for the next step of a flow |
-| UI → another view of the product | `cards`, or a `whip` that continues the pointer's direction |
+| UI → another view of the product | `cards`, or one morphing shape inside a single shot (`Morph`) |
+| Many shots → one | `grid`: pull back to all of them, push into the next |
 | UI → closer UI | camera move within the shot, `portal` through the card |
 | Section change | `slice`, `tiles`, or `split` on the beat |
 | Calm change of scene | `focus` |

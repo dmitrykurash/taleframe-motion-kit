@@ -38,7 +38,7 @@ export function CardsTransition({from, to, time, start, duration, options}: Tran
     const d = s.horizontal ? `${center.toFixed(2)}px, 0px` : `0px, ${center.toFixed(2)}px`;
     const inStage = corner / Math.max(.01, scale);
     return <AbsoluteFill key={key} style={{transform: `translate(${d}) scale(${scale.toFixed(4)})`, transformOrigin: '50% 50%'}}>
-      {corner > .5 && <AbsoluteFill style={{borderRadius: inStage, boxShadow: `0 ${30 / scale}px ${90 / scale}px rgba(0,0,0,.45)`}}/>}
+      {corner > .5 && <AbsoluteFill style={{borderRadius: inStage, boxShadow: `0 ${14 / scale}px ${44 / scale}px rgba(0,0,0,.14)`}}/>}
       <AbsoluteFill style={{clipPath: corner > .5 ? `inset(0px round ${inStage.toFixed(2)}px)` : undefined, overflow: 'hidden'}}>{content}</AbsoluteFill>
     </AbsoluteFill>;
   };

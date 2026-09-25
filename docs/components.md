@@ -66,8 +66,9 @@ Use the example's font-loading setup or `FontLoader` before rendering a custom f
 | `KineticText` | `lines`, `by?`, `enter?`, `exit?`, `start?`, `stagger?`, `order?`, `exitAt?`, font settings | Any of 18 motion presets per line, word, or letter, with a stagger order and a separate exit |
 | `TextSwap` | `texts`, `at`, `enter?`, `exit?`, `by?` | Type-to-type transitions in place; the slot's width follows |
 | `Mark` | `lines` (runs with `mark`), `kind?`, `at?`, `markColor?`, `markedColor?` | Marker, underline, strike, box, or hand-drawn circle drawn onto words |
-| `Echo` | `text`, `copies?`, `offset?`, `mode?`, `outline?` | Stacked repeats that collapse, expand, or pulse |
-| `Marquee` | `text`, `rows?`, `speed?`, `angle?`, `alternate?`, `outlineRows?` | Endless rows of repeating type |
+| `Marquee` | `text`, `rows?`, `speed?`, `angle?`, `alternate?` | Endless rows of repeating type (filled; `outlineRows` only when asked) |
+| `TypeWall` | `word`, `rows?`, `variants?`, `palettes?`, `band?`, `ripple?` | Rows of one word in varying widths, weights, and slants |
+| `ParticleText` | `text`, `mode?`, `start?`, `duration?`, `count?`, `accent?` | Letters that dissolve into dust, assemble from it, or swirl into a galaxy |
 | `Shine` | `text`, `at?`, `duration?`, `shineColor?` | A sheen of light crossing the letters |
 | `CircleText` | `text`, `radius?`, `speed?` | Type on a turning circle |
 | `SplitText` | `text`, `start?`, `distance?`, `exitAt?` | A word cut in half; the halves slide in and lock, then part |
@@ -91,7 +92,7 @@ In these components `letterSpacing` is in em. See [kinetic type](kinetic-type.md
 | `curves`, `overshoot` | — | Shared launch-film easing: `punchIn`, `punchOut`, `snap`, `open`, `glide` |
 | `ClockScale`, `useClockRate` | `rate` | Run children's clock at a rate; `MotionBlur` scales its shutter by it |
 
-Transition kinds are `zoom`, `portal`, `expand`, `slice`, `glitch`, `whip`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, and `cards`; their options are listed in [scene transitions](scene-transitions.md). Shots must be opaque, read the clock inside themselves, and keep audio outside.
+Transition kinds are `zoom`, `portal`, `expand`, `slice`, `glitch`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, `cards`, `grid`, and `divide`; their options are listed in [scene transitions](scene-transitions.md). Shots must be opaque, read the clock inside themselves, and keep audio outside.
 
 ## Cursor, badge, closing
 
@@ -124,6 +125,16 @@ Transition kinds are `zoom`, `portal`, `expand`, `slice`, `glitch`, `whip`, `sta
 | `SpeedRamp`, `rampTime`, `rampRate` | `keys: {at, rate}[]` | Slow motion, freezes, and rushes for everything inside |
 | `Space`, `Plane` | `camera`, `perspective?`, `focus?`, `aperture?` / `x`, `y`, `z`, rotations, size | A 3D stage for floating UI, with depth of field |
 | `camera3DAt`, `depthOf` | keys / point, camera | Interpolate 3D camera keys; distance of a point from the camera |
+| `springTo` | `t`, `keys: {at, value}[]`, spring | A value that springs to each new target; responses add up, so it never jumps |
+| `liquidRange` | `t`, `keys: {at, start, end}[]` | A span whose leading edge runs ahead of the trailing one: liquid tab indicators and toggle knobs |
+| `rubberBand` | `value`, `min`, `max`, `reach?` | Resistance past a limit, for drags beyond the end of a slider |
+| `bounce` | `t`, `{start, height, gravity, restitution}` | A dropped ball's height, speed, squash, stretch, and impact times |
+| `Morph`, `morphAt`, `fitScale` | `states: {at, width, height, radius?, color?, content?, id?, fill?}[]` | One shape through many UI states; content swaps with a short blur; a camera scale that fits each state |
+| `Trail` | `count?`, `spacing?`, `fade?`, `children: (time) => node` | Fading ghosts of a moving element |
+| `Viewfinder` | `title?`, `specs?`, `sections?`, `color?`, `accent?` | A camera frame over a film: brackets, labels, timecode, progress, section |
+| `SelectionBox` | `rect`, `start?`, `label?`, `name?` | A design-tool selection: outline, handles, size chip |
+| `PatternField`, `fieldWave` | `columns`, `rows`, `cell`, `glyph(col, row, t)` | A grid of dots, crosses, tiles, or rings driven by waves |
+| `BlockField` | `columns`, `rows`, `height(col, row, t)`, `color(col, row, t)`, `camera?`, `ball?` | A 3D field of blocks on a canvas, with lighting, fog, and a ball |
 
 See [motion direction](motion-direction.md#motion-vocabulary) for how to use them, and `src/kit` for precise types and other exports. Keep a scene's action times together so UI state, cursor, and camera cannot silently drift apart.
 

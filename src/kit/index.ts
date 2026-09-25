@@ -20,3 +20,7 @@ export * from './moves';
 export * from './presets';
 export * from './choreography';
 export * from './typefx';
+export * from './morph';
+export * from './hud';
+export * from './fields';
+export * from './particles';

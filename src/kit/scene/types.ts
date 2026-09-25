@@ -63,6 +63,9 @@ export type ExpandOptions = BlurOptions & {
   shape?: 'rect' | 'circle';
   /** Fill of that element: the window starts in this color and dissolves into the incoming shot. */
   color?: string;
+  /** Fraction of the window the color stays solid before it dissolves, e.g. .6 for a ball that grows into a
+   * full field of color and only then opens onto the next shot. Default 0. */
+  colorHold?: number;
   /** Scale the outgoing shot moves to while the new one opens: above 1 pushes toward the camera
    * (like a home screen when an app opens), below 1 recedes. Default 1.08. */
   push?: number;
@@ -112,18 +115,6 @@ export type GlitchOptions = {
   backdrop?: string;
 };
 
-/** A whip pan: the picture tears sideways at speed and the next shot swings in from the other side on the
- * same move. Real temporal motion blur plus a directional streak at peak speed. */
-export type WhipOptions = BlurOptions & {
-  /** Direction the picture moves. 'left' is the camera panning right. Default 'left'. */
-  direction?: 'left' | 'right' | 'up' | 'down';
-  /** Degrees the frame rolls through the move, for a spin whip. Default 0. */
-  spin?: number;
-  /** Scale at peak speed, as if the move bulged toward the lens. Default 1.05. */
-  bulge?: number;
-  backdrop?: string;
-};
-
 /** The next shot slides over the current one as a card while the current one sinks back into depth. */
 export type StackOptions = BlurOptions & {
   /** Side the new card enters from. Default 'bottom'. */
@@ -167,7 +158,8 @@ export type SplitOptions = BlurOptions & {
   angle?: number;
   /** A point on the split line (stage units). Default: stage center. */
   at?: Point;
-  /** The incoming shot settles from this scale behind the halves. Default 1.12. */
+  /** How far the camera moves in through the opening: the halves grow by this fraction as they part, and
+   * the next shot comes forward from behind them. Default .3. */
   depth?: number;
   /** A line of light along the split before it opens, 0–1. Default .7. */
   seam?: number;
@@ -227,6 +219,38 @@ export type CardsOptions = BlurOptions & {
   backdrop?: string;
 };
 
+/** Pull back from the current shot to a grid of live shots, hold, and push into the next one. */
+export type GridOptions = {
+  /** Other shots shown in the grid, as full-stage React scenes; they are drawn small. */
+  tiles?: readonly React.ReactNode[];
+  /** Grid size. Default 3 × 3. */
+  columns?: number;
+  rows?: number;
+  /** Cells (row by row) of the outgoing and incoming shots. Default: the middle cell and the next. */
+  fromCell?: number;
+  toCell?: number;
+  /** Space between cells and their corner radius, in logical px at grid size. */
+  gap?: number;
+  radius?: number;
+  /** Fraction of the window spent on the whole grid. Default .3. */
+  hold?: number;
+  backdrop?: string;
+};
+
+/** The next shot pushes in to share the screen, the two hold side by side, then the new shot takes the frame. */
+export type DivideOptions = {
+  /** Side the new shot enters from. Default 'right'. */
+  side?: 'right' | 'left';
+  /** Fraction of the window the shots share the screen. Default .4. */
+  hold?: number;
+  /** Where the divider rests, as a fraction of the width. Default .5. */
+  split?: number;
+  /** Divider width in logical px and its color. */
+  line?: number;
+  lineColor?: string;
+  backdrop?: string;
+};
+
 export type Align = 'center' | 'start' | 'end';
 export type TransitionTiming = {
   /** Seconds. Each kind has a default. */
@@ -241,14 +265,15 @@ export type TransitionSpec =
   | ({kind: 'expand'} & ExpandOptions & TransitionTiming)
   | ({kind: 'slice'} & SliceOptions & TransitionTiming)
   | ({kind: 'glitch'} & GlitchOptions & TransitionTiming)
-  | ({kind: 'whip'} & WhipOptions & TransitionTiming)
   | ({kind: 'stack'} & StackOptions & TransitionTiming)
   | ({kind: 'tiles'} & TilesOptions & TransitionTiming)
   | ({kind: 'split'} & SplitOptions & TransitionTiming)
   | ({kind: 'focus'} & FocusOptions & TransitionTiming)
   | ({kind: 'liquid'} & LiquidOptions & TransitionTiming)
   | ({kind: 'tilt'} & TiltOptions & TransitionTiming)
-  | ({kind: 'cards'} & CardsOptions & TransitionTiming);
+  | ({kind: 'cards'} & CardsOptions & TransitionTiming)
+  | ({kind: 'grid'} & GridOptions & TransitionTiming)
+  | ({kind: 'divide'} & DivideOptions & TransitionTiming);
 export type SceneTransitionKind = TransitionSpec['kind'];
 
 export type TransitionRenderProps<O> = {

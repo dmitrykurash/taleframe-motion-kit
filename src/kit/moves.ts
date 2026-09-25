@@ -28,6 +28,75 @@ export function springCurve(bounce = .3): Curve {
   return p => p <= 0 ? 0 : p >= 1 ? 1 : spring(p, {duration, bounce});
 }
 
+export type SpringOptions = {duration?: number; bounce?: number};
+export type SpringKey = {at: number; value: number};
+
+/** A value that springs to each new target at its time (the first key is the starting value). Every change
+ * adds its own spring response, so the value never jumps when a target changes mid-flight and it stays a pure
+ * function of time. Use it for sizes, positions, radii, and colors that change many times. */
+export function springTo(t: number, keys: readonly SpringKey[], o: SpringOptions = {}): number {
+  if (!keys.length) throw new Error('springTo needs at least one key.');
+  let value = keys[0].value;
+  for (let i = 1; i < keys.length; i++) {
+    if (keys[i].at < keys[i - 1].at) throw new Error('springTo keys need non-decreasing times.');
+    value += (keys[i].value - keys[i - 1].value) * spring(t - keys[i].at, o);
+  }
+  return value;
+}
+
+export type RangeKey = {at: number; start: number; end: number};
+
+/** A span (a tab indicator, a toggle knob, a selection) whose edges ride different springs: the edge in the
+ * direction of travel leads on a quick spring and the other trails on a slower one, so the span stretches as
+ * it moves and snaps back to size when it lands, like liquid. */
+export function liquidRange(t: number, keys: readonly RangeKey[],
+  {lead = {duration: .36, bounce: .08}, trail = {duration: .62, bounce: .04}}: {lead?: SpringOptions; trail?: SpringOptions} = {}) {
+  if (!keys.length) throw new Error('liquidRange needs at least one key.');
+  let start = keys[0].start, end = keys[0].end;
+  for (let i = 1; i < keys.length; i++) {
+    const a = keys[i - 1], b = keys[i], forward = b.start + b.end >= a.start + a.end;
+    start += (b.start - a.start) * spring(t - b.at, forward ? trail : lead);
+    end += (b.end - a.end) * spring(t - b.at, forward ? lead : trail);
+  }
+  return {start, end};
+}
+
+/** Resistance past a limit, like a slider dragged beyond its end: the overshoot grows ever more slowly and
+ * never passes `reach` logical px. Inside the limits the value passes through unchanged. */
+export function rubberBand(value: number, min: number, max: number, reach = 60): number {
+  if (value > max) return max + reach * (1 - 1 / (1 + (value - max) / reach));
+  if (value < min) return min - reach * (1 - 1 / (1 + (min - value) / reach));
+  return value;
+}
+
+/** A ball dropped from `height` (logical px) at `start` that bounces under gravity, losing energy at each
+ * impact. Returns its height above the floor, its vertical speed, and a squash and stretch to draw it with:
+ * stretched along its motion in fast flight, flattened for a moment after each impact. */
+export function bounce(t: number, {start = 0, height = 320, gravity = 4200, restitution = .62, bounces = 8}:
+  {start?: number; height?: number; gravity?: number; restitution?: number; bounces?: number} = {}) {
+  const s = t - start;
+  const impacts: number[] = [];
+  let at = Math.sqrt(2 * height / gravity), h = height;
+  impacts.push(at);
+  for (let k = 1; k < bounces; k++) {h *= restitution * restitution; at += 2 * Math.sqrt(2 * h / gravity); impacts.push(at);}
+  // Impact times are known before the drop starts, so callers can place markers on them at any time.
+  if (s <= 0) return {y: height, velocity: 0, stretch: 1, squash: 1, impacts: impacts.map(i => i + start)};
+  let y = 0, velocity = 0;
+  if (s < impacts[0]) {y = height - gravity * s * s / 2; velocity = -gravity * s;}
+  else {
+    const k = impacts.findIndex(i => i > s);
+    if (k < 0) {y = 0; velocity = 0;}
+    else {
+      const launch = impacts[k - 1], v0 = Math.sqrt(2 * gravity * height * restitution ** (2 * k)), u = s - launch;
+      y = Math.max(0, v0 * u - gravity * u * u / 2); velocity = v0 - gravity * u;
+    }
+  }
+  const fast = Math.min(1, Math.abs(velocity) / Math.sqrt(2 * gravity * height));
+  const last = [...impacts].reverse().find(i => i <= s), since = last === undefined ? Infinity : s - last;
+  const hit = last === undefined ? 0 : Math.exp(-since / .045) * Math.min(1, fast + .35);
+  return {y, velocity, stretch: 1 + .28 * fast * fast, squash: 1 - .32 * hit, impacts: impacts.map(i => i + start)};
+}
+
 /** Three incommensurate sines per axis: smooth, never repeating within a film, identical on every seek. */
 function noise(t: number, seed: number, axis: number): number {
   const random = mulberry32((seed * 9173 + axis * 7919) >>> 0);

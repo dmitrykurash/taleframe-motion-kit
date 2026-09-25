@@ -2,7 +2,7 @@
 
 In a launch film, type shots carry the message between product shots. They are big, short, and move with a purpose. This guide covers the kit's kinetic components and how to use them well. The rules behind them are in [film language](film-language.md#4-kinetic-typography).
 
-All components derive their state from time, work with direct seeks and motion blur, and take `fontFamily`, `fontSize` (logical px), `fontWeight`, `letterSpacing` (**em**, so tracking scales with size), and `color`. Load custom fonts first with `FontLoader`.
+All components derive their state from time, work with direct seeks and motion blur, and take `fontFamily`, `fontSize` (logical px), `fontWeight`, `letterSpacing` (**em**, so tracking scales with size), and `color`. Type is **medium (500) unless you give a weight**; go heavier only when the style calls for it. Type is always filled: never outline it unless the brief asks for outlines. Load custom fonts first with `FontLoader`.
 
 ## Components
 
@@ -94,23 +94,25 @@ import {KineticText, TextSwap} from '../kit';
 </div>
 ```
 
-`flip` by letter makes a split-flap board, `blur` a soft morph, `scatter` a burst, `glitch` a digital swap, and `rise` a clean roll. `WordRoll` stays the lightest option for a masked roll after a prefix.
+The default is the classic roll: the old text rolls up out of its mask while the new one rises from the bottom, so letters never overlap. `by="character"` with a small stagger makes the roll cascade. `blur` makes a soft morph and `glitch` a digital swap; `flip` makes a split-flap board but crosses letters mid-swap, so keep it for technical styles. The slot keeps a real baseline, so it lines up with type beside it in a baseline-aligned row. `WordRoll` stays the lightest option for a masked roll after a prefix.
 
 ## Type effects
 
 | Component | What it does | Good for |
 |---|---|---|
 | `Mark` | Draws emphasis onto marked runs: `'marker'`, `'underline'`, `'strike'`, `'box'`, or a hand-drawn `'circle'` | Explainers, before-and-after claims |
-| `Echo` | Stacked repeats of a word that fold into it, fan out, or breathe; outlines optional | Loud, graphic, Y2K |
-| `Marquee` | Endless rows of repeating type in alternating directions, optionally tilted and outlined | Loud, brutalist, event films |
+| `Marquee` | Endless rows of repeating type in alternating directions, optionally tilted | Loud, brutalist, event films |
+| `TypeWall` | Rows of one word where every repeat takes another width, weight, or slant, rows sliding in opposite directions, with an optional solid band | Motion-design reels, posters, loud films |
+| `ParticleText` | Letters that break into drifting dust, dust that assembles into letters, or dust that swirls into a galaxy | Reels, reveals, endings |
 | `Shine` | A sheen of light crossing the letters once | Premium titles, end cards |
 | `CircleText` | Type set on a turning circle | Badges, seals, loops around a product |
 | `SplitText` | A word cut along its middle: the halves slide in and lock, then part | Hype, reveals |
 | `Breathe` | A weight wave running through a variable font | Modern typography, living holds |
 
-- `Mark`: `lines` (runs with `mark: true`), `kind`, `at`, `duration`, `stagger` (between marks), `markColor`, `markedColor` (the marked text's color once the mark is down, e.g. white on a dark marker or gray under a strike).
-- `Echo`: `text`, `copies`, `offset` (em between copies), `start`, `duration`, `mode` (`'collapse'`, `'expand'`, `'pulse'`), `outline`, `echoColor`.
-- `Marquee`: `text`, `rows`, `speed` (logical px per second), `separator`, `angle`, `alternate`, `outlineRows`, `rowGap`. It fills its positioned parent.
+- `Mark`: `lines` (runs with `mark: true`), `kind`, `at`, `duration`, `stagger` (between marks), `markColor`, `markedColor` (the marked text's color once the mark is down, e.g. white on a dark marker or gray under a strike). `'circle'` is a pen loop: a little more than one turn with an uneven radius, then a shorter second pass, drawn at a pen's pace.
+- `Marquee`: `text`, `rows`, `speed` (logical px per second), `separator`, `angle`, `alternate`, `rowGap`. It fills its positioned parent; tilted bands need enough rows to cover the corners. `outlineRows` exists for briefs that ask for outlined type and is off by default.
+- `TypeWall`: `word`, `rows`, `variants` (`{weight, stretch, italic}` cycled; `stretch` needs a width axis, such as Anybody's 50–150 %), `speed`, `palettes`, `dot`, `band` (`{row, background, color, text?, variant?}`), `ripple`.
+- `ParticleText`: `text`, `mode` (`'dissolve'`, `'assemble'`, `'swirl'`), `start`, `duration`, `count`, `accent`, `accentShare`, `center`, `drift`. Particles are sampled from the real glyphs; the solid letters are erased exactly where particles leave.
 - `Shine`: `text`, `at`, `duration`, `shineColor`, `width` (fraction of the text), `angle`.
 - `CircleText`: `text` (repeat it to fill the circle), `radius`, `speed` (degrees per second), `rotate`.
 - `SplitText`: `text`, `start`, `duration`, `distance` (em), `exitAt`, `exitDuration`.
@@ -120,7 +122,7 @@ Effects compose: wrap one in `Enter` for its entrance, or set a `KineticText` li
 
 ## Practice
 
-**Size and weight.** Display lines are 160–420 px on the stage; a single word can go larger. Heavy weights (800–1000) read as confident and survive motion blur; light weights need slower motion. Secondary lines stay at least 48 px.
+**Size and weight.** Display lines are 160–420 px on the stage; a single word can go larger. Medium (500) is the default and reads as calm and confident; semibold suits loud beats; heavy weights (800–1000) are for styles that ask for them. Light weights need slower motion. Secondary lines stay at least 48 px. Keep type filled, never outlined, unless the brief asks for outlines.
 
 **One idea per card.** One to six words. Break lines by meaning ("Ship on Friday. / Sleep on Friday."). Left-aligned or deliberately placed type usually looks more designed than centered type; center only when the style calls for symmetry.
 
@@ -151,11 +153,12 @@ Hold at least 0.4 s plus 0.06 s per character after the last word lands, and tim
 | Style | Recipe |
 |---|---|
 | Minimal premium | `MaskReveal` or `KineticText` with `rise`, `soft`, or `blur` by word, 180–260 px, weight 700–800, slow push on the card, long holds; the name with `TrackIn` or `Shine` |
-| Loud, hype | `WordSequence` on beats with palette flips, `Slam` or the `zoom` and `stretch` presets at 300+ px weight 1000, `Echo`, `SplitText`, `Marquee` |
+| Loud, hype | `WordSequence` on beats with palette flips, `Slam` or the `zoom` and `stretch` presets at 300+ px, `TypeWall`, `SplitText`, `Marquee` |
 | Friendly | `pop`, `wave`, and `drop` presets or `MaskReveal` with `tilt` 6–10°, rounded face, bright grounds, `CircleText` badges |
 | Editorial | Serif lines by line with `rise` or `wipe`, generous margins, `Mark` underlines, one accent word via `TextSwap` or `WordRoll` |
 | Technical | `Scramble` for labels and names, `glitch` and `flip` presets, `TextSwap` flip boards, `Counter` for metrics, mono accents |
 | Cinematic | `TrackIn` titles in small caps or an elegant serif, `blur` by line, `Shine`, slow fades only here, long holds |
 | Modern typographic | The `weight` preset and `Breathe` on a variable font, `turn` and `flip` in 3D, one face in several weights |
+| Motion-design reel | `TypeWall` with width variants, `ParticleText`, `Scramble` labels under a `Viewfinder`, type under a `SelectionBox`, medium weights |
 
-**Motion-Showcase** plays all 18 presets on two walls (each word is its preset's name), the stagger orders, `TextSwap`, and every type effect, each named by a label. The **Scene-Transitions** composition uses `MaskReveal`, `WordRoll`, and `Counter` between UI shots. **Product-Explainer**, **Product-Launch**, and **Kit-Reel** use every component above. Each pairs a grotesk with one serif-italic line, and Kit-Reel gives each idea its own face: Inter, Instrument Serif, Geist Mono, and DM Sans Black.
+**Motion-Showcase** plays all 18 presets on two walls (each word is its preset's name), the stagger orders, `TextSwap`, and the type effects, each named by a label. **Motion-Reel** uses `TypeWall`, `ParticleText`, `SelectionBox`, and `Scramble` in a motion-design reel. The **Scene-Transitions** composition uses `MaskReveal`, `WordRoll`, and `Counter` between UI shots. **Product-Explainer**, **Product-Launch**, and **Kit-Reel** use every component above. Each pairs a grotesk with one serif-italic line, and Kit-Reel gives each idea its own face: Inter, Instrument Serif, Geist Mono, and DM Sans Black.

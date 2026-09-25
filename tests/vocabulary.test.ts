@@ -11,7 +11,6 @@ import {splitGeometry, splitOpen, splitSettings} from '../src/kit/scene/split';
 import {stackPose, stackSettings} from '../src/kit/scene/stack';
 import {tileShrink, tilesSettings} from '../src/kit/scene/tiles';
 import {tiltPose} from '../src/kit/scene/tilt';
-import {whipRate, whipTravel} from '../src/kit/scene/whip';
 import {depthOf, camera3DAt} from '../src/kit/choreography';
 
 const near = (a: number, b: number, tolerance = 1e-6) => Math.abs(a - b) <= tolerance;
@@ -109,13 +108,8 @@ test('every motion preset starts hidden, lands exactly at rest, and leaves compl
   assert.match(String(poseStyle({rotateX: -40, y: .5}, 100).transform), /^perspective\(600px\) translate\(0\.00px, 50\.00px\) rotateX/);
 });
 
-test('the eight new transitions start on the outgoing shot and end exactly on the incoming one', () => {
-  for (const kind of ['whip', 'stack', 'tiles', 'split', 'focus', 'liquid', 'tilt', 'cards'] as const) assert.ok(SCENE_TRANSITIONS[kind].duration > 0);
-  // Whip: a continuous strip, fastest at the middle.
-  assert.equal(whipTravel(0), 0);
-  assert.ok(near(whipTravel(1), 1));
-  assert.ok(near(whipTravel(.5 - 1e-6), whipTravel(.5 + 1e-6), 1e-4));
-  assert.ok(whipRate(.5) > 5 && whipRate(0) < .05 && whipRate(1) < .05);
+test('the newer transitions start on the outgoing shot and end exactly on the incoming one', () => {
+  for (const kind of ['stack', 'tiles', 'split', 'focus', 'liquid', 'tilt', 'cards'] as const) assert.ok(SCENE_TRANSITIONS[kind].duration > 0);
   // Stack: the card starts off frame and lands flat.
   const st = stackSettings({}), s0 = stackPose(0, st), s1 = stackPose(1, st);
   assert.ok(s0.offset >= LANDSCAPE.height && s1.offset === 0 && s1.radius === 0 && s1.cardScale === 1);
@@ -156,4 +150,60 @@ test('3D cameras interpolate keys and measure depth from the camera', () => {
   assert.equal(depthOf({x: 960, y: 540, z: 300}, space), 1700, 'planes toward the viewer are nearer');
   assert.ok(near(depthOf({x: 1260, y: 540, z: 0}, {...space, yaw: 90}), 2000 - 300, 1e-6), 'orbiting brings the side nearer');
   assert.throws(() => camera3DAt(0, [{time: 1}, {time: 1}]));
+});
+
+test('springTo follows each new target without jumps, and liquid spans stretch toward travel', async () => {
+  const {springTo, liquidRange, rubberBand, bounce} = await import('../src/kit/moves');
+  const keys = [{at: 0, value: 10}, {at: 1, value: 50}, {at: 1.3, value: 20}];
+  assert.equal(springTo(.5, keys), 10);
+  assert.ok(near(springTo(4, keys), 20, 1e-3), 'settles on the last target');
+  const before = springTo(1.3 - 1e-6, keys), after = springTo(1.3 + 1e-6, keys);
+  assert.ok(Math.abs(before - after) < 1e-3, 'a target change mid-flight never jumps');
+  const span = liquidRange(1.15, [{at: 0, start: 0, end: 100}, {at: 1, start: 200, end: 300}]);
+  assert.ok(span.end - 300 > span.start - 200, 'the leading edge runs ahead, so the span stretches');
+  assert.ok(span.end - span.start > 100);
+  const done = liquidRange(5, [{at: 0, start: 0, end: 100}, {at: 1, start: 200, end: 300}]);
+  assert.ok(near(done.start, 200, 1e-2) && near(done.end, 300, 1e-2));
+  assert.equal(rubberBand(50, 0, 100), 50);
+  assert.ok(rubberBand(1e6, 0, 100, 60) < 160 && rubberBand(130, 0, 100, 60) > 100 && rubberBand(-40, 0, 100, 60) > -60);
+  const b = bounce(0), impacts = b.impacts;
+  assert.ok(impacts.every((at, i) => i === 0 || at > impacts[i - 1]), 'impacts come in order');
+  for (let t = 0; t < 3; t += .01) assert.ok(bounce(t).y >= 0 && bounce(t).y <= 320 + 1e-9);
+  assert.ok(bounce(impacts[0] + .01).squash < 1, 'the ball squashes just after it lands');
+});
+
+test('the new transitions and the morph start and end on their shots', async () => {
+  const {gridSettings, gridCamera} = await import('../src/kit/scene/grid');
+  const {divideSettings, divideAt} = await import('../src/kit/scene/divide');
+  const {splitPose, splitSettings} = await import('../src/kit/scene/split');
+  const {morphAt} = await import('../src/kit/morph');
+  const {fieldWave} = await import('../src/kit/fields');
+  const {scribble} = await import('../src/kit/typefx');
+  const g = gridSettings({columns: 4, rows: 2, fromCell: 5, toCell: 2});
+  const cellCenter = (i: number) => {const r = g.rect(i); return {x: r.x + r.width / 2, y: r.y + r.height / 2};};
+  const c0 = gridCamera(0, g), c1 = gridCamera(1, g), mid = gridCamera(.5, g);
+  assert.ok(near(c0.scale, g.zoom) && near(c0.focus.x, cellCenter(5).x) && near(c0.focus.y, cellCenter(5).y), 'starts full frame on the outgoing cell');
+  assert.ok(near(c1.scale, g.zoom) && near(c1.focus.x, cellCenter(2).x) && near(c1.focus.y, cellCenter(2).y), 'ends full frame on the incoming cell');
+  assert.ok(mid.scale < 1.05 && mid.overview > .95, 'shows the whole grid in the middle');
+  assert.ok(near(g.rect(0).width * g.zoom, 1920) && near(g.rect(0).height * g.zoom, 1080), 'a cell scaled up fills the frame exactly');
+  assert.throws(() => gridSettings({fromCell: 1, toCell: 1}));
+  const d = divideSettings({});
+  assert.equal(divideAt(0, d), 1920);
+  assert.equal(divideAt(1, d), 0);
+  assert.equal(divideAt(.5, d), 960);
+  const sp = splitSettings({}), open = splitPose(1, sp), closed = splitPose(0, sp);
+  assert.ok(closed.halfScale === 1 && open.halfScale > 1.2 && open.incomingScale === 1 && closed.incomingScale < 1, 'the camera moves in through the opening');
+  const states = [{at: 0, width: 280, height: 76, color: '#000000'}, {at: 1, width: 540, height: 300, radius: 40, color: '#ffffff'}];
+  const m0 = morphAt(.5, states), m1 = morphAt(5, states);
+  assert.ok(m0.width === 280 && m0.radius === 38 && m0.color === 'rgb(0.0, 0.0, 0.0)');
+  assert.ok(near(m1.width, 540, 1e-2) && near(m1.radius, 40, 1e-2) && m1.color.startsWith('rgb(255'));
+  assert.throws(() => morphAt(0, [{at: 0, width: 1, height: 1, color: 'red'}]));
+  for (const pattern of ['radial', 'diagonal', 'rows', 'columns'] as const) {
+    const w = fieldWave(3, 7, 1.23, {pattern});
+    assert.ok(w >= 0 && w <= 1);
+  }
+  const loop = scribble(3);
+  assert.deepEqual(scribble(3), loop, 'the same seed draws the same loop');
+  const xs = loop.first.map(p => p.x), ys = loop.first.map(p => p.y);
+  assert.ok(Math.min(...xs) < 8 && Math.max(...xs) > 92 && Math.min(...ys) < 10 && Math.max(...ys) > 90, 'the loop goes all the way around the word');
 });

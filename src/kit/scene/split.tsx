@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, useVideoConfig} from 'remotion';
 import {useStage, type StageSize} from '../camera';
 import {TimeShift} from '../clock';
 import {bell} from '../moves';
@@ -9,9 +9,11 @@ import {Layer, STAGE, about, centerOf} from './layers';
 import type {SplitOptions, TransitionRenderProps} from './types';
 
 const OPEN = .12;
+/** Doors that start gently, travel with intent, and ease to a stop as they leave the frame. */
+const doors = Easing.bezier(.65, 0, .25, 1);
 
 export function splitSettings(o: SplitOptions, stage: StageSize = STAGE) {
-  return {angle: o.angle ?? 90, at: o.at ?? centerOf(stage), depth: Math.max(1, o.depth ?? 1.12), seam: clamp01(o.seam ?? .7),
+  return {angle: o.angle ?? 90, at: o.at ?? centerOf(stage), depth: Math.max(0, o.depth ?? .3), seam: clamp01(o.seam ?? .7),
     seamColor: o.seamColor ?? '#ffffff', shutter: o.shutter ?? .6, quality: o.quality ?? 14, backdrop: o.backdrop ?? '#000', stage};
 }
 
@@ -21,11 +23,19 @@ export function splitGeometry(s: ReturnType<typeof splitSettings>) {
   const v = {x: Math.cos(a), y: Math.sin(a)}, n = {x: -Math.sin(a), y: Math.cos(a)};
   const {width: W, height: H} = s.stage;
   const reach = Math.max(...[[0, 0], [W, 0], [0, H], [W, H]].map(([x, y]) => Math.abs((x - s.at.x) * n.x + (y - s.at.y) * n.y)));
-  return {v, n, travel: reach + 60};
+  return {v, n, travel: reach * (1 + s.depth) + 60};
 }
 
 /** Distance each half has moved at progress p. The seam lights first, then the halves open. */
-export const splitOpen = (p: number, travel: number) => travel * curves.snap(phase(p, OPEN, 1));
+export const splitOpen = (p: number, travel: number) => travel * doors(phase(p, OPEN, 1));
+
+/** The camera moving in through the opening: the halves grow and soften as they pass it, and the next
+ * shot comes forward from behind them, a little dim until the doors are open. */
+export function splitPose(p: number, s: ReturnType<typeof splitSettings>) {
+  const open = doors(phase(p, OPEN, 1));
+  return {open, halfScale: 1 + s.depth * open, defocus: 5 * s.depth / .3 * open * open,
+    incomingScale: mix(1 / (1 + s.depth * .5), 1, curves.punchOut(phase(p, OPEN * .5, 1))), shade: .4 * (1 - open)};
+}
 
 export function SplitTransition({from, to, time, start, duration, options}: TransitionRenderProps<SplitOptions>) {
   const {fps} = useVideoConfig();
@@ -33,7 +43,7 @@ export function SplitTransition({from, to, time, start, duration, options}: Tran
   const g = splitGeometry(s);
   const p = clamp01((time - start) / duration);
   const u = phase(p, OPEN, 1);
-  const speed = g.travel * Math.abs(slope(curves.snap, u)) / ((1 - OPEN) * duration) / fps;
+  const speed = g.travel * Math.abs(slope(doors, u)) / ((1 - OPEN) * duration) / fps;
   const offsets = shutterOffsets(samplesForStreak(speed * s.shutter, s.quality), s.shutter, fps);
   const L = 6000, {v, n} = g, c = centerOf(s.stage);
   const half = (side: 1 | -1) => {
@@ -43,11 +53,15 @@ export function SplitTransition({from, to, time, start, duration, options}: Tran
   const clips = {plus: half(1), minus: half(-1)};
   const sample = (offset: number) => {
     const q = clamp01((time + offset - start) / duration);
-    const d = splitOpen(q, g.travel);
+    const d = splitOpen(q, g.travel), pose = splitPose(q, s);
     return <AbsoluteFill style={{background: s.backdrop}}>
-      <Layer transform={about(c, mix(s.depth, 1, curves.punchOut(phase(q, OPEN * .5, 1))))}>{to}</Layer>
-      {d < g.travel - 1 && ([1, -1] as const).map(side => <AbsoluteFill key={side} style={{clipPath: side > 0 ? clips.plus : clips.minus,
-        transform: `translate(${(n.x * d * side).toFixed(2)}px, ${(n.y * d * side).toFixed(2)}px)`}}>{from}</AbsoluteFill>)}
+      <Layer transform={about(c, pose.incomingScale)}>{to}</Layer>
+      {pose.shade > .005 && <AbsoluteFill style={{background: '#000', opacity: pose.shade}}/>}
+      {d < g.travel - 1 && ([1, -1] as const).map(side => <AbsoluteFill key={side} style={{transformOrigin: '0 0',
+        transform: `translate(${(n.x * d * side).toFixed(2)}px, ${(n.y * d * side).toFixed(2)}px) ${about(c, pose.halfScale)}`,
+        filter: pose.defocus > .3 ? `blur(${pose.defocus.toFixed(2)}px)` : undefined}}>
+        <AbsoluteFill style={{clipPath: side > 0 ? clips.plus : clips.minus}}>{from}</AbsoluteFill>
+      </AbsoluteFill>)}
     </AbsoluteFill>;
   };
   const glow = s.seam * bell(phase(p, 0, OPEN * 2.6));

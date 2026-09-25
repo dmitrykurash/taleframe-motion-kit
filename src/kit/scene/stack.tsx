@@ -43,7 +43,7 @@ export function StackTransition({from, to, time, start, duration, options}: Tran
         style={{filter: s.defocus * back > .3 ? `blur(${(s.defocus * back).toFixed(2)}px)` : undefined}}>{from}</Layer>
       {s.dim > 0 && <AbsoluteFill style={{background: '#000', opacity: s.dim * back}}/>}
       <AbsoluteFill style={{transform: card, transformOrigin: '0 0'}}>
-        {radius > .5 && <AbsoluteFill style={{borderRadius: radius, boxShadow: '0 -24px 90px rgba(0,0,0,.35), 0 -2px 10px rgba(0,0,0,.12)'}}/>}
+        {radius > .5 && <AbsoluteFill style={{borderRadius: radius, boxShadow: '0 -12px 48px rgba(0,0,0,.14), 0 -1px 6px rgba(0,0,0,.05)'}}/>}
         <AbsoluteFill style={{clipPath: radius > .5 ? `inset(0px round ${radius.toFixed(2)}px)` : undefined, overflow: 'hidden'}}>{to}</AbsoluteFill>
       </AbsoluteFill>
     </AbsoluteFill>;

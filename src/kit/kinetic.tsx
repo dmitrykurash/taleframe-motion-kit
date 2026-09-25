@@ -8,13 +8,14 @@ import {graphemes} from './typing';
 import {FontStyle, useTextMetrics} from './typography';
 
 /** Kinetic typography. Every component derives its state from time; nothing uses timers or unseeded randomness.
- * Sizes are logical stage pixels. Letter spacing is in em here (display type is tracked relative to size). */
+ * Sizes are logical stage pixels. Letter spacing is in em here (display type is tracked relative to size).
+ * Type is medium (500) unless a component is given a weight: go heavier only when the style calls for it. */
 export type KineticFont = {fontFamily?: string; fontSize?: number; fontWeight?: number; letterSpacing?: number; color?: string};
 const DEFAULT_FAMILY = '"DM Sans Variable", sans-serif';
-export const fontCss = ({fontFamily = DEFAULT_FAMILY, fontSize = 140, fontWeight = 800, letterSpacing = -.035, color = 'currentColor'}: KineticFont): React.CSSProperties =>
+export const fontCss = ({fontFamily = DEFAULT_FAMILY, fontSize = 140, fontWeight = 500, letterSpacing = -.035, color = 'currentColor'}: KineticFont): React.CSSProperties =>
   ({fontFamily, fontSize, fontWeight, letterSpacing: `${letterSpacing}em`, color, fontKerning: 'normal', fontSynthesis: 'none'});
 export const measureFont = (f: KineticFont): FontStyle => ({fontFamily: f.fontFamily ?? DEFAULT_FAMILY, fontSize: f.fontSize ?? 140,
-  fontWeight: f.fontWeight ?? 800, letterSpacing: (f.letterSpacing ?? -.035) * (f.fontSize ?? 140)});
+  fontWeight: f.fontWeight ?? 500, letterSpacing: (f.letterSpacing ?? -.035) * (f.fontSize ?? 140)});
 
 /** Widths of several strings in one font, after the font has loaded. */
 export function useTextWidths(texts: readonly string[], font: FontStyle): number[] | null {

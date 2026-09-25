@@ -52,6 +52,14 @@ The kit's motion helpers are pure functions of time, so every frame renders on i
 
 **Speed ramps.** `<SpeedRamp keys={[{at, rate}, …]}>` plays its children through slow motion, a freeze, or a rush while the film runs on; `rampTime(t, keys)` gives the shot time directly. Everything inside that reads the clock follows, including cursors, typing, and `MotionBlur`, whose shutter shrinks in slow motion as a real camera's would. Ramp into the moment that matters, hold it, then rush out.
 
+**Springs that change their mind.** `springTo(t, keys)` springs a value to each new target at its time. Every change adds its own spring response, so the value never jumps when a target changes mid-flight, and it stays a pure function of time. Use it for anything that changes many times: sizes, radii, colors, camera scale. `liquidRange(t, keys)` moves a span with its leading edge on a quicker spring than its trailing edge, so a tab indicator or a toggle knob stretches toward where it is going and snaps back to size when it lands. `rubberBand(value, min, max)` resists a drag past a limit, like a slider pulled beyond its end.
+
+**One shape, never cut.** `<Morph states>` is a single element that springs from UI state to UI state (a button, a loader, a player, a slider, a card) while its content swaps with a short blur. Each state's content has its own enter and exit timing, so text never overlaps inside the morphing container; states that share an `id` keep their content (a slider that stretches, a toggle that changes color), and `fill` lets content stretch with the shape. Drive every change with a `Cursor` and real clicks and drags: while a drag is held, compute the value from the cursor's position (`cursorAt`); on release, spring back from wherever it was. Spring the camera so each state fills the frame (`fitScale`). To loop, make the last state the first. `Motion-Reel` has a worked sequence in `src/examples/reel/interface.tsx`.
+
+**Animation studies.** `bounce(t)` is a dropped ball with squash, stretch, and its impact times; `<Trail>` draws fading ghosts of any moving element; draw the path and a key at each impact for a curve-editor look.
+
+**Showreel devices.** `<Viewfinder>` frames a whole film like a camera (title, specs, a running timecode, progress, and a section label that decodes when it changes). `<SelectionBox>` puts a design-tool selection around an element. `<PatternField>` is a grid of dots, crosses, tiles, or rings driven by waves (`fieldWave`), for halftone discs and pattern fields. `<BlockField>` is a 3D field of blocks with an orbiting camera, fog, and a bouncing ball. They suit reels and technical films; keep them out of calm product films.
+
 **3D space.** `<Space camera>` is a 3D stage for floating UI: place `<Plane x y z rotateX rotateY>` layers in it, circle the camera with `yaw`, tilt it with `pitch`, and move it with `distance`; `camera3DAt(t, keys)` interpolates camera keyframes. Set `focus` and `aperture` for depth of field, so planes away from the focus distance soften. A product window with a few cards floating at different depths, and a slow orbit, is the classic floating-UI hero shot.
 
 ## Variety and invention
@@ -61,7 +69,7 @@ A film where every UI shot does the same slow push, every word rises the same wa
 - **Choose a motion palette.** One signature move that belongs to this film (a 3D orbit, a speed ramp, a flip board), two or three supporting moves, and one surprise saved for the key moment. Write it into the style sheet.
 - **Contrast neighbors.** Alternate fast and slow, near and far, 2D and 3D, still and moving, left and right. After a burst, hold. Before rendering, list each shot's move; if two neighbors share a move and a direction, change one.
 - **Motivate every move.** The camera follows the action (the pointer, the answer arriving), reveals something the viewer did not see, or connects two shots. Motion that means nothing is noise.
-- **Connect shots.** Match cuts on shape, color, or position; a card that becomes the next frame (`expand`, `cards`); a word the camera flies through (`portal`); a whip that continues the pointer's direction.
+- **Connect shots.** Match cuts on shape, color, or position; a card that becomes the next frame (`expand`, `cards`); a word the camera flies through (`portal`); a ball that grows into a field of color (`expand` with `colorHold`); one shape that never cuts (`Morph`).
 - **Try a device.** A speed ramp into the click. The product as a physical object in 3D. A grid of states popping in with a ripple. A type card that swaps its key word three times. A beat of handheld on a hard claim. A callback that ends on the opening line's structure.
 - **Keep one idea per shot.** Variety comes from shot to shot, not from stacking every effect in one frame.
 
@@ -75,7 +83,7 @@ For a settings scene, a useful sequence is title → current option → pointer 
 
 Natural typing uses fixed but uneven keystroke intervals, occasional small hesitations, and short spaces. `useTyping` measures the actual font and exposes a smoothly tracked width. Use that width for camera follow; starting a separate ease for each phrase produces a repeated accelerate/stop pattern. Typing belongs inside UI; headlines use [kinetic type](kinetic-type.md).
 
-Type shots use the kinetic components: `MaskReveal` for most headlines, `KineticText` with any of 18 motion presets, `TextSwap` for type-to-type transitions, effects such as `Mark`, `Echo`, `Shine`, and `Breathe`, and `Slam`, `WordRoll`, `WordSequence`, `Counter`, `Scramble`, and `TrackIn` where the style calls for them. `WordReveal` and `CharacterReveal` are quiet options for calm, editorial moments; a small centered line fading in on an empty frame is the look to avoid.
+Type shots use the kinetic components: `MaskReveal` for most headlines, `KineticText` with any of 18 motion presets, `TextSwap` for type-to-type transitions, effects such as `Mark`, `TypeWall`, `ParticleText`, `Shine`, and `Breathe`, and `Slam`, `WordRoll`, `WordSequence`, `Counter`, `Scramble`, and `TrackIn` where the style calls for them. `WordReveal` and `CharacterReveal` are quiet options for calm, editorial moments; a small centered line fading in on an empty frame is the look to avoid.
 
 Load fonts before measuring. Use genuine weight files where needed. Character positioning preserves Latin pair kerning and uses grapheme segmentation; for connected scripts such as Arabic or Indic, prefer whole-word animation so shaping remains intact. Set deliberate line breaks when the copy needs two lines.
 
@@ -89,7 +97,7 @@ Overscan keeps the enlarged image's edges outside the frame. For a centered full
 
 ## Transitions and effects
 
-Cut first. When a designed transition is justified, use a [scene transition](scene-transitions.md) between React shots (`zoom`, `portal`, `expand`, `slice`, `glitch`, `whip`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, `cards`) or a [Taleframe shader transition](transitions.md) between pictures and footage. A painted spread suits an organic, handmade film; a UI workflow usually wants a cut, an `expand` from the clicked control, or a `portal` through a card. The transition should not hide the action the viewer came to see. The [effects guide](effects.md) covers processing order and settings.
+Cut first. When a designed transition is justified, use a [scene transition](scene-transitions.md) between React shots (`zoom`, `portal`, `expand`, `slice`, `glitch`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, `cards`, `grid`, `divide`) or a [Taleframe shader transition](transitions.md) between pictures and footage. A painted spread suits an organic, handmade film; a UI workflow usually wants a cut, an `expand` from the clicked control, or a `portal` through a card. The transition should not hide the action the viewer came to see. The [effects guide](effects.md) covers processing order and settings.
 
 Use texture and distortion selectively. A background may benefit from a treatment that makes small UI text unreadable. When preparing painted imagery, soften the source before painting if needed, then preserve the brush detail. Grain and stop motion are independent choices, not implied by a watercolor look.
 

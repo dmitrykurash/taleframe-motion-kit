@@ -1,6 +1,6 @@
 # Scene transitions
 
-Thirteen transitions for live React scenes: UI, typography, product shots. They work directly on the shots you build with the kit, keep type and UI vector-sharp at any zoom, and carry true motion blur where things move fast. Open **Scene-Transitions** in Studio for the first five between realistic launch-film shots, and **Motion-Showcase** for the eight newer ones, each named by a label while it plays.
+Fourteen transitions for live React scenes: UI, typography, product shots. They work directly on the shots you build with the kit, keep type and UI vector-sharp at any zoom, and carry true motion blur where things move fast. Open **Scene-Transitions** in Studio for the first five between realistic launch-film shots, **Motion-Showcase** for the newer ones, each named by a label while it plays, and **Motion-Reel** for `grid`, `divide`, and a color-filled circle `expand` in a motion-design reel.
 
 They are different from the [Taleframe shader transitions](transitions.md), which operate on pictures (images, footage, canvas drawings) and include the painted looks. Use scene transitions between React shots; use the shaders for footage and stills or when a film is deliberately painterly.
 
@@ -13,7 +13,6 @@ Read [film language](film-language.md) first: most cuts in a launch film are har
 | `expand` | The next shot grows out of the element that was just clicked, while the current one pushes back and dims. | 0.7 s, starts at the cut |
 | `slice` | Bands of the frame push across with a stagger, optionally led by brand-color bars. | 0.6 s, centered on the cut |
 | `glitch` | A short digital hit around a hard cut: RGB split, tearing, smeared rows, stutter. | 0.42 s, centered on the cut |
-| `whip` | A whip pan: the picture tears sideways and the next shot swings in on the same move. Add `spin` for a roll. | 0.5 s, centered on the cut |
 | `stack` | The next shot slides over as a card while the current one sinks back into depth. Calm and product-like. | 0.75 s, starts at the cut |
 | `tiles` | The frame breaks into a grid of tiles that shrink away in a wave, ripple, rows, or at random. | 0.8 s, centered on the cut |
 | `split` | A line of light cracks the frame and the halves slide apart to reveal the next shot. | 0.7 s, starts at the cut |
@@ -21,8 +20,10 @@ Read [film language](film-language.md) first: most cuts in a launch film are har
 | `liquid` | Both shots ripple as if under moving water; the swap happens inside the distortion. | 0.8 s, centered on the cut |
 | `tilt` | Two planes pass in 3D: the current shot tips back and falls away as the next one swings up into place. | 0.8 s, centered on the cut |
 | `cards` | The app-switcher move: shrink to a card, slide along the strip, grow into the next shot. | 1.1 s, centered on the cut |
+| `grid` | Pull back to a bento grid of live shots, hold, and push into the next one. A recap, a chapter jump, a show of range. | 1.5 s, centered on the cut |
+| `divide` | The next shot pushes in to share a split screen, the two hold side by side, then the new one takes the frame. | 1.3 s, centered on the cut |
 
-Pick by style (see the table in [film language](film-language.md#2-read-the-style-and-commit-to-it)): `focus`, `stack`, and `cards` suit calm and premium films; `whip`, `zoom`, `slice`, and `glitch` loud ones; `tilt`, `tiles`, and `split` graphic ones; `liquid` dreamy or organic ones. Use two or three kinds per film, not all of them.
+Pick by style (see the table in [film language](film-language.md#2-read-the-style-and-commit-to-it)): `focus`, `stack`, and `cards` suit calm and premium films; `zoom`, `slice`, and `glitch` loud ones; `tilt`, `tiles`, `split`, `divide`, and `grid` graphic ones and motion-design reels; `liquid` dreamy or organic ones. Use two or three kinds per film, not all of them.
 
 ## Build a film from shots
 
@@ -108,6 +109,7 @@ Choose a word and colors so the incoming shot is legible inside the letters agai
 | `source` | 140 px square at center | `{x, y, width, height, radius}` of the element the new shot grows out of, usually the control that was just clicked |
 | `shape` | `'rect'` | `'circle'` grows a circle from the source center |
 | `color` | none | Fill of the source element. The window starts in this color and dissolves into the incoming shot |
+| `colorHold` | 0 | Fraction of the window the color stays solid first: a ball that grows into a full field of color, then opens onto the next shot |
 | `push` | 1.08 | Scale the outgoing shot moves to. Above 1 pushes toward the camera (like a home screen as an app opens); below 1 recedes |
 | `dim` / `defocus` | 0.4 / 8 | Darkening and depth blur of the outgoing shot |
 | `bounce` | 0 | 0 settles without overshoot; up to 1 overshoots about 8 % for playful styles |
@@ -143,17 +145,6 @@ Each band carries a directional blur matched to its speed.
 
 Keep it short and rare, and make sure the incoming shot is already composed at the cut, so the hit reveals a finished frame.
 
-### `whip`
-
-| Option | Default | Meaning |
-|---|---|---|
-| `direction` | `'left'` | Where the picture moves; `'left'` is the camera panning right. Also `'right'`, `'up'`, `'down'` |
-| `spin` | 0 | Degrees the frame rolls through the move, for a spin whip |
-| `bulge` | 1.05 | Scale at peak speed, as if the move bulged toward the lens |
-| `shutter`, `quality` | 0.9, 20 | Motion blur; a directional streak closes the gaps at peak speed |
-
-Both shots ride one continuous strip, so the move reads as a single pan. Cut two whips in opposite directions to return to a place.
-
 ### `stack`
 
 | Option | Default | Meaning |
@@ -182,7 +173,7 @@ Good for step-by-step stories: each step arrives on top of the last.
 |---|---|---|
 | `angle` | 90 | Angle of the split: 90 vertical doors, 0 horizontal, 20 a diagonal tear |
 | `at` | stage center | A point on the split line |
-| `depth` | 1.12 | The incoming shot settles from this scale behind the halves |
+| `depth` | 0.3 | How far the camera moves in through the opening: the halves grow by this much and soften as they pass it, and the next shot comes forward from behind them |
 | `seam`, `seamColor` | 0.7, white | A line of light along the split before it opens |
 
 ### `focus`
@@ -226,6 +217,30 @@ The swap happens only while both shots are deep out of focus, so no sharp double
 
 Shrink, slide, and grow overlap, so the move reads as one gesture. The cards keep a constant gap at any size, so they never overlap.
 
+### `grid`
+
+| Option | Default | Meaning |
+|---|---|---|
+| `tiles` | none | Other shots for the grid, as full-stage React scenes; they are drawn small and stay live |
+| `columns`, `rows` | 3, 3 | Grid size. Cells keep the stage's aspect ratio, so a cell scaled up fills the frame exactly |
+| `fromCell`, `toCell` | middle, next | Cells (row by row) of the outgoing and incoming shots |
+| `gap`, `radius` | 26, 22 | Space between cells and their corners at grid size |
+| `hold` | 0.3 | Fraction of the window spent on the whole grid |
+| `backdrop` | near black | Color behind the cells; make it a step lighter than dark shots so they read as cards |
+
+Every tile renders its shot live, so a large grid of heavy shots is slow to render. Six to nine light shots work well.
+
+### `divide`
+
+| Option | Default | Meaning |
+|---|---|---|
+| `side` | `'right'` | Side the new shot enters from |
+| `hold` | 0.4 | Fraction of the window the two shots share the screen |
+| `split` | 0.5 | Where the divider rests, as a fraction of the width |
+| `line`, `lineColor` | 2, white | Divider width and color |
+
+Each panel shows the middle of its shot, so both stay composed while the divider moves.
+
 ## Motion blur elsewhere
 
 `MotionBlur` gives the same temporal blur to any fast move inside a shot, such as a whip pan of the camera or a slam of type:
@@ -248,7 +263,7 @@ Render stills at the start, middle, and end of every window before a long export
 
 ```sh
 npm run stills -- Scene-Transitions --gl angle --times 1.6,4.9,5.6,9.0,12.8,15.7,19.6 --out out/scene-transition-stills
-npm run check:scenes -- --gl angle   # all 14 windows of Scene-Transitions and Motion-Showcase
+npm run check:scenes -- --gl angle   # all 17 windows of Scene-Transitions, Motion-Showcase, and Motion-Reel
 npm run render -- Scene-Transitions --gl angle --out out/scene-transitions.mp4
 ```
 

@@ -14,7 +14,9 @@ The kit is a Remotion project with editable examples and instructions for coding
 
 ![Frames from Motion-Showcase: a tiles transition, floating UI in 3D, the type presets, and a marquee](docs/images/motion-showcase.jpg)
 
-[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.2.0) or open the examples in Studio.
+![Frames from Motion-Reel: a bouncing ball, type under a selection box, a pattern field, a type wall, particle type, one UI shape morphing through states, and a bento-grid recap](docs/images/motion-reel.jpg)
+
+[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.3.0) or open the examples in Studio.
 
 ## Start with an agent
 
@@ -44,7 +46,8 @@ Choose a composition in Remotion Studio:
 
 | Composition | What it shows |
 |---|---|
-| `Motion-Showcase` | A 66-second catalog of the motion vocabulary: eight newer scene transitions, 3D space, springs, camera moves, a speed ramp, all 18 type presets, and every type effect, each named by a label |
+| `Motion-Reel` | A 30-second 60 fps motion-design reel made with the kit: a bouncing ball, type under a selection box, pattern and block fields, a type wall, particle type, one UI shape morphing through twelve states, and a bento-grid recap |
+| `Motion-Showcase` | A 66-second catalog: the newer scene transitions, 3D space, springs, camera moves, a speed ramp, all 18 type presets, and the type effects, each named by a label |
 | `Product-Explainer` | A 52-second UX explainer for an unnamed AI workspace: four features, each a type card and then the product doing it |
 | `Product-Launch` | A 26-second dark launch for the same product: word beats, a hero shot, a zoom into Allow, and a counter |
 | `Kit-Reel` | A 31-second 1080 × 1920 reel about the kit, made with the kit; each scene transition names itself as it plays |
@@ -67,11 +70,13 @@ The first render downloads Remotion's dedicated Chrome. Media tools come from th
 
 ## What you can reuse
 
-- A shot list (`Shots`) with hard cuts by default and thirteen scene transitions for React shots: `zoom`, `portal`, `expand`, `slice`, `glitch`, `whip`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, and `cards`.
+- A shot list (`Shots`) with hard cuts by default and fourteen scene transitions for React shots: `zoom`, `portal`, `expand`, `slice`, `glitch`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, `cards`, `grid`, and `divide`.
 - Temporal motion blur (`MotionBlur`) for transitions and any fast move, aware of speed ramps.
-- A motion vocabulary: springs, camera moves (glide, drift, spring, crash, whip), handheld wander and hits, arcs, stagger orders and grid waves, entrances for any element, speed ramps, and a 3D space for floating UI with depth of field.
+- A motion vocabulary: springs (including targets that change mid-flight and liquid edges), camera moves (glide, drift, spring, crash, whip), handheld wander and hits, arcs, stagger orders and grid waves, entrances for any element, speed ramps, rubber-band drags, a bouncing ball with squash and stretch, motion trails, and a 3D space for floating UI with depth of field.
+- One shape, never cut: `Morph` carries a single element through many UI states with springs and blur content swaps, driven by a cursor.
+- Motion-reel devices: a camera viewfinder frame, design-tool selection boxes, pattern fields, a 3D block field, and particle type.
 - Logical stages for 16:9, 9:16, 1:1, and 4:5 outputs; the scene transitions adapt to each.
-- Kinetic typography: 18 motion presets for lines, words, or letters (`KineticText`), type-to-type swaps, mask reveals, slams, word rolls, rapid word sequences, counters, scrambles, track-ins, and type effects: marks, echoes, marquees, shine, circular text, split words, and variable-weight waves.
+- Kinetic typography: 18 motion presets for lines, words, or letters (`KineticText`), type-to-type rolls and swaps, mask reveals, slams, word rolls, rapid word sequences, counters, scrambles, track-ins, and type effects: hand-drawn marks, marquees, type walls with variable widths, particle type, shine, circular text, split words, and variable-weight waves. Type is medium and filled by default.
 - Camera keyframes, target framing, cursor paths, hover and click timing, and background parallax.
 - Natural typing with repeatable key timing and a smoothly following camera.
 - Word and character reveals, expanding badges, and closing sequences.
@@ -80,7 +85,7 @@ The first render downloads Remotion's dedicated Chrome. Media tools come from th
 
 The starter demonstrates a fictional app. Changing its JSON personalizes that example; a film about a real app needs that app's UI source, screenshots, or recording. For a different story, layout, interaction, or duration, create a custom composition using the same library.
 
-The supplied examples use Inter, DM Sans, Geist Mono, and Instrument Serif. Replace fonts, colors, assets, pacing, and copy to fit your project. Effects are optional: a quiet background and a few precise movements can be enough.
+The supplied examples use Inter, DM Sans, Geist, Geist Mono, Anybody, and Instrument Serif. Replace fonts, colors, assets, pacing, and copy to fit your project. Effects are optional: a quiet background and a few precise movements can be enough.
 
 ## Project map
 

@@ -4,6 +4,9 @@ import '@fontsource-variable/dm-sans';
 import '@fontsource-variable/inter/opsz.css';
 import '@fontsource-variable/inter/opsz-italic.css';
 import '@fontsource-variable/geist-mono';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/anybody/wdth.css';
+import '@fontsource-variable/anybody/wdth-italic.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import {StarterFilm, defaultStarterProps, calculateStarterMetadata} from './examples/StarterFilm';
@@ -16,6 +19,7 @@ import {ProductExplainer, EXPLAINER_SECONDS} from './examples/ProductExplainer';
 import {ProductLaunch, LAUNCH_SECONDS} from './examples/ProductLaunch';
 import {KitReel, KIT_REEL_SECONDS} from './examples/KitReel';
 import {MotionShowcase, SHOWCASE_SECONDS} from './examples/MotionShowcase';
+import {MotionReel, REEL_SECONDS} from './examples/MotionReel';
 
 const Root = () => <>
   {['Starter', 'UI-Demo'].map(id => <Composition key={id} id={id} component={StarterFilm}
@@ -36,6 +40,7 @@ const Root = () => <>
   <Composition id="Kit-Reel" component={KitReel} width={1080} height={1920} fps={30} durationInFrames={KIT_REEL_SECONDS * 30}/>
   <Composition id="Motion-Showcase" component={MotionShowcase} defaultProps={{labelled: true}} width={1920} height={1080} fps={30}
     durationInFrames={SHOWCASE_SECONDS * 30}/>
+  <Composition id="Motion-Reel" component={MotionReel} width={1920} height={1080} fps={60} durationInFrames={REEL_SECONDS * 60}/>
   <Composition id="Scene-Transitions" component={SceneTransitionReel} defaultProps={{labelled: true}} width={1920} height={1080}
     fps={30} durationInFrames={SCENE_TRANSITION_REEL_SECONDS * 30}/>
 </>;

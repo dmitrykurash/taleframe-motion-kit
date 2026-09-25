@@ -7,7 +7,7 @@ npm ci
 npm run studio
 ```
 
-Studio lists the registered compositions. `Motion-Showcase` is a labeled catalog of the motion vocabulary: the eight newer scene transitions, 3D space, camera moves, a speed ramp, all type presets, and the type effects. `Product-Explainer`, `Product-Launch`, and `Kit-Reel` are three films about an unnamed AI workspace and about the kit itself: a UX explainer, a dark launch, and a 9:16 social reel. `Launch-Film` is the reference editorial launch film: an editorial style sheet, type and UI shots taking turns, kinetic type, a card portal, and an expand from a clicked button. `Scene-Transitions` shows the five scene transitions between launch-film shots. `Starter` and `UI-Demo` provide a calmer fictional app walkthrough. The other galleries let you inspect motion recipes, shader transitions, and effects before choosing a treatment.
+Studio lists the registered compositions. `Motion-Reel` is a 60 fps motion-design reel made with the kit. `Motion-Showcase` is a labeled catalog of the motion vocabulary: the eight newer scene transitions, 3D space, camera moves, a speed ramp, all type presets, and the type effects. `Product-Explainer`, `Product-Launch`, and `Kit-Reel` are three films about an unnamed AI workspace and about the kit itself: a UX explainer, a dark launch, and a 9:16 social reel. `Launch-Film` is the reference editorial launch film: an editorial style sheet, type and UI shots taking turns, kinetic type, a card portal, and an expand from a clicked button. `Scene-Transitions` shows the five scene transitions between launch-film shots. `Starter` and `UI-Demo` provide a calmer fictional app walkthrough. The other galleries let you inspect motion recipes, shader transitions, and effects before choosing a treatment.
 
 ## Customize the starter
 
@@ -66,6 +66,7 @@ npm run render -- Product-Explainer --gl angle --out out/product-explainer.mp4
 npm run render -- Product-Launch --gl angle --out out/product-launch.mp4
 npm run render -- Kit-Reel --gl angle --out out/kit-reel.mp4
 npm run render -- Motion-Showcase --gl angle --out out/motion-showcase.mp4
+npm run render -- Motion-Reel --gl angle --out out/motion-reel.mp4
 ```
 
 `Kit-Reel` is 1080 × 1920. Stills and previews work the same way for vertical films.

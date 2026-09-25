@@ -1,9 +1,11 @@
 import React from 'react';
 import {useTime} from '../clock';
 import {CardsTransition} from './cards';
+import {DivideTransition} from './divide';
 import {ExpandTransition} from './expand';
 import {FocusTransition} from './focus';
 import {GlitchTransition} from './glitch';
+import {GridTransition} from './grid';
 import {LiquidTransition} from './liquid';
 import {PortalTransition} from './portal';
 import {SliceTransition} from './slice';
@@ -12,7 +14,6 @@ import {StackTransition} from './stack';
 import {TiltTransition} from './tilt';
 import {TilesTransition} from './tiles';
 import type {SceneTransitionKind, TransitionSpec} from './types';
-import {WhipTransition} from './whip';
 import {ZoomTransition} from './zoom';
 
 /** What each scene transition is for. Durations are seconds; `align` places the window on the cut. */
@@ -27,8 +28,6 @@ export const SCENE_TRANSITIONS = {
     use: 'Bands of the frame push across with a stagger, optionally led by brand-color bars. Graphic and fast.'},
   glitch: {name: 'Glitch', duration: .42, align: 'center',
     use: 'A short digital hit around a hard cut: RGB split, tearing, smeared rows, stutter. For loud, technical films.'},
-  whip: {name: 'Whip pan', duration: .5, align: 'center',
-    use: 'The camera tears sideways and the next shot swings in on the same move. Energetic and continuous; add `spin` for a roll.'},
   stack: {name: 'Stack', duration: .75, align: 'start',
     use: 'The next shot slides over as a card while the current one sinks into depth. Calm, product-like, great for step-by-step.'},
   tiles: {name: 'Tiles', duration: .8, align: 'center',
@@ -43,6 +42,10 @@ export const SCENE_TRANSITIONS = {
     use: 'Two planes pass in 3D: the current shot tips back and falls away as the next swings up into place. Spatial and bold.'},
   cards: {name: 'Cards', duration: 1.1, align: 'center',
     use: 'The app-switcher move: shrink to a card, slide along the strip, grow into the next shot. Shows that shots belong together.'},
+  grid: {name: 'Grid', duration: 1.5, align: 'center',
+    use: 'Pull back to a bento grid of live shots, hold, and push into the next one. A recap, a chapter jump, or a show of range.'},
+  divide: {name: 'Divide', duration: 1.3, align: 'center',
+    use: 'The next shot pushes in to share a split screen, holds side by side, then takes the frame. Comparisons and handoffs.'},
 } as const satisfies Record<SceneTransitionKind, {name: string; duration: number; align: 'center' | 'start' | 'end'; use: string}>;
 
 export const SCENE_TRANSITION_KINDS = Object.keys(SCENE_TRANSITIONS) as SceneTransitionKind[];
@@ -75,7 +78,6 @@ export function SceneTransition(props: SceneTransitionProps) {
     case 'expand': return <ExpandTransition {...common} options={props}/>;
     case 'slice': return <SliceTransition {...common} options={props}/>;
     case 'glitch': return <GlitchTransition {...common} options={props}/>;
-    case 'whip': return <WhipTransition {...common} options={props}/>;
     case 'stack': return <StackTransition {...common} options={props}/>;
     case 'tiles': return <TilesTransition {...common} options={props}/>;
     case 'split': return <SplitTransition {...common} options={props}/>;
@@ -83,5 +85,7 @@ export function SceneTransition(props: SceneTransitionProps) {
     case 'liquid': return <LiquidTransition {...common} options={props}/>;
     case 'tilt': return <TiltTransition {...common} options={props}/>;
     case 'cards': return <CardsTransition {...common} options={props}/>;
+    case 'grid': return <GridTransition {...common} options={props}/>;
+    case 'divide': return <DivideTransition {...common} options={props}/>;
   }
 }

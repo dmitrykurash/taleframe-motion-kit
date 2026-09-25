@@ -160,7 +160,7 @@ export function Answer({theme, blocks, p, style}: {theme: WorkspaceTheme; blocks
 
 export function FileCard({theme, name, meta, style}: {theme: WorkspaceTheme; name: string; meta: string; style?: React.CSSProperties}) {
   return <div style={{display: 'inline-flex', alignItems: 'center', gap: 16, padding: '14px 26px 14px 14px', borderRadius: 20,
-    background: theme.window, boxShadow: `0 14px 40px rgba(0,0,0,${theme.dark ? .5 : .1}), inset 0 0 0 1px ${theme.hairline}`, fontFamily: fonts.sans, ...style}}>
+    background: theme.window, boxShadow: `0 6px 18px rgba(0,0,0,${theme.dark ? .2 : .04}), inset 0 0 0 1px ${theme.hairline}`, fontFamily: fonts.sans, ...style}}>
     <div style={{width: 56, height: 56, borderRadius: 14, background: theme.accentSoft, color: theme.accent, display: 'grid', placeItems: 'center'}}>
       <Icon name="file" size={28}/></div>
     <div><div style={{fontSize: 22, fontWeight: 560, color: theme.text}}>{name}</div><div style={{fontSize: 17, color: theme.secondary, marginTop: 3}}>{meta}</div></div>

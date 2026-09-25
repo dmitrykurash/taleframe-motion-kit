@@ -15,7 +15,7 @@ const lift = (g: number) => `0 ${Math.round(48 * (1 - g))}px ${Math.round(70 + 6
 export function expandSettings(o: ExpandOptions, stage: StageSize = STAGE) {
   const source = o.source ?? {...DEFAULT_SOURCE, x: stage.width / 2 - 70, y: stage.height / 2 - 70};
   if (!(source.width > 0 && source.height > 0)) throw new Error('Expand needs a source rect with positive size.');
-  return {source, shape: o.shape ?? 'rect', color: o.color, push: Math.min(1.3, Math.max(.8, o.push ?? 1.08)),
+  return {source, shape: o.shape ?? 'rect', color: o.color, colorHold: Math.min(.9, Math.max(0, o.colorHold ?? 0)), push: Math.min(1.3, Math.max(.8, o.push ?? 1.08)),
     dim: clamp01(o.dim ?? .4), defocus: Math.max(0, o.defocus ?? 8), curve: overshoot(o.bounce ?? 0),
     shutter: o.shutter ?? .45, quality: o.quality ?? 14, backdrop: o.backdrop ?? '#000', stage};
 }
@@ -69,7 +69,7 @@ export function ExpandTransition({from, to, time, start, duration, options}: Tra
     const clip = w.kind === 'rect'
       ? `inset(${w.y}px ${STAGE.width - w.x - w.width}px ${STAGE.height - w.y - w.height}px ${w.x}px round ${w.radius}px)`
       : `circle(${w.radius}px at ${w.x}px ${w.y}px)`;
-    const tint = s.color ? 1 - curves.punchOut(phase(q, .04, .42)) : 0;
+    const tint = s.color ? 1 - curves.punchOut(phase(q, .04 + s.colorHold, .42 + s.colorHold * .6)) : 0;
     return <AbsoluteFill style={{background: s.backdrop}}>
       <Layer transform={receding} style={{filter: s.defocus * g > .3 ? `blur(${s.defocus * g}px)` : undefined}}>{from}</Layer>
       {s.dim > 0 && <AbsoluteFill style={{background: '#000', opacity: s.dim * g}}/>}

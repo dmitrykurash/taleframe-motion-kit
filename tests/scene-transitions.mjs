@@ -16,8 +16,9 @@ const chromiumOptions = {gl: glIndex > 0 ? process.argv[glIndex + 1] : 'swangle'
 const films = [
   {id: 'Scene-Transitions', windows: [['zoom', 1.44, 1.96], ['portal-word', 4.3, 5.65], ['expand', 8.88, 9.68], ['slice', 12.59, 13.21],
     ['portal-card', 15.2, 16.25], ['glitch', 19.37, 19.83]]},
-  {id: 'Motion-Showcase', windows: [['whip', 5.05, 5.55], ['stack', 7.1, 7.85], ['tiles', 8.6, 9.4], ['split', 10.8, 11.5],
+  {id: 'Motion-Showcase', windows: [['divide', 4.65, 5.95], ['stack', 7.1, 7.85], ['tiles', 8.6, 9.4], ['split', 10.8, 11.5],
     ['focus', 12.25, 12.95], ['liquid', 14, 14.8], ['tilt', 15.8, 16.6], ['cards', 17.45, 18.55]]},
+  {id: 'Motion-Reel', windows: [['expand-circle', 2.6, 3.6], ['divide-wall', 8.95, 10.25], ['grid', 25.4, 27]]},
 ];
 await fs.mkdir(out, {recursive: true});
 const serveUrl = await bundle({entryPoint: path.join(root, 'src/index.tsx'), publicDir: path.join(root, 'public')});

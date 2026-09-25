@@ -1,4 +1,5 @@
 import React from 'react';
+import {mulberry32} from '../taleframe/transitions/kit';
 import {useStage} from './camera';
 import {useTime} from './clock';
 import {fontCss, measureFont, runStyle, useTextWidths, type KineticFont, type RevealLine, type TextRun} from './kinetic';
@@ -8,7 +9,7 @@ import {poseAt, poseStyle, preset, unitOf, type PresetName} from './presets';
 import {curves} from './scene/curves';
 import {graphemes} from './typing';
 
-/** Kinetic type built on motion presets, plus type effects: marks, echoes, marquees, shine, circular
+/** Kinetic type built on motion presets, plus type effects: marks, marquees, shine, circular
  * text, split words, and variable-weight waves. Everything derives from time. */
 
 export type KineticTextProps = KineticFont & {
@@ -47,7 +48,7 @@ const lineMask: React.CSSProperties = {overflow: 'hidden', padding: '.1em .06em 
 export function KineticText({lines, by = 'word', enter = 'rise', exit, start = 0, stagger: each = .05, order = 'start', duration,
   exitAt, exitDuration, exitStagger, exitOrder, lineHeight = 1, align = 'left', seed = 1, time, style, ...font}: KineticTextProps) {
   const clock = useTime(), t = time ?? clock;
-  const size = font.fontSize ?? 140, weight = font.fontWeight ?? 800, tracking = font.letterSpacing ?? -.035;
+  const size = font.fontSize ?? 140, weight = font.fontWeight ?? 500, tracking = font.letterSpacing ?? -.035;
   const split = (text: string) => by === 'line' ? [text] : by === 'word' ? text.split(/(\s+)/).filter(Boolean) : graphemes(text);
   const structure = lines.map(line => (typeof line === 'string' ? [{text: line}] as TextRun[] : line).map(run => ({run, pieces: split(run.text)})));
   const count = structure.flat().reduce((n, r) => n + r.pieces.filter(p => !isSpace(p)).length, 0);
@@ -87,23 +88,26 @@ export type TextSwapProps = KineticFont & {
 };
 
 /** Type-to-type transitions: each text leaves with one preset while the next arrives with another,
- * and the slot's width follows. 'flip' by letter makes a split-flap board; 'blur' a soft morph;
- * 'scatter' a burst; 'glitch' a digital swap. */
-export function TextSwap({texts, at, enter = 'flip', exit, by = 'character', stagger: each = .03, order = 'start', duration,
-  exitDuration = .32, align = 'left', seed = 1, time, style, ...font}: TextSwapProps) {
+ * and the slot's width follows. The default is the classic roll: the old text rolls up out of its mask as
+ * the new one rises from the bottom. 'blur' makes a soft morph and 'glitch' a digital swap. The slot keeps a
+ * real baseline, so it lines up with type beside it in a baseline-aligned row. */
+export function TextSwap({texts, at, enter = 'rise', exit, by = 'word', stagger: each = .03, order = 'start', duration,
+  exitDuration = .5, align = 'left', seed = 1, time, style, ...font}: TextSwapProps) {
   const clock = useTime(), t = time ?? clock;
   if (at.length !== texts.length) throw new Error('TextSwap needs one arrival time per text.');
   const widths = useTextWidths(texts, measureFont(font));
   if (!widths) return null;
   let current = -1;
   at.forEach((time, i) => {if (t >= time) current = i;});
-  if (current < 0) return <div style={{...fontCss(font), height: '1em', ...style}}/>;
+  if (current < 0) return <div style={{...fontCss(font), lineHeight: 1, whiteSpace: 'pre', visibility: 'hidden', ...style}}>{texts[0]}</div>;
   const settle = curves.snap(progress(t, at[current], .5));
   const width = current > 0 ? mix(widths[current - 1], widths[current], settle) : widths[current];
   const left = (i: number) => align === 'center' ? (width - widths[i]) / 2 : align === 'right' ? width - widths[i] : 0;
-  return <div style={{...fontCss(font), position: 'relative', display: 'inline-block', width, height: '1em', lineHeight: 1, whiteSpace: 'pre', ...style}}>
+  return <div style={{...fontCss(font), position: 'relative', display: 'inline-block', width, lineHeight: 1, whiteSpace: 'pre', ...style}}>
+    {/* Invisible in-flow text gives the slot its baseline and height; the moving copies sit on top of it. */}
+    <span aria-hidden style={{visibility: 'hidden'}}>{texts[current]}</span>
     {[current - 1, current].filter(i => i >= 0).map(i => <KineticText key={i} lines={[texts[i]]} by={by} enter={enter} exit={exit ?? enter}
-      start={i === 0 ? at[0] : at[i] + .05} stagger={each} order={order} duration={duration} exitAt={at[i + 1]} exitDuration={exitDuration}
+      start={at[i]} stagger={each} order={order} duration={duration} exitAt={at[i + 1]} exitDuration={exitDuration}
       exitStagger={each * .5} seed={seed + i} time={t} {...font} style={{position: 'absolute', left: left(i), top: 0}}/>)}
   </div>;
 }
@@ -127,9 +131,44 @@ export type MarkProps = KineticFont & {
   style?: React.CSSProperties;
 };
 
-/** Hand-drawn loop, a little more than one turn, in a 100 × 100 box. */
-const LOOP = 'M8 58 C4 30 32 10 58 11 C84 12 98 32 95 55 C92 80 64 93 40 90 C16 87 3 70 9 48 C13 34 26 24 38 20';
-const BOX = 'M3 4 L97 3 L98 96 L2 97 Z';
+type P = {x: number; y: number};
+/** A hand-drawn box: four slightly uneven sides with a small overshoot where the pen closes it. */
+const BOX: P[] = [{x: 3, y: 4}, {x: 97, y: 2.5}, {x: 98.5, y: 96}, {x: 2, y: 97.5}, {x: 3.5, y: 1.5}];
+/** The first `q` (0–1) of a line through points, ending partway along a segment. Drawing a stroke this way
+ * is exact at any size, unlike dash offsets, which break when a stroke does not scale with its path. */
+function partial(points: readonly P[], q: number): P[] {
+  const f = Math.max(0, Math.min(1, q)) * (points.length - 1), k = Math.floor(f);
+  const head = points.slice(0, k + 1), a = points[k], b = points[k + 1];
+  return b && f > k ? [...head, {x: a.x + (b.x - a.x) * (f - k), y: a.y + (b.y - a.y) * (f - k)}] : head;
+}
+const linePath = (points: readonly P[]) => points.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+
+/** A smooth path through points (Catmull-Rom as cubic Béziers). */
+function smoothPath(points: readonly P[]): string {
+  if (points.length < 2) return '';
+  let d = `M${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i - 1] ?? points[i], p1 = points[i], p2 = points[i + 1], p3 = points[i + 2] ?? p2;
+    d += ` C${(p1.x + (p2.x - p0.x) / 6).toFixed(2)} ${(p1.y + (p2.y - p0.y) / 6).toFixed(2)} ${(p2.x - (p3.x - p1.x) / 6).toFixed(2)} `
+      + `${(p2.y - (p3.y - p1.y) / 6).toFixed(2)} ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  }
+  return d;
+}
+
+/** A pen loop around a word, in a 100 × 100 box: a little more than one turn with an uneven radius and a
+ * slight tilt, then a shorter second pass that does not quite follow the first, the way a hand circles a
+ * word. Seeded, so every render draws the same loop. */
+export function scribble(seed = 1): {first: P[]; second: P[]} {
+  const random = mulberry32((seed * 7919 + 17) >>> 0);
+  const tilt = (random() - .5) * .14, start = Math.PI * (.9 + random() * .12), phase = random() * 6.28;
+  const loop = (from: number, turns: number, scale: number, steps: number) => Array.from({length: steps + 1}, (_, i) => {
+    const a = from + i / steps * turns * 2 * Math.PI;
+    const wobble = 1 + .05 * Math.sin(3 * a + phase) + .025 * Math.sin(7 * a + 2 * phase);
+    const spiral = scale * (1 + .07 * i / steps), x = 48 * wobble * spiral * Math.cos(a), y = 45 * wobble * spiral * Math.sin(a);
+    return {x: 50 + x * Math.cos(tilt) - y * Math.sin(tilt), y: 50 + x * Math.sin(tilt) + y * Math.cos(tilt)};
+  });
+  return {first: loop(start, 1.1 + random() * .08, .97, 64), second: loop(start + 2 * Math.PI * .92, .5, 1.02, 30)};
+}
 
 /** Emphasis drawn onto words: a marker sweep, an underline, a strike, a box, or a hand-drawn loop.
  * Wrap it in Enter or put a KineticText line beside it for the entrance. */
@@ -141,58 +180,38 @@ export function Mark({lines, kind = 'marker', at = 0, duration = .55, stagger: e
     {lines.map((line, li) => <div key={li} style={{whiteSpace: 'pre'}}>
       {(typeof line === 'string' ? [{text: line}] as MarkRun[] : line).map((run, ri) => {
         if (!run.mark) return <span key={ri} style={runStyle(run)}>{run.text}</span>;
-        const q = curves.punchOut(progress(t, at + marks++ * each, duration));
+        const markStart = at + marks++ * each;
+        const q = curves.punchOut(progress(t, markStart, duration));
         const color = markedColor ? `color-mix(in srgb, ${markedColor} ${(clamp((q - .35) / .4) * 100).toFixed(1)}%, ${run.color ?? font.color ?? 'currentColor'})` : run.color;
-        const drawn = {strokeDasharray: 1, strokeDashoffset: 1 - q};
         return <span key={ri} style={{...runStyle(run), position: 'relative', display: 'inline-block', isolation: 'isolate', color}}>
           {kind === 'marker' && <span style={{position: 'absolute', zIndex: -1, left: '-.06em', right: '-.06em', top: '.14em', bottom: '.02em',
             background: markColor, borderRadius: '.08em', transform: `scaleX(${q}) skewX(-6deg)`, transformOrigin: '0 50%'}}/>}
           {(kind === 'underline' || kind === 'strike') && <span style={{position: 'absolute', left: '-.02em', right: '-.02em', height: '.075em',
             top: kind === 'underline' ? '.97em' : '.5em', background: markColor, borderRadius: '.04em', zIndex: kind === 'underline' ? -1 : 1,
             transform: `scaleX(${q}) rotate(${kind === 'strike' ? -2 : 0}deg)`, transformOrigin: '0 50%'}}/>}
-          {(kind === 'box' || kind === 'circle') && <span aria-hidden style={{position: 'absolute', zIndex: -1,
-            ...(kind === 'box' ? {left: '-.14em', right: '-.14em', top: '.02em', bottom: '-.1em'} : {left: '-.28em', right: '-.28em', top: '-.12em', bottom: '-.2em'})}}>
+          {kind === 'box' && <span aria-hidden style={{position: 'absolute', zIndex: -1, left: '-.14em', right: '-.14em', top: '.02em', bottom: '-.1em'}}>
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible'}}>
-              <path d={kind === 'box' ? BOX : LOOP} pathLength={1} fill="none" stroke={markColor} strokeWidth={kind === 'box' ? 5 : 6}
-                strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" style={drawn}/>
+              <path d={linePath(partial(BOX, q))} fill="none" stroke={markColor} strokeWidth={Math.max(3, (run.fontSize ?? font.fontSize ?? 140) * .03)}
+                strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
             </svg>
           </span>}
+          {kind === 'circle' && (() => {
+            // A pen's pace: slow into the stroke, quick around the far side, slow at the end; the second pass follows on.
+            const loop = scribble(ri + li * 13 + 3), size = Math.max(3, (run.fontSize ?? font.fontSize ?? 140) * .035);
+            const a = curves.glide(progress(t, markStart, duration * .78)), b = curves.glide(progress(t, markStart + duration * .62, duration * .38));
+            return <span aria-hidden style={{position: 'absolute', zIndex: -1, left: '-.3em', right: '-.3em', top: '-.16em', bottom: '-.2em'}}>
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible'}}>
+                {a > 0 && <path d={smoothPath(partial(loop.first, a))} fill="none" stroke={markColor} strokeWidth={size} strokeLinecap="round"
+                  strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>}
+                {b > 0 && <path d={smoothPath(partial(loop.second, b))} fill="none" stroke={markColor} strokeWidth={size * .7} strokeLinecap="round"
+                  strokeLinejoin="round" vectorEffect="non-scaling-stroke" opacity={.85}/>}
+              </svg>
+            </span>;
+          })()}
           {run.text}
         </span>;
       })}
     </div>)}
-  </div>;
-}
-
-export type EchoProps = KineticFont & {
-  text: string;
-  /** Copies behind the text. */
-  copies?: number;
-  /** Offset between neighboring copies, in em. */
-  offset?: {x: number; y: number};
-  start?: number;
-  duration?: number;
-  /** 'collapse': copies fold into the word; 'expand': they fan out and stay; 'pulse': they breathe. */
-  mode?: 'collapse' | 'expand' | 'pulse';
-  /** Draw the copies as outlines. */
-  outline?: boolean;
-  echoColor?: string;
-  time?: number;
-  style?: React.CSSProperties;
-};
-
-/** Stacked repeats of a word: a trail that folds into it, fans out, or breathes. Loud and graphic. */
-export function Echo({text, copies = 5, offset = {x: 0, y: .16}, start = 0, duration = .9, mode = 'collapse', outline = true, echoColor,
-  time, style, ...font}: EchoProps) {
-  const clock = useTime(), t = time ?? clock;
-  const q = mode === 'pulse' ? .5 - .5 * Math.cos(2 * Math.PI * Math.max(0, t - start) / duration)
-    : mode === 'expand' ? curves.punchOut(progress(t, start, duration)) : 1 - curves.punchOut(progress(t, start, duration));
-  const color = echoColor ?? font.color ?? 'currentColor';
-  return <div style={{...fontCss(font), position: 'relative', lineHeight: 1, whiteSpace: 'pre', ...style}}>
-    {Array.from({length: copies}, (_, k) => copies - k).map(i => <div key={i} aria-hidden style={{position: 'absolute', left: 0, top: 0,
-      transform: `translate(${(offset.x * i * q).toFixed(4)}em, ${(offset.y * i * q).toFixed(4)}em)`, opacity: (1 - i / (copies + 1)) * Math.min(1, q * 4),
-      color: outline ? 'transparent' : color, WebkitTextStroke: outline ? `${Math.max(1.2, (font.fontSize ?? 140) * .012)}px ${color}` : undefined}}>{text}</div>)}
-    <div style={{position: 'relative'}}>{text}</div>
   </div>;
 }
 
@@ -207,7 +226,7 @@ export type MarqueeProps = KineticFont & {
   angle?: number;
   /** Rows run in alternating directions. */
   alternate?: boolean;
-  /** Every other row as an outline. */
+  /** Every other row as an outline. Off by default: outlined type only when the brief asks for it. */
   outlineRows?: boolean;
   rowGap?: number;
   start?: number;
@@ -216,7 +235,7 @@ export type MarqueeProps = KineticFont & {
 };
 
 /** Endless rows of repeating type, like a ticker or a poster band. For loud, brutalist, and event films. */
-export function Marquee({text, rows = 3, speed = 260, separator = '  —  ', angle = 0, alternate = true, outlineRows = true, rowGap = .08,
+export function Marquee({text, rows = 3, speed = 260, separator = '  —  ', angle = 0, alternate = true, outlineRows = false, rowGap = .08,
   start = 0, time, style, ...font}: MarqueeProps) {
   const clock = useTime(), t = time ?? clock;
   const stage = useStage();
@@ -234,6 +253,65 @@ export function Marquee({text, rows = 3, speed = 260, separator = '  —  ', ang
       return <div key={r} style={{...fontCss(font), lineHeight: 1 + rowGap, whiteSpace: 'pre', overflow: 'hidden',
         color: outlined ? 'transparent' : color, WebkitTextStroke: outlined ? `${Math.max(1.2, (font.fontSize ?? 140) * .012)}px ${color}` : undefined}}>
         <div style={{transform: `translateX(${(dir < 0 ? -shift : shift - w).toFixed(2)}px)`}}>{unit.repeat(repeats)}</div>
+      </div>;
+    })}
+  </div>;
+}
+
+export type WallVariant = {weight?: number; stretch?: number; italic?: boolean};
+export type TypeWallProps = KineticFont & {
+  word: string;
+  rows?: number;
+  /** Styles cycled across the repeats: weight, width (font-stretch %, needs a width axis such as Anybody's
+   * 50–150), and italic. */
+  variants?: readonly WallVariant[];
+  /** Logical px per second; neighboring rows run in opposite directions. */
+  speed?: number;
+  /** [background, text] per row, cycled. */
+  palettes?: readonly [string, string][];
+  /** Color of the dot between repeats. */
+  dot?: string;
+  /** One row drawn as a solid band with a single centered word. */
+  band?: {row: number; background: string; color: string; text?: string; variant?: WallVariant};
+  /** Row height in em. */
+  rowHeight?: number;
+  /** Weights and widths ripple along each row over time. */
+  ripple?: boolean;
+  start?: number;
+  time?: number;
+  style?: React.CSSProperties;
+};
+
+/** A wall of one word repeated in rows, every repeat in a different width, weight, or slant, the rows sliding in
+ * opposite directions, with an optional solid band through the middle. Poster energy for loud and graphic films. */
+export function TypeWall({word, rows = 7, variants = [{weight: 800, stretch: 125}, {weight: 400, stretch: 70, italic: true}, {weight: 700, stretch: 100},
+  {weight: 300, stretch: 60}], speed = 150, palettes = [['#f3f1ec', '#2f45ff'], ['#2f45ff', '#f3f1ec']], dot = '#ff5a1f', band, rowHeight = 1.06,
+  ripple = true, start = 0, time, style, ...font}: TypeWallProps) {
+  const clock = useTime(), t = time ?? clock;
+  const repeats = 22, local = t - start;
+  const css = fontCss(font);
+  return <div style={{position: 'absolute', inset: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...style}}>
+    {Array.from({length: rows}, (_, r) => {
+      const [background, color] = palettes[r % palettes.length];
+      if (band && band.row === r) return <div key={r} style={{...css, flex: 'none', height: `${rowHeight}em`, background: band.background, color: band.color,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, whiteSpace: 'pre',
+        fontWeight: band.variant?.weight ?? css.fontWeight, fontStretch: band.variant?.stretch ? `${band.variant.stretch}%` : undefined,
+        fontStyle: band.variant?.italic ? 'italic' : 'normal'}}>{band.text ?? word}</div>;
+      const dir = r % 2 ? 1 : -1, shift = dir * speed * local - (dir > 0 ? 9000 : 400) - r * 137;
+      return <div key={r} style={{...css, flex: 'none', height: `${rowHeight}em`, background, color, lineHeight: rowHeight, whiteSpace: 'pre', overflow: 'hidden'}}>
+        <div style={{transform: `translateX(${shift.toFixed(2)}px)`, display: 'flex', alignItems: 'baseline'}}>
+          {Array.from({length: repeats}, (_, k) => {
+            const v = variants[(k + r) % variants.length];
+            const wave = ripple ? .5 + .5 * Math.sin(local * 2.2 + k * .8 + r * 1.3) : .5;
+            const weight = ripple ? Math.round(mix((v.weight ?? 600) - 150, (v.weight ?? 600) + 150, wave)) : v.weight;
+            const stretch = v.stretch !== undefined && ripple ? mix(v.stretch - 12, v.stretch + 12, 1 - wave) : v.stretch;
+            return <span key={k} style={{display: 'inline-flex', alignItems: 'center'}}>
+              <span style={{fontWeight: weight, fontStretch: stretch !== undefined ? `${Math.max(50, Math.min(150, stretch)).toFixed(1)}%` : undefined,
+                fontStyle: v.italic ? 'italic' : 'normal'}}>{word}</span>
+              <span style={{display: 'inline-block', width: '.16em', height: '.16em', borderRadius: '50%', background: dot, margin: '0 .32em', transform: 'translateY(-.28em)'}}/>
+            </span>;
+          })}
+        </div>
       </div>;
     })}
   </div>;
