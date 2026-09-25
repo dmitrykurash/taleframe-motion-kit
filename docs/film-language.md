@@ -7,7 +7,7 @@ A launch film sells a feeling and proves it with the product. It borrows from ti
 1. **Make a launch film, not a keynote.** No shot is a slide that fades in, waits, and fades out. Something is always arriving, holding for reading, or leaving, and the next shot is already on its way.
 2. **Read the style, then commit to it.** Work out the requested style from the brief, write a short style sheet, and apply it to every shot.
 3. **Type and UI take turns.** A type shot states the idea; a UI shot proves it. Do not lay headlines or captions over UI unless the task requires it or the brief asks for it.
-4. **Type moves with intent.** Use big, short, kinetic typography: masks, slams, rolls, counters, rapid word sequences. Never centered small lines floating on an empty frame.
+4. **Type moves with intent.** Use big, short, kinetic typography: masks, slams, rolls, counters, rapid word sequences, motion presets, swaps, and type effects. Never centered small lines floating on an empty frame.
 5. **Cut like an editor, transition like a motion designer.** Most cuts are hard cuts on action or on the beat. A designed transition is fast, carries momentum, and has a reason.
 
 ## 1. The keynote tells
@@ -16,7 +16,8 @@ These make a film look like a presentation. Remove them.
 
 - A centered heading of 90–120 px fades in, holds, and fades out on an empty background, and the next scene repeats the pattern.
 - Every scene enters with the same fade or small rise and leaves with a fade. Nothing continues across a cut.
-- A dissolve or dip-to-color between every scene. Cube, flip, page curl, doorway, mosaic, twirl, blinds, or a constant-speed push.
+- A dissolve or dip-to-color between every scene. Cube, a whole-frame flip, page curl, doorway, a flat tile mosaic, twirl, blinds, or a constant-speed push.
+- The same move everywhere: every UI shot gets the same slow push, every word the same rise, every cut the same transition.
 - Uniform pacing: every shot 3–5 seconds, every move the same speed and curve.
 - Captions or titles over UI ("Now with sharing"), bullet lists, numbered feature cards, labels that explain the screen.
 - Static screenshots that sit there while nothing happens.
@@ -79,24 +80,27 @@ Components and recipes are in the [kinetic type guide](kinetic-type.md). The rul
 - **Readable.** After the last word lands, hold at least 0.4 s plus 0.06 s per character. Never start the exit while the line is still arriving.
 - **Leave with direction.** Exit up and out, cut away, or hand off to a transition. Do not fade in place.
 - **Blur only in motion.** Wrap fast type moves in `MotionBlur`; type at rest is crisp.
-- **Avoid:** typewriter headlines (typing belongs to UI), letter-by-letter fades on long lines, spinning 3D text, bevels, glows, drop shadows, rainbow gradients, and text that drifts in from the frame edge at constant speed.
+- **Avoid:** typewriter headlines (typing belongs to UI), letter-by-letter fades on long lines, extruded 3D text, spins outside playful styles, bevels, glows, drop shadows, rainbow gradients, and text that drifts in from the frame edge at constant speed.
 
 ## 5. Cutting and transitions
 
 - **The default is a hard cut** on action or on the beat. Most cuts in a launch film are cuts.
-- **Use a designed transition when it carries meaning or energy:** the click causes the next screen (`expand`), the word becomes the product (`portal` with text), the product accelerates into the claim (`zoom`), a section change on a beat (`slice`), a technical hit (`glitch`), a detail of the UI becomes its own screen (`portal` with a rect).
+- **Use a designed transition when it carries meaning or energy:** the click causes the next screen (`expand`), the word becomes the product (`portal` with text), the product accelerates into the claim (`zoom`), a section change on a beat (`slice`, `tiles`, `split`), a technical hit (`glitch`), a detail of the UI becomes its own screen (`portal` with a rect), the camera's move carries across the cut (`whip`), the next step arrives on top of the last (`stack`), a calm change of scene (`focus`), shots that belong to one set (`cards`), a spatial reveal (`tilt`), an organic or dreamy change (`liquid`).
 - **Budget:** two or three transition kinds per film, never the same kind twice in a row, and on average no more than one designed transition every four seconds.
 - **Timing:** 0.3–0.8 s for most, up to 1.5 s for a word portal. Accelerate into the cut, land with a long settle, and keep motion blur on.
 - **Continuity:** the outgoing shot is already moving toward the transition; the incoming shot is composed (or deliberately mid-entrance) when it is revealed and starts its own secondary motion as the transition lands.
-- **Never** the presentation set: cube, flip, page curl, doorway, mosaic, twirl, static blinds, constant-speed pushes, or a crossfade between every shot. Taleframe's painted shader transitions belong to the handmade family.
+- **Never** the presentation set: cube, a whole-frame flip around its center, page curl, doorway, a flat tile mosaic, twirl, static blinds, constant-speed pushes, or a crossfade between every shot. The kit's `tilt` and `tiles` avoid those tells on purpose (planes pass in depth with motion blur and a long settle; tiles shrink in a wave onto a shot that is already moving), and `focus` hides its blend inside the blur; still use them sparingly. Taleframe's painted shader transitions belong to the handmade family.
 
 | From → to | Good choices |
 |---|---|
-| UI → type | hard cut, `zoom` into the element the claim is about, `slice` |
-| Type → UI | hard cut, `portal` through the word |
-| Click → result | `expand` from the clicked control |
+| UI → type | hard cut, `zoom` into the element the claim is about, `slice`, `whip` |
+| Type → UI | hard cut, `portal` through the word, `tilt` |
+| Click → result | `expand` from the clicked control; `stack` for the next step of a flow |
+| UI → another view of the product | `cards`, or a `whip` that continues the pointer's direction |
 | UI → closer UI | camera move within the shot, `portal` through the card |
-| Section change | `slice` on the beat |
+| Section change | `slice`, `tiles`, or `split` on the beat |
+| Calm change of scene | `focus` |
+| Dreamy or organic | `liquid`, or the painted shaders for pictures |
 | Technical hit | `glitch`, short and rare |
 | Footage or stills | `TaleframeTransition` shaders chosen for the style |
 
@@ -129,4 +133,5 @@ Run this on stills and on the encoded film before delivery.
 - Does each designed transition carry motion from one shot into the next? Is any crossfade or dip there without a reason?
 - Is there an empty frame longer than four frames?
 - Do the cuts land on actions or beats? Does the pace change at least once?
+- Do neighboring shots repeat a move: the same push, the same direction, the same transition? Change one.
 - Would the style sheet be recognizable from any single shot?

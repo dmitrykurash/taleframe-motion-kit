@@ -43,6 +43,81 @@ Key options:
 - `Scramble`: `text`, `start`, `duration`, `characters`, `rate`, `seed`. Monospace faces look best.
 - `TrackIn`: `text`, `start`, `duration`, `trackFrom` (em), `exit`.
 
+## Motion presets
+
+`KineticText` applies any of 18 motion presets to lines, words, or letters, with a stagger order and a separate exit. The same presets move any element through `Enter` (see [motion direction](motion-direction.md#motion-vocabulary)). Every preset starts hidden and lands exactly at rest.
+
+```tsx
+import {KineticText} from '../kit';
+
+// Letters flip up from the middle outward, hold, then blur away.
+<KineticText lines={['Built to move.']} by="character" enter="flip" order="center" stagger={.03} start={.2}
+  exit="blur" exitAt={2.4} fontSize={180} fontWeight={800} color="#fff"/>
+```
+
+Options: `lines` (strings or runs, as in `MaskReveal`), `by` (`'line'`, `'word'`, `'character'`), `enter`, `exit` (defaults to `enter`), `start`, `stagger` (seconds between pieces), `order`, `duration` (per piece; each preset has a default), `exitAt`, `exitDuration`, `exitStagger`, `exitOrder`, `lineHeight`, `align`, and `seed` for the seeded presets.
+
+| Preset | Look | Suits |
+|---|---|---|
+| `rise` | Slides up from behind the baseline and leaves upward (masked) | Every style; the workhorse |
+| `soft` | A short rise with a fade | Calm films, supporting lines |
+| `blur` | Resolves out of focus while it settles in scale | Premium, cinematic |
+| `track` | Pulls together from wide tracking while it sharpens (by line or word) | Titles and names |
+| `weight` | Grows from a hairline to full weight on a variable font | Modern typographic |
+| `wipe` | Revealed left to right by a moving edge | Editorial, explainers |
+| `flip` | Flips up on its baseline in 3D, like a split-flap board | Technical, crisp |
+| `turn` | Swings open around its left edge like a door | Editorial, spatial |
+| `slide` | Sweeps in from the right with a lean | Energetic |
+| `skew` | Shears into place from a hard italic lean | Sporty, fast |
+| `zoom` | Flies in from the camera with a soft blur | Loud |
+| `glitch` | Jitters in with a red and cyan split in stepped frames, then locks | Technical, digital |
+| `drop` | Falls in from above and bounces once; leaves by falling with a tumble | Playful |
+| `pop` | Scales up from nothing with a springy overshoot | Friendly |
+| `wave` | Bobs up on a spring, so a stagger rolls through the line like a wave | Friendly, fun |
+| `stretch` | Shoots up tall and thin, then squashes into place | Loud, fun |
+| `spin` | Spins in from small while it grows | Playful only |
+| `scatter` | Pieces fly in from seeded random places and assemble; they leave by bursting apart | Loud, playful |
+
+**Stagger order** changes the character of the same preset: `'start'` reads like speech, `'end'` like a rewind, `'center'` like a burst, `'edges'` like something closing in, and `'random'` like sparkle. Letters suit short words; words suit lines; whole lines suit paragraphs and `track`.
+
+## Type transitions
+
+`TextSwap` replaces one text with the next in place: the old text leaves with one preset while the new one arrives with another, and the slot's width follows.
+
+```tsx
+import {KineticText, TextSwap} from '../kit';
+
+<div style={{display: 'flex', alignItems: 'baseline'}}>
+  <KineticText lines={['Make it\u00a0']} enter="soft" fontSize={190} fontWeight={700}/>
+  <TextSwap texts={['fast.', 'simple.', 'yours.']} at={[.3, 1.1, 1.9]} enter="flip" by="character"
+    fontSize={190} fontWeight={700} color="#2f63ff"/>
+</div>
+```
+
+`flip` by letter makes a split-flap board, `blur` a soft morph, `scatter` a burst, `glitch` a digital swap, and `rise` a clean roll. `WordRoll` stays the lightest option for a masked roll after a prefix.
+
+## Type effects
+
+| Component | What it does | Good for |
+|---|---|---|
+| `Mark` | Draws emphasis onto marked runs: `'marker'`, `'underline'`, `'strike'`, `'box'`, or a hand-drawn `'circle'` | Explainers, before-and-after claims |
+| `Echo` | Stacked repeats of a word that fold into it, fan out, or breathe; outlines optional | Loud, graphic, Y2K |
+| `Marquee` | Endless rows of repeating type in alternating directions, optionally tilted and outlined | Loud, brutalist, event films |
+| `Shine` | A sheen of light crossing the letters once | Premium titles, end cards |
+| `CircleText` | Type set on a turning circle | Badges, seals, loops around a product |
+| `SplitText` | A word cut along its middle: the halves slide in and lock, then part | Hype, reveals |
+| `Breathe` | A weight wave running through a variable font | Modern typography, living holds |
+
+- `Mark`: `lines` (runs with `mark: true`), `kind`, `at`, `duration`, `stagger` (between marks), `markColor`, `markedColor` (the marked text's color once the mark is down, e.g. white on a dark marker or gray under a strike).
+- `Echo`: `text`, `copies`, `offset` (em between copies), `start`, `duration`, `mode` (`'collapse'`, `'expand'`, `'pulse'`), `outline`, `echoColor`.
+- `Marquee`: `text`, `rows`, `speed` (logical px per second), `separator`, `angle`, `alternate`, `outlineRows`, `rowGap`. It fills its positioned parent.
+- `Shine`: `text`, `at`, `duration`, `shineColor`, `width` (fraction of the text), `angle`.
+- `CircleText`: `text` (repeat it to fill the circle), `radius`, `speed` (degrees per second), `rotate`.
+- `SplitText`: `text`, `start`, `duration`, `distance` (em), `exitAt`, `exitDuration`.
+- `Breathe`: `text`, `min` and `max` weights, `speed` (waves per second), `wavelength` (letters per wave).
+
+Effects compose: wrap one in `Enter` for its entrance, or set a `KineticText` line beside it. Variable-weight moves need a variable font; Inter and DM Sans are variable here.
+
 ## Practice
 
 **Size and weight.** Display lines are 160–420 px on the stage; a single word can go larger. Heavy weights (800–1000) read as confident and survive motion blur; light weights need slower motion. Secondary lines stay at least 48 px.
@@ -69,17 +144,18 @@ Hold at least 0.4 s plus 0.06 s per character after the last word lands, and tim
 
 **Leaving.** Exit up and out, cut, or hand off to a scene transition (a word can become a `portal`). Do not fade in place and do not let the next shot start while the line is still arriving.
 
-**Avoid** typewriter headlines, letter-by-letter fades on long sentences, spinning or extruded 3D text, glows, bevels, drop shadows, rainbow gradients, text sliding in from the frame edge at a constant speed, and small centered lines floating on an empty frame.
+**Avoid** typewriter headlines, letter-by-letter fades on long sentences, extruded 3D text, glows, bevels, drop shadows, rainbow gradients, text sliding in from the frame edge at a constant speed, and small centered lines floating on an empty frame. `spin`, `scatter`, `stretch`, and `drop` are for playful and loud styles; keep them out of premium films.
 
 ## Recipes by style
 
 | Style | Recipe |
 |---|---|
-| Minimal premium | `MaskReveal` by word, 180–260 px, weight 700–800, slow push on the card, long holds; brand name with `TrackIn` |
-| Loud, hype | `WordSequence` on beats with palette flips, `Slam` at 300+ px weight 1000, `zoom` into the next shot |
-| Friendly | `MaskReveal` with `tilt` 6–10°, rounded face, bright grounds, `expand` with `bounce` |
-| Editorial | Serif `MaskReveal` by line, generous margins, one muted accent word via `WordRoll` |
-| Technical | `Scramble` for labels and names, `Counter` for metrics, mono accents beside a grotesk headline |
-| Cinematic | `TrackIn` titles in small caps or an elegant serif, slow fades only here, long holds |
+| Minimal premium | `MaskReveal` or `KineticText` with `rise`, `soft`, or `blur` by word, 180–260 px, weight 700–800, slow push on the card, long holds; the name with `TrackIn` or `Shine` |
+| Loud, hype | `WordSequence` on beats with palette flips, `Slam` or the `zoom` and `stretch` presets at 300+ px weight 1000, `Echo`, `SplitText`, `Marquee` |
+| Friendly | `pop`, `wave`, and `drop` presets or `MaskReveal` with `tilt` 6–10°, rounded face, bright grounds, `CircleText` badges |
+| Editorial | Serif lines by line with `rise` or `wipe`, generous margins, `Mark` underlines, one accent word via `TextSwap` or `WordRoll` |
+| Technical | `Scramble` for labels and names, `glitch` and `flip` presets, `TextSwap` flip boards, `Counter` for metrics, mono accents |
+| Cinematic | `TrackIn` titles in small caps or an elegant serif, `blur` by line, `Shine`, slow fades only here, long holds |
+| Modern typographic | The `weight` preset and `Breathe` on a variable font, `turn` and `flip` in 3D, one face in several weights |
 
-The **Scene-Transitions** composition uses `MaskReveal`, `WordRoll`, and `Counter` between UI shots. **Product-Explainer**, **Product-Launch**, and **Kit-Reel** use every component above. Each pairs a grotesk with one serif-italic line, and Kit-Reel gives each idea its own face: Inter, Instrument Serif, Geist Mono, and DM Sans Black.
+**Motion-Showcase** plays all 18 presets on two walls (each word is its preset's name), the stagger orders, `TextSwap`, and every type effect, each named by a label. The **Scene-Transitions** composition uses `MaskReveal`, `WordRoll`, and `Counter` between UI shots. **Product-Explainer**, **Product-Launch**, and **Kit-Reel** use every component above. Each pairs a grotesk with one serif-italic line, and Kit-Reel gives each idea its own face: Inter, Instrument Serif, Geist Mono, and DM Sans Black.

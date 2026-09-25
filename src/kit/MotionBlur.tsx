@@ -1,6 +1,6 @@
 import React from 'react';
 import {AbsoluteFill, useVideoConfig} from 'remotion';
-import {TimeShift, useTime} from './clock';
+import {TimeShift, useClockRate, useTime} from './clock';
 
 /** Centered, evenly stratified sample offsets in seconds for one exposure.
  * `shutter` is a fraction of the frame interval: 0.5 equals a 180° film shutter. */
@@ -38,7 +38,8 @@ export type MotionBlurProps = {
 export function MotionBlur({children, shutter = .5, samples = 12, time, style}: MotionBlurProps) {
   const clock = useTime(), t = time ?? clock;
   const {fps} = useVideoConfig();
-  const offsets = shutterOffsets(samples, shutter, fps);
+  // The shutter stays open for a fraction of a *film* frame; inside a speed ramp that spans less (or more) shot time.
+  const offsets = shutterOffsets(samples, Math.min(2, shutter * useClockRate()), fps);
   if (offsets.length === 1) return <>{children(t)}</>;
   return <AbsoluteFill style={{isolation: 'isolate', ...style}}>
     {offsets.map((offset, i) => <AbsoluteFill key={i} style={{opacity: 1 / (i + 1)}}>

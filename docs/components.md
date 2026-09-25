@@ -63,6 +63,16 @@ Use the example's font-loading setup or `FontLoader` before rendering a custom f
 | `Scramble` | `text`, `start?`, `duration?` | Characters cycle and resolve left to right |
 | `TrackIn` | `text`, `start?`, `trackFrom?` | Wide tracking tightening into a title |
 | `useTextWidths` | `texts`, font | Widths of several strings after the font loads |
+| `KineticText` | `lines`, `by?`, `enter?`, `exit?`, `start?`, `stagger?`, `order?`, `exitAt?`, font settings | Any of 18 motion presets per line, word, or letter, with a stagger order and a separate exit |
+| `TextSwap` | `texts`, `at`, `enter?`, `exit?`, `by?` | Type-to-type transitions in place; the slot's width follows |
+| `Mark` | `lines` (runs with `mark`), `kind?`, `at?`, `markColor?`, `markedColor?` | Marker, underline, strike, box, or hand-drawn circle drawn onto words |
+| `Echo` | `text`, `copies?`, `offset?`, `mode?`, `outline?` | Stacked repeats that collapse, expand, or pulse |
+| `Marquee` | `text`, `rows?`, `speed?`, `angle?`, `alternate?`, `outlineRows?` | Endless rows of repeating type |
+| `Shine` | `text`, `at?`, `duration?`, `shineColor?` | A sheen of light crossing the letters |
+| `CircleText` | `text`, `radius?`, `speed?` | Type on a turning circle |
+| `SplitText` | `text`, `start?`, `distance?`, `exitAt?` | A word cut in half; the halves slide in and lock, then part |
+| `Breathe` | `text`, `min?`, `max?`, `speed?`, `wavelength?` | A weight wave through a variable font |
+| `PRESETS`, `PRESET_NAMES`, `poseAt`, `poseStyle` | — | The preset catalog and its pose math, for custom components |
 
 In these components `letterSpacing` is in em. See [kinetic type](kinetic-type.md) for timing and practice.
 
@@ -79,8 +89,9 @@ In these components `letterSpacing` is in em. See [kinetic type](kinetic-type.md
 | `shutterOffsets`, `samplesForStreak` | — | Sample times inside the shutter; sample count for a streak length |
 | `useTime`, `TimeShift` | `by` (seconds) | The film clock, and a scoped offset of it (motion-blur samples use this) |
 | `curves`, `overshoot` | — | Shared launch-film easing: `punchIn`, `punchOut`, `snap`, `open`, `glide` |
+| `ClockScale`, `useClockRate` | `rate` | Run children's clock at a rate; `MotionBlur` scales its shutter by it |
 
-Transition kinds are `zoom`, `portal`, `expand`, `slice`, and `glitch`; their options are listed in [scene transitions](scene-transitions.md). Shots must be opaque, read the clock inside themselves, and keep audio outside.
+Transition kinds are `zoom`, `portal`, `expand`, `slice`, `glitch`, `whip`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, and `cards`; their options are listed in [scene transitions](scene-transitions.md). Shots must be opaque, read the clock inside themselves, and keep audio outside.
 
 ## Cursor, badge, closing
 
@@ -99,7 +110,22 @@ Transition kinds are `zoom`, `portal`, `expand`, `slice`, and `glitch`; their op
 - `mix(a, b, p)` interpolates values; `clamp(v)` bounds 0–1.
 - `keystrokeSchedule` and `trackedWidth` are lower-level typing helpers.
 
-See `src/kit` for precise types and other exports. Keep a scene's action times together so UI state, cursor, and camera cannot silently drift apart.
+## Motion vocabulary
+
+| API | Main inputs | Purpose |
+|---|---|---|
+| `spring`, `springCurve` | `t`, `{duration, bounce}` / `bounce` | A damped spring in seconds, or as a 0–1 curve over a window |
+| `moveCamera` | `t`, `from`, `to`, `start`, `duration`, `move` | Camera between two framings: `'glide'`, `'drift'`, `'spring'`, `'crash'`, `'whip'` |
+| `Handheld` | `amount?`, `impacts?`, `hit?`, `children` | Organic camera wander plus hits at chosen times, edges covered |
+| `shake`, `impact`, `drift` / `Drift` | `t`, options | Raw handheld offsets, a decaying jolt, and a slow float for holds |
+| `arc` | `p`, `from`, `to`, `bend?` | A point on a curved path |
+| `stagger`, `staggerRank`, `gridDelay` | index, count, order or pattern | Delays for pieces in a line or a grid |
+| `Enter` | `preset?`, `start?`, `exit?`, `exitAt?`, `distance?`, `children` | Any element arriving and leaving with a motion preset |
+| `SpeedRamp`, `rampTime`, `rampRate` | `keys: {at, rate}[]` | Slow motion, freezes, and rushes for everything inside |
+| `Space`, `Plane` | `camera`, `perspective?`, `focus?`, `aperture?` / `x`, `y`, `z`, rotations, size | A 3D stage for floating UI, with depth of field |
+| `camera3DAt`, `depthOf` | keys / point, camera | Interpolate 3D camera keys; distance of a point from the camera |
+
+See [motion direction](motion-direction.md#motion-vocabulary) for how to use them, and `src/kit` for precise types and other exports. Keep a scene's action times together so UI state, cursor, and camera cannot silently drift apart.
 
 ## Transitions and effects
 

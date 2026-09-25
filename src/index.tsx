@@ -15,6 +15,7 @@ import {SceneTransitionReel, SCENE_TRANSITION_REEL_SECONDS} from './examples/Sce
 import {ProductExplainer, EXPLAINER_SECONDS} from './examples/ProductExplainer';
 import {ProductLaunch, LAUNCH_SECONDS} from './examples/ProductLaunch';
 import {KitReel, KIT_REEL_SECONDS} from './examples/KitReel';
+import {MotionShowcase, SHOWCASE_SECONDS} from './examples/MotionShowcase';
 
 const Root = () => <>
   {['Starter', 'UI-Demo'].map(id => <Composition key={id} id={id} component={StarterFilm}
@@ -33,6 +34,8 @@ const Root = () => <>
   <Composition id="Product-Launch" component={ProductLaunch} width={1920} height={1080} fps={30}
     durationInFrames={LAUNCH_SECONDS * 30}/>
   <Composition id="Kit-Reel" component={KitReel} width={1080} height={1920} fps={30} durationInFrames={KIT_REEL_SECONDS * 30}/>
+  <Composition id="Motion-Showcase" component={MotionShowcase} defaultProps={{labelled: true}} width={1920} height={1080} fps={30}
+    durationInFrames={SHOWCASE_SECONDS * 30}/>
   <Composition id="Scene-Transitions" component={SceneTransitionReel} defaultProps={{labelled: true}} width={1920} height={1080}
     fps={30} durationInFrames={SCENE_TRANSITION_REEL_SECONDS * 30}/>
 </>;

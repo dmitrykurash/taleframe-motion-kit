@@ -11,6 +11,18 @@ export function useTime() {
   return useCurrentFrame() / fps + useContext(ClockOffset);
 }
 
+/** Playback rate of the local clock relative to the film: 1 normally, below 1 inside slow motion. */
+const ClockRate = createContext(1);
+export const useClockRate = () => useContext(ClockRate);
+
+/** Children run at `rate` times the speed of their parent's clock (rates multiply when nested). Combine
+ * with TimeShift; SpeedRamp does both. MotionBlur scales its shutter by the rate, so slow motion blurs less. */
+export function ClockScale({rate, children}: {rate: number; children: React.ReactNode}) {
+  const outer = useContext(ClockRate);
+  if (!Number.isFinite(rate) || rate < 0) throw new Error('ClockScale needs a finite rate of 0 or more.');
+  return <ClockRate.Provider value={outer * rate}>{children}</ClockRate.Provider>;
+}
+
 /** Render children as if the clock were `by` seconds later (negative: earlier). Offsets nest. */
 export function TimeShift({by, children}: {by: number; children: React.ReactNode}) {
   const outer = useContext(ClockOffset);

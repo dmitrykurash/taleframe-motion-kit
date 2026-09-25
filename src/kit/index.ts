@@ -16,3 +16,7 @@ export * from './TaleframeEffects';
 export * from './imageSequence';
 export * from './scene';
 export * from './kinetic';
+export * from './moves';
+export * from './presets';
+export * from './choreography';
+export * from './typefx';

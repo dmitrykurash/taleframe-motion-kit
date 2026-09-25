@@ -1,6 +1,6 @@
 # Taleframe
 
-A reusable library for product launches, app demonstrations, and motion reels. Build films with real UI, guided cameras, natural typing, kinetic typography, scene transitions with true motion blur, and transitions and effects from Taleframe.
+A reusable library for product launches, app demonstrations, and motion reels. Build films with real UI, guided cameras, natural typing, kinetic typography, a motion vocabulary (springs, speed ramps, 3D space), scene transitions with true motion blur, and transitions and effects from Taleframe.
 
 Films made with the kit follow one [film language](docs/film-language.md): a launch film, not a keynote. The agent reads the requested style and commits to it, lets type shots and UI shots take turns, uses big kinetic type, and cuts like an editor.
 
@@ -12,7 +12,9 @@ The kit is a Remotion project with editable examples and instructions for coding
 
 ![Frames from the demo films: a UX explainer, a dark launch, and a vertical reel about the kit](docs/images/demo-films.jpg)
 
-[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.1.0) or open the examples in Studio.
+![Frames from Motion-Showcase: a tiles transition, floating UI in 3D, the type presets, and a marquee](docs/images/motion-showcase.jpg)
+
+[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.2.0) or open the examples in Studio.
 
 ## Start with an agent
 
@@ -42,6 +44,7 @@ Choose a composition in Remotion Studio:
 
 | Composition | What it shows |
 |---|---|
+| `Motion-Showcase` | A 66-second catalog of the motion vocabulary: eight newer scene transitions, 3D space, springs, camera moves, a speed ramp, all 18 type presets, and every type effect, each named by a label |
 | `Product-Explainer` | A 52-second UX explainer for an unnamed AI workspace: four features, each a type card and then the product doing it |
 | `Product-Launch` | A 26-second dark launch for the same product: word beats, a hero shot, a zoom into Allow, and a counter |
 | `Kit-Reel` | A 31-second 1080 × 1920 reel about the kit, made with the kit; each scene transition names itself as it plays |
@@ -64,10 +67,11 @@ The first render downloads Remotion's dedicated Chrome. Media tools come from th
 
 ## What you can reuse
 
-- A shot list (`Shots`) with hard cuts by default and five scene transitions for React shots: `zoom`, `portal`, `expand`, `slice`, and `glitch`.
-- Temporal motion blur (`MotionBlur`) for transitions and any fast move.
+- A shot list (`Shots`) with hard cuts by default and thirteen scene transitions for React shots: `zoom`, `portal`, `expand`, `slice`, `glitch`, `whip`, `stack`, `tiles`, `split`, `focus`, `liquid`, `tilt`, and `cards`.
+- Temporal motion blur (`MotionBlur`) for transitions and any fast move, aware of speed ramps.
+- A motion vocabulary: springs, camera moves (glide, drift, spring, crash, whip), handheld wander and hits, arcs, stagger orders and grid waves, entrances for any element, speed ramps, and a 3D space for floating UI with depth of field.
 - Logical stages for 16:9, 9:16, 1:1, and 4:5 outputs; the scene transitions adapt to each.
-- Kinetic typography: mask reveals, slams, word rolls, rapid word sequences, counters, scrambles, and track-ins.
+- Kinetic typography: 18 motion presets for lines, words, or letters (`KineticText`), type-to-type swaps, mask reveals, slams, word rolls, rapid word sequences, counters, scrambles, track-ins, and type effects: marks, echoes, marquees, shine, circular text, split words, and variable-weight waves.
 - Camera keyframes, target framing, cursor paths, hover and click timing, and background parallax.
 - Natural typing with repeatable key timing and a smoothly following camera.
 - Word and character reveals, expanding badges, and closing sequences.

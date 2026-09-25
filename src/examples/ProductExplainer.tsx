@@ -24,10 +24,11 @@ const blend = (a: Camera, b: Camera, p: number): Camera => ({x: mix(a.x, b.x, p)
 const threadCamera = (centerY: number, scale = 1.42) => focusCamera(stagePoint(COLUMN.left + COLUMN.width / 2 + 40, centerY), scale, {x: 960, y: 540});
 const send = (t: number, click: number): ButtonState => (Math.abs(t - click) < .09 ? 'press' : t > click - .35 && t < click ? 'hover' : 'idle');
 
-/** The whole composer, low in frame with a slow push, while a prompt is typed and sent. */
+/** The whole composer, low in frame with a slow push, while a prompt is typed and sent. Aimed a little right of
+ * the composer's center so the sidebar stays fully outside the frame. */
 function composerCamera(t: number, from: number, attachment = false) {
   const frame = composerFrame(attachment);
-  return focusCamera(stagePoint(frame.x + frame.width / 2, frame.y + frame.height / 2), 1.4 + .08 * curves.glide(progress(t, from, 3)), {x: 960, y: 760});
+  return focusCamera(stagePoint(frame.x + frame.width / 2 + 46, frame.y + frame.height / 2), 1.4 + .08 * curves.glide(progress(t, from, 3)), {x: 960, y: 760});
 }
 
 function Window({title, rows, children}: {title: string; rows: SidebarRow[]; children?: React.ReactNode}) {

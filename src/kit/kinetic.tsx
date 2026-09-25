@@ -11,9 +11,9 @@ import {FontStyle, useTextMetrics} from './typography';
  * Sizes are logical stage pixels. Letter spacing is in em here (display type is tracked relative to size). */
 export type KineticFont = {fontFamily?: string; fontSize?: number; fontWeight?: number; letterSpacing?: number; color?: string};
 const DEFAULT_FAMILY = '"DM Sans Variable", sans-serif';
-const fontCss = ({fontFamily = DEFAULT_FAMILY, fontSize = 140, fontWeight = 800, letterSpacing = -.035, color = 'currentColor'}: KineticFont): React.CSSProperties =>
+export const fontCss = ({fontFamily = DEFAULT_FAMILY, fontSize = 140, fontWeight = 800, letterSpacing = -.035, color = 'currentColor'}: KineticFont): React.CSSProperties =>
   ({fontFamily, fontSize, fontWeight, letterSpacing: `${letterSpacing}em`, color, fontKerning: 'normal', fontSynthesis: 'none'});
-const measureFont = (f: KineticFont): FontStyle => ({fontFamily: f.fontFamily ?? DEFAULT_FAMILY, fontSize: f.fontSize ?? 140,
+export const measureFont = (f: KineticFont): FontStyle => ({fontFamily: f.fontFamily ?? DEFAULT_FAMILY, fontSize: f.fontSize ?? 140,
   fontWeight: f.fontWeight ?? 800, letterSpacing: (f.letterSpacing ?? -.035) * (f.fontSize ?? 140)});
 
 /** Widths of several strings in one font, after the font has loaded. */
@@ -68,7 +68,7 @@ export type MaskRevealProps = KineticFont & {
   style?: React.CSSProperties;
 };
 
-const runStyle = (run: TextRun): React.CSSProperties => ({fontFamily: run.fontFamily, fontWeight: run.fontWeight, fontStyle: run.fontStyle,
+export const runStyle = (run: TextRun): React.CSSProperties => ({fontFamily: run.fontFamily, fontWeight: run.fontWeight, fontStyle: run.fontStyle,
   color: run.color, fontSize: run.fontSize, letterSpacing: run.letterSpacing === undefined ? undefined : `${run.letterSpacing}em`});
 
 /** The workhorse of launch typography: each line sits in a mask and its words (or letters) slide up

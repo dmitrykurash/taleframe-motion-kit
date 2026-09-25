@@ -68,3 +68,12 @@ Checked on 25 September 2026 on the same Mac.
 - Every transition window was inspected frame by frame in the encoded files: zoom, expand, slice, glitch, word portal, the painted watercolor, the motion-blur whip, and the match cut from a card into the product window. The UI shots were checked for typing, cursor hits, hover and press states, reading holds, and camera framing.
 - Found and fixed during these checks: `WordRoll` moved its line up on `exit` without a mask, so the words stayed visible (the line now leaves through its own mask); close-ups framed a sliver of the sidebar at the frame edge; a zoom that landed on an empty frame before its headline began; a word that finished decoding as it left the frame.
 
+## Motion vocabulary (version 1.2)
+
+Checked on 25 September 2026 on the same Mac.
+
+- `npm run check` passed TypeScript and all 44 tests, including springs that settle exactly, repeatable handheld noise and hits, arcs, stagger orders and grid waves, speed ramps integrated exactly, camera moves that start and end on their framings, 3D camera keys and depth, every one of the 18 presets starting hidden and landing exactly at rest, and the geometry of the eight new transitions (a continuous whip strip, tiles that cover any stage, split halves that clear the frame at any angle, cards that never overlap).
+- `npm run check:scenes -- --gl angle` rendered all 14 transition windows of Scene-Transitions and Motion-Showcase at three points each; every revisited frame was identical after out-of-order seeks.
+- The 66-second Motion-Showcase (1920 × 1080, 30 fps, 1980 frames) rendered with `--gl angle` in about 36 seconds, decodes fully, and matches its render settings. Every frame of all eight new transition windows and the first frames after every cut were inspected in the encoded file.
+- Found and fixed during these checks: `MotionBlur` inside a speed ramp kept a full-speed shutter, so slow motion still streaked (the clock now carries its rate, and the shutter follows it); a close-up of the composer in Product-Explainer showed a band of the sidebar at the frame edge (the framing now clears it); several type shots opened on a few empty frames after their cut (their first move now starts on the cut).
+
