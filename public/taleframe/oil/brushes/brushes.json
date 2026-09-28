@@ -1,0 +1,89 @@
+{
+ "version": 1,
+ "brushes": [
+  {
+   "id": "0_small_h",
+   "size": [
+    512,
+    256
+   ],
+   "mips": [
+    "0_small_h.png",
+    "0_small_h_m1.png",
+    "0_small_h_m2.png",
+    "0_small_h_m3.png",
+    "0_small_h_m4.png",
+    "0_small_h_m5.png",
+    "0_small_h_m6.png",
+    "0_small_h_m7.png",
+    "0_small_h_m8.png"
+   ],
+   "meanL": 0.890036,
+   "coverage": 0.504441
+  },
+  {
+   "id": "1_small_v",
+   "size": [
+    256,
+    512
+   ],
+   "mips": [
+    "1_small_v.png",
+    "1_small_v_m1.png",
+    "1_small_v_m2.png",
+    "1_small_v_m3.png",
+    "1_small_v_m4.png",
+    "1_small_v_m5.png",
+    "1_small_v_m6.png",
+    "1_small_v_m7.png",
+    "1_small_v_m8.png"
+   ],
+   "meanL": 0.892103,
+   "coverage": 0.495015
+  },
+  {
+   "id": "2_large_h",
+   "size": [
+    1024,
+    1024
+   ],
+   "mips": [
+    "2_large_h.png",
+    "2_large_h_m1.png",
+    "2_large_h_m2.png",
+    "2_large_h_m3.png",
+    "2_large_h_m4.png",
+    "2_large_h_m5.png",
+    "2_large_h_m6.png",
+    "2_large_h_m7.png",
+    "2_large_h_m8.png",
+    "2_large_h_m9.png",
+    "2_large_h_m10.png"
+   ],
+   "meanL": 0.89329,
+   "coverage": 0.580319
+  },
+  {
+   "id": "3_large_v",
+   "size": [
+    1024,
+    1024
+   ],
+   "mips": [
+    "3_large_v.png",
+    "3_large_v_m1.png",
+    "3_large_v_m2.png",
+    "3_large_v_m3.png",
+    "3_large_v_m4.png",
+    "3_large_v_m5.png",
+    "3_large_v_m6.png",
+    "3_large_v_m7.png",
+    "3_large_v_m8.png",
+    "3_large_v_m9.png",
+    "3_large_v_m10.png"
+   ],
+   "meanL": 0.887326,
+   "coverage": 0.584009
+  }
+ ]
+}

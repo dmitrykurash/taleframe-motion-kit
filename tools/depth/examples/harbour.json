@@ -1,0 +1,29 @@
+{
+  "name": "harbour",
+  "still": "public/demo/depth/harbour/color.jpg",
+  "out": "public/demo/depth/harbour",
+  "size": [1920, 1080],
+  "depth": {"variant": "small", "res": 770},
+  "subjects": {
+    "boat": {
+      "points": [[0.375, 0.622], [0.392, 0.556], [0.3525, 0.444], [0.342, 0.585], [0.433, 0.622], [0.3125, 0.6]],
+      "negatives": [[0.5, 0.681], [0.25, 0.489], [0.29, 0.66]]
+    },
+    "wall": {
+      "points": [[0.125, 0.533], [0.083, 0.637], [0.225, 0.667], [0.175, 0.511]],
+      "negatives": [[0.275, 0.696], [0.083, 0.37], [0.4, 0.62]]
+    }
+  },
+  "planes": [
+    {"name": "headland", "depth": [0.04, 0.055], "region": [0.6, 0, 1, 0.56], "feather": 0.02},
+    {"name": "mist", "luma": "bright", "region": [0, 0.3, 1, 0.82], "feather": 0.03},
+    {"name": "boat", "matte": "boat"},
+    {"name": "rocks", "depth": [0.34, 0.4], "region": [0, 0.55, 0.66, 1], "feather": 0.015, "write": false},
+    {"name": "near", "matte": "wall", "plus": ["rocks"]}
+  ],
+  "fill": {"cut": ["headland", "boat", "near"]},
+  "tracks": {
+    "lamp": {"region": [0.74, 0.03, 0.82, 0.16], "measure": "bright"},
+    "boat": {"plane": "boat"}
+  }
+}

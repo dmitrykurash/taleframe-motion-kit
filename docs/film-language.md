@@ -50,11 +50,11 @@ A named company or film is a reference for traits, not assets. List three to fiv
 | Editorial, refined | thoughtful, trusted, writing, finance | Paper, ink, one muted accent. Serif display with a small sans | Line-by-line mask reveals, slow parallax, precise holds | Hard cuts, word `portal`, restrained `expand` | 2–4 s |
 | Technical, developer | developer, API, terminal, fast, dark mode | Near-black, grays, one neon accent, subtle glow. Grotesk with mono accents | Crisp snaps (0.3–0.5 s), typed commands, decode text, gliding camera | `slice`, `zoom`, card `portal`, occasional `glitch` | 1–2 s |
 | Cinematic | cinematic, story, emotional, documentary | Graded footage, film grain. Tracked small caps or an elegant serif | Weighty, slow, long holds, `TrackIn` titles | Hard cuts, light leaks, dissolves (the one family where they belong) | 3–6 s |
-| Handmade, painted | watercolor, storybook, warm, paper, craft | Paper whites, pigment colors. Serif or lettered type | Held poses (stop motion), gentle drift | Taleframe shader transitions: watercolor, ink, paper paint, sand | 3–5 s |
+| Handmade, painted | watercolor, oil, storybook, warm, paper, craft, painterly | Paper whites, pigment colors. Serif or lettered type, ink type set into the picture | Held poses (stop motion on twos), gentle drift, a camera traveling through painted planes ([section 9](#9-painted-films-in-depth)) | Taleframe shader transitions opened from something in the picture (watercolor, ink, engraving; prism, ripple or godrays for light), with paper paint, sand or waterspill for washes | 3–6 s |
 | Retro, brutalist | Y2K, retro, brutalist, zine, raw, pixel | Primaries or harsh contrast. Extreme grotesk, mono, pixel faces | Stepped timing, hard cuts, halftone | `glitch`, `slice`, halftone and signal shaders | 0.5–1.5 s |
 | Motion-design reel | showreel, motion designer, Dribbble, UI motion, "all code" | Near-black and warm paper, one or two electric accents. Medium grotesk, a variable-width face for type walls, mono labels | Springs with a touch of overshoot, one shape morphing through states, trails, fields, particles, everything on a beat grid | Hard cuts on beats, circle `expand`, `divide`, `grid` | 0.5–2 s |
 
-Worked examples: `Product-Launch` is minimal premium in black, `Product-Explainer` is the same family in white with explainer pacing, `Kit-Reel` puts loud word beats inside a minimal 9:16 reel, `Motion-Reel` is a motion-design reel, `Launch-Film` is editorial, and `Scene-Transitions` is technical. Each file opens with its style sheet.
+Worked examples: `Product-Launch` is minimal premium in black, `Product-Explainer` is the same family in white with explainer pacing, `Kit-Reel` puts loud word beats inside a minimal 9:16 reel, `Motion-Reel` is a motion-design reel, `Launch-Film` is editorial, `Scene-Transitions` is technical, and `Painted-Depth` is handmade and painted, a depth film in oil. Each file opens with its style sheet; for `Painted-Depth` that file is `src/examples/depth/film.ts`, which holds its shots.
 
 ## 3. Structure: shots, turns, and beats
 
@@ -81,6 +81,7 @@ Components and recipes are in the [kinetic type guide](kinetic-type.md). The rul
 - **Readable.** After the last word lands, hold at least 0.4 s plus 0.06 s per character. Never start the exit while the line is still arriving.
 - **Leave with direction.** Exit up and out, cut away, or hand off to a transition. Do not fade in place.
 - **Blur only in motion.** Wrap fast type moves in `MotionBlur`; type at rest is crisp.
+- **Clear of the edges.** Over pictures, and in cinematic or painted styles, keep type out of the outer 10 % of the frame for its whole life ([section 9](#9-painted-films-in-depth)). Full-frame type (a word sequence, a type wall, a marquee) and entrances from off screen are the exceptions.
 - **Medium by default, always filled.** Set display type in a medium weight unless the style asks for heavier; never outline type unless the brief asks for it.
 - **Avoid:** typewriter headlines (typing belongs to UI), letter-by-letter fades on long lines, extruded 3D text, spins outside playful styles, bevels, glows, drop shadows, rainbow gradients, and text that drifts in from the frame edge at constant speed.
 
@@ -105,7 +106,8 @@ Components and recipes are in the [kinetic type guide](kinetic-type.md). The rul
 | Calm change of scene | `focus` |
 | Dreamy or organic | `liquid`, or the painted shaders for pictures |
 | Technical hit | `glitch`, short and rare |
-| Footage or stills | `TaleframeTransition` shaders chosen for the style |
+| Footage or stills | `TaleframeTransition` shaders chosen for the style, opened from something in the picture |
+| Painting → painting in a depth film | Travel through an anchor (a lit window, a lamp), or a match cut on it ([section 9](#9-painted-films-in-depth)) |
 
 See [scene transitions](scene-transitions.md) for the API.
 
@@ -138,3 +140,30 @@ Run this on stills and on the encoded film before delivery.
 - Do the cuts land on actions or beats? Does the pace change at least once?
 - Do neighboring shots repeat a move: the same push, the same direction, the same transition? Change one.
 - Would the style sheet be recognizable from any single shot?
+- In a depth film: does every cut pass through something in the picture? Are headings and UI separate beats? Does the render log zero `SAFEAREA`?
+
+## 9. Painted films in depth
+
+A film made of pictures (paintings, stills, footage) can travel into them. A [depth film](depth-films.md) cuts each picture into painted planes, moves a camera through them, and passes from shot to shot through something in the picture. The rules above still hold, with the exceptions listed at the end of this section; these are the ones specific to it.
+
+**Choose it** when the brief asks for a handmade, storybook, or painterly film, when the material is pictures rather than UI, or when a few UI beats need a painted world around them. For a UI-led launch, stay with React shots and [scene transitions](scene-transitions.md).
+
+**Painted looks are one style family.** Watercolor and oil are two looks of one paint engine, chosen per film and switched by one flag, so an earlier look stays reproducible. The chain is fixed: a duotone tint per shot before the paint, the paint per plane, a swirl lens, then one painted finish over the frame (stopmotion at 12 fps, soft-light grain, a light duotone). Loose, bold oil keeps its detail where a focus ellipse puts it: a face, a hand, the one prop a scene is about. See [paint in oil](effects.md#paint-in-oil) and [named looks](effects.md#named-looks).
+
+**Cut through the picture.** Every cut passes through something in the picture, on a beat: a lit window, a lantern, a lamp. A Taleframe shader that takes a centre (watercolor, ink or engraving; prism, ripple or godrays for light) opens from that anchor while the camera travels into it, and the next shot opens pushed in and pulls back. A match cut puts the incoming anchor exactly on the outgoing one. Behind UI, the camera dives through the element on screen (a button, a badge, a window) and the next painting opens from that point. Pictures hold on twos; the transition and the camera inside it run at the full frame rate. See [transitions](transitions.md#travel-through-the-picture).
+
+**Compose type into the picture.** Set type in groups around the subject: big and small, together and apart, each drifting slowly toward the viewer and leaving upward. Give a few lines their own gesture (a stamp, a flight, a rush past the lens, a glint), not all of them. A soft, wide scrim darkens bright paper or sky behind a line so it reads. See [ink type](kinetic-type.md#ink-type-in-depth-films).
+
+**Keep a 10 % type-free border.** Every word's real ink box (cap or ascender top to descender bottom) stays inside 10–90 % of the width and the height for its whole life, including the group's drift and growth and the word's own gesture (a stamp, a flight). Only a deliberate full-frame effect or an entrance from off screen may cross it. A group set against the border grows away from it. Depth films check this on every frame and log `SAFEAREA`; a delivered render logs none.
+
+**Headings and UI are separate beats.** The heading, then the UI element, then the next scene. When a UI beat needs more time, take it from the neighboring shots; never overlap them.
+
+**Cut out only what reads.** A subject with an imperfect matte (a spinning wheel, smoke, wisps of hair against the sky) or no real parallax (it sits at the sky's depth) stays in its plate: cutting it leaves a ghost of the subject and a blurry filled patch that viewers notice. A painting behind UI often reads best uncut, as one plate that moves as a piece.
+
+**Exceptions in a depth film.** Its ink type and its cuts follow these rules where they differ from [section 4](#4-kinetic-typography), [section 5](#5-cutting-and-transitions) and the keynote test:
+
+- **Size.** Compose groups big and small: display groups of about 100–160 px on the 1920 × 1080 stage, secondary groups at least 48 px. A painting needs room around its subject, so type frames it instead of filling the frame.
+- **Tracking.** Set a serif at neutral tracking (the ink engine's default, 0), not the tight tracking of a grotesk. A small secondary line may open slightly (0.02 em).
+- **Shadow and scrim.** The ink's soft legibility shadow and the wide `scrim` behind a group over bright paper or sky are allowed; they read as shade in the picture, not as a drop shadow on a slide.
+- **Exits.** Groups lift off upward by default. A secondary group may `dissolve` in place while its heading lifts.
+- **Cuts.** Every cut is a travel-through, a match cut on an anchor, or a dive through UI. A depth film has no hard cuts between pictures, and the transition budget above does not apply; still vary the shader from cut to cut.

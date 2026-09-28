@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {TaleframeEffects, type EffectsFrame, type EffectsSettings} from '../kit/TaleframeEffects';
+import {looseOil, WATERCOLOR_BROAD} from '../kit/looks';
 
 export const effectExamples: {name: string; detail: string; effects: EffectsSettings}[] = [
   {name: 'Watercolor', detail: 'Brushwork, softened detail, and paper', effects: {watercolor: {enabled: true, amount: 1, brushSize: .8, strokes: 1.1, paper: .45}}},
@@ -13,6 +14,15 @@ export const effectExamples: {name: string; detail: string; effects: EffectsSett
   {name: 'Stopmotion', detail: 'Held source frames plus optional handmade texture', effects: {stopmotion: {enabled: true, fps: 8, jitter: .7, rotation: .08, boil: .45, texture: .12}}},
 ];
 
+/** Oil needs its brushes loaded, which <TaleframeEffects> does; it is kept out of effectExamples, whose GPU check
+ * calls applyTaleframeEffects() directly. The focus ellipse keeps finer strokes on the sun. */
+export const oilExample: {name: string; detail: string; effects: EffectsSettings} = {
+  name: 'Oil', detail: 'Bristle-brush strokes laid coarse to fine', effects: {watercolor: looseOil(WATERCOLOR_BROAD, [[.8, .26, .1, .16]])},
+};
+const panels = [effectExamples[0], oilExample, ...effectExamples.slice(1)];
+/** Three seconds per pair. */
+export const EFFECTS_GALLERY_SECONDS = panels.length * 3;
+
 const drawMotion = (ctx: CanvasRenderingContext2D, {width, height, seconds}: EffectsFrame) => {
   ctx.fillStyle = '#eee4d4'; ctx.fillRect(0, 0, width, height);
   ctx.strokeStyle = '#c2b7a8'; ctx.lineWidth = 2;
@@ -23,11 +33,12 @@ const drawMotion = (ctx: CanvasRenderingContext2D, {width, height, seconds}: Eff
   ctx.fillStyle = '#2f6762'; ctx.save(); ctx.translate(width - x, height * .57); ctx.rotate(seconds); ctx.fillRect(-height * .11, -height * .11, height * .22, height * .22); ctx.restore();
 };
 
-/** Register at any resolution and frame rate, with durationInFrames = fps * 24. */
+/** Register at any resolution and frame rate, with durationInFrames = fps * EFFECTS_GALLERY_SECONDS. The pairs share
+ * whatever duration the composition has. */
 export const EffectsGallery: React.FC = () => {
-  const frame = useCurrentFrame(), {fps, width, height} = useVideoConfig();
-  const index = Math.min(effectExamples.length - 1, Math.floor(frame / (fps * 3)));
-  const entry = effectExamples[index];
+  const frame = useCurrentFrame(), {width, height, durationInFrames} = useVideoConfig();
+  const index = Math.min(panels.length - 1, Math.floor(frame / (durationInFrames / panels.length)));
+  const entry = panels[index];
   const source = entry.name === 'Stopmotion' ? {draw: drawMotion} : staticFile('demo/landscape-a.svg');
   const pad = width * .045, gap = width * .018;
   const cardWidth = (width - pad * 2 - gap) / 2, cardHeight = height * .60;
@@ -40,6 +51,6 @@ export const EffectsGallery: React.FC = () => {
       </div>
       <div style={{position: 'absolute', top: '104%', fontSize: height * .023, color: '#66635c'}}>{processed ? 'With effect' : 'Original'}</div>
     </div>)}
-    <div style={{position: 'absolute', right: pad, top: height * .075, fontSize: height * .025, color: '#8b877d'}}>{index + 1} / {effectExamples.length}</div>
+    <div style={{position: 'absolute', right: pad, top: height * .075, fontSize: height * .025, color: '#8b877d'}}>{index + 1} / {panels.length}</div>
   </AbsoluteFill>;
 };

@@ -1,6 +1,7 @@
 import React, {useLayoutEffect, useRef, useState} from 'react';
 import {cancelRender, continueRender, delayRender, useCurrentFrame, useVideoConfig} from 'remotion';
 import {applyTaleframeEffects, effectFrame, type EffectsFrame, type EffectsSettings} from '../taleframe/effects/adapter';
+import {loadOilBrushes} from './oil';
 
 export type EffectsSource = string | {
   src: string;
@@ -35,7 +36,9 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   return loaded;
 }
 
-/** Finish a source canvas with native Taleframe effects. Put crisp UI/text after this component. */
+/** Finish a source canvas with native Taleframe effects. Put crisp UI/text after this component.
+ * Oil paint (`watercolor.style: 'oil'`) loads its brushes here. If you call applyTaleframeEffects() yourself with oil,
+ * await loadOilBrushes() first. */
 export const TaleframeEffects: React.FC<TaleframeEffectsProps> = ({source, effects = {}, style, width, height}) => {
   const frame = useCurrentFrame();
   const config = useVideoConfig();
@@ -57,6 +60,7 @@ export const TaleframeEffects: React.FC<TaleframeEffectsProps> = ({source, effec
     };
     const run = async () => {
       await document.fonts.ready;
+      if (effects.watercolor?.style === 'oil') await loadOilBrushes();
       const staging = document.createElement('canvas');
       staging.width = w; staging.height = h;
       const ctx = staging.getContext('2d');

@@ -1,0 +1,29 @@
+{
+  "name": "room",
+  "still": "public/demo/depth/room/color.jpg",
+  "out": "public/demo/depth/room",
+  "size": [1920, 1080],
+  "depth": {"variant": "small", "res": 770},
+  "subjects": {
+    "table": {
+      "points": [[0.278, 0.279], [0.275, 0.43], [0.275, 0.526], [0.321, 0.519], [0.379, 0.504], [0.392, 0.422],
+                 [0.433, 0.489], [0.333, 0.56], [0.35, 0.667], [0.4, 0.837]],
+      "negatives": [[0.125, 0.222], [0.392, 0.296], [0.475, 0.444], [0.208, 0.652], [0.5, 0.889]]
+    },
+    "chair": {
+      "points": [[0.05, 0.52], [0.083, 0.74], [0.25, 0.77], [0.208, 0.637], [0.317, 0.889]],
+      "negatives": [[0.35, 0.667], [0.5, 0.9], [0.1, 0.25], [0.28, 0.35]]
+    },
+    "fern": {"salient": [0.76, 0.3, 1.0, 1.0]}
+  },
+  "planes": [
+    {"name": "table", "matte": "table"},
+    {"name": "fern", "matte": "fern"},
+    {"name": "chair", "matte": "chair", "minus": ["table"]}
+  ],
+  "fill": {"cut": ["table", "fern", "chair"]},
+  "tracks": {
+    "lamp": {"region": [0.2, 0.18, 0.36, 0.38], "measure": "bright"},
+    "table": {"plane": "table"}
+  }
+}

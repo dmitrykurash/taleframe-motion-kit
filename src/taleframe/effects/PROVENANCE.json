@@ -68,17 +68,22 @@
       "source": "src/engine/postprocess/paint/model.ts",
       "destination": "native/paint/model.ts",
       "sourceSha256": "08e2c729f2d8dfae6dd0675ac94d2edeb3e4ff6aee073aa1a84cd4a2c909ede2",
-      "vendoredSha256": "08e2c729f2d8dfae6dd0675ac94d2edeb3e4ff6aee073aa1a84cd4a2c909ede2",
-      "changes": []
+      "vendoredSha256": "03bca45293691d3c9ea6fbcae8ad35d1ad287ae1b9979117a0a0917fec0d52bd",
+      "changes": [
+        "Taleframe kit: optional `style: 'oil'` and `focus` (up to four ellipses in frame uv) on WatercolorSettings. Absent = watercolor; watercolor settings normalise exactly as before.",
+        "Taleframe kit: optional oil `strokeScale` (0.25-8, every stroke's size relative to the brush preset) and `looseness` (1-8)."
+      ]
     },
     {
       "source": "src/engine/postprocess/paint/render.ts",
       "destination": "native/paint/render.ts",
       "sourceSha256": "14de4ac9449a6ca2373ba35d33d2c939dc18e4cd0bfe8d16c67141d8da288898",
-      "vendoredSha256": "3a75880f96ad7cb854bca21593c7414226d9522fe118b766075617459732f091",
+      "vendoredSha256": "d6fad7c98134bccfb8dff723fc027ee6440a439d1c45e7f059dcf59aefe4012e",
       "changes": [
         "import '../../compose/types' -> '../../types'",
-        "import '../../anim/keyframes' -> '../../types'"
+        "import '../../anim/keyframes' -> '../../types'",
+        "Taleframe kit: the oil style. setOilBrushes() registers the two bristle brushes (re-uploaded when re-registered); the OIL program draws four box levels on an output-resolution canvas seeded with the upsampled underpainting; each finer level is gated by the residual of the painting so far (a canvas snapshot blitted between levels) and by focus ellipses; guide, tensor, flow and underpainting stay on the material grid; no wetness or paper relief on oil.",
+        "Taleframe kit: passes the oil `strokeScale` to the lattice and `looseness` to the shader (uLoose)."
       ]
     },
     {
@@ -94,9 +99,11 @@
       "source": "src/engine/postprocess/paint/brushGrid.ts",
       "destination": "native/paint/brushGrid.ts",
       "sourceSha256": "4c61dfd6b14bf07268e8719eb038b85cc2faa09061edc9e9fdb396c4bf5d0434",
-      "vendoredSha256": "fd5748876275a84a07dd6d924593343f85e4c08dc10f29efa06b21f4aba5c582",
+      "vendoredSha256": "c16310fe4995ab4434c7c9482863ad16f141c2b0d774d3f039b4fdc83f88a0b3",
       "changes": [
-        "import '../../anim/keyframes' -> '../../types'"
+        "import '../../anim/keyframes' -> '../../types'",
+        "Taleframe kit: OIL_LEVELS and an `oil` flag (single-box instances, denser fine lattices).",
+        "Taleframe kit: `oilScale` multiplies the oil brush cell on every level."
       ]
     },
     {
@@ -110,8 +117,11 @@
       "source": "src/engine/postprocess/paint/painterly.ts",
       "destination": "native/paint/painterly.ts",
       "sourceSha256": "988d9fcbf200aa958a87438ebe7cfbb8aacded63ee98b75f71242488c4949271",
-      "vendoredSha256": "988d9fcbf200aa958a87438ebe7cfbb8aacded63ee98b75f71242488c4949271",
-      "changes": []
+      "vendoredSha256": "2cd67e21c8927e8298d9934f7c91443a9b4cb253b0db88212701d678089b5607",
+      "changes": [
+        "Taleframe kit: OIL_VERTEX / OIL_FRAGMENT, the oil stroke of Stylized Neural Painting (Zou et al., CVPR 2021) implemented from the paper on the engine's lattice: a rotated bristle-brush box along the local structure, colour C0 -> C2 along the stroke, brush luminance x colour, mask = alpha, scattered draw order, large brush for big boxes.",
+        "Taleframe kit: looseness raises the finer levels' residual threshold outside focus regions and thins the two finest levels (keep 1/loose and 1/loose^2 per cell)."
+      ]
     },
     {
       "source": "src/engine/postprocess/paint/temporal/types.ts",

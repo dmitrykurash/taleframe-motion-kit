@@ -14,6 +14,17 @@ export interface WatercolorSettings {
   edgeScale: number;
   paper: number;
   seed: number;
+  /** 'oil' (Taleframe kit): the same reconstruction painted with opaque bristle-brush boxes, coarse to fine,
+   * after Stylized Neural Painting's oil strokes; no wetness, edge darkening or paper. Absent = watercolor. */
+  style?: 'oil';
+  /** Oil only: up to four ellipses [cx, cy, rx, ry] in frame uv (top-left origin) where fine strokes gather
+   * (faces, hands, eyes, the hero prop of a scene). */
+  focus?: number[];
+  /** Oil only, 0.25-8: size of every stroke relative to the brush preset (1 = the preset's cell; 2 = twice as long and wide). */
+  strokeScale?: number;
+  /** Oil only, 1-8: how much more error finer strokes need outside the focus regions, which also thins the two finest
+   * levels there (1 = every stroke the residual asks for; larger = looser). */
+  looseness?: number;
 }
 export interface PigmentSettings {
   enabled: boolean;
@@ -40,6 +51,13 @@ export function normalizeWatercolor(value: unknown): WatercolorSettings {
     detail: artistic(r.detail, d.detail), brushSize: artistic(r.brushSize, d.brushSize), strokes: artistic(r.strokes, d.strokes),
     edgeScale: artistic(r.edgeScale, d.edgeScale),
     paper: artistic(r.paper, d.paper), seed: seed(r.seed, d.seed),
+    ...(r.style === 'oil' ? { style: 'oil' as const } : {}),
+    ...(r.style === 'oil' && Array.isArray(r.focus) && r.focus.length >= 4 && r.focus.every(v => typeof v === 'number' && Number.isFinite(v))
+      ? { focus: (r.focus as number[]).slice(0, Math.min(16, r.focus.length) - Math.min(16, r.focus.length) % 4) } : {}),
+    ...(r.style === 'oil' && typeof r.strokeScale === 'number' && Number.isFinite(r.strokeScale) && r.strokeScale > 0
+      ? { strokeScale: Math.max(.25, Math.min(8, r.strokeScale)) } : {}),
+    ...(r.style === 'oil' && typeof r.looseness === 'number' && Number.isFinite(r.looseness)
+      ? { looseness: Math.max(1, Math.min(8, r.looseness)) } : {}),
   };
   return JSON.stringify(result) === JSON.stringify(value) ? value as WatercolorSettings : result;
 }

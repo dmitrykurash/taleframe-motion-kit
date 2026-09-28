@@ -5,3 +5,6 @@ out/
 .env
 .env.*
 *.log
+.venv/
+__pycache__/
+*.pyc

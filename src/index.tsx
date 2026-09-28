@@ -13,13 +13,14 @@ import {StarterFilm, defaultStarterProps, calculateStarterMetadata} from './exam
 import {MotionCatalogue, CATALOGUE_DURATION} from './examples/MotionCatalogue';
 import {LaunchFilm, defaultLaunchProps, calculateLaunchMetadata} from './examples/LaunchFilm';
 import {TransitionGallery, TRANSITION_GALLERY_DURATION} from './examples/TransitionGallery';
-import {EffectsGallery} from './examples/EffectsGallery';
+import {EffectsGallery, EFFECTS_GALLERY_SECONDS} from './examples/EffectsGallery';
 import {SceneTransitionReel, SCENE_TRANSITION_REEL_SECONDS} from './examples/SceneTransitionReel';
 import {ProductExplainer, EXPLAINER_SECONDS} from './examples/ProductExplainer';
 import {ProductLaunch, LAUNCH_SECONDS} from './examples/ProductLaunch';
 import {KitReel, KIT_REEL_SECONDS} from './examples/KitReel';
 import {MotionShowcase, SHOWCASE_SECONDS} from './examples/MotionShowcase';
 import {MotionReel, REEL_SECONDS} from './examples/MotionReel';
+import {PaintedDepth, PAINTED_DEPTH_FPS, PAINTED_DEPTH_FRAMES} from './examples/PaintedDepth';
 
 const Root = () => <>
   {['Starter', 'UI-Demo'].map(id => <Composition key={id} id={id} component={StarterFilm}
@@ -32,7 +33,7 @@ const Root = () => <>
   <Composition id="Transition-Gallery" component={TransitionGallery} width={1920} height={1080} fps={60}
     durationInFrames={TRANSITION_GALLERY_DURATION}/>
   <Composition id="Effects-Gallery" component={EffectsGallery} width={1920} height={1080} fps={30}
-    durationInFrames={720}/>
+    durationInFrames={EFFECTS_GALLERY_SECONDS * 30}/>
   <Composition id="Product-Explainer" component={ProductExplainer} width={1920} height={1080} fps={30}
     durationInFrames={EXPLAINER_SECONDS * 30}/>
   <Composition id="Product-Launch" component={ProductLaunch} width={1920} height={1080} fps={30}
@@ -43,5 +44,7 @@ const Root = () => <>
   <Composition id="Motion-Reel" component={MotionReel} width={1920} height={1080} fps={60} durationInFrames={REEL_SECONDS * 60}/>
   <Composition id="Scene-Transitions" component={SceneTransitionReel} defaultProps={{labelled: true}} width={1920} height={1080}
     fps={30} durationInFrames={SCENE_TRANSITION_REEL_SECONDS * 30}/>
+  <Composition id="Painted-Depth" component={PaintedDepth} defaultProps={{watercolor: false}} width={1920} height={1080}
+    fps={PAINTED_DEPTH_FPS} durationInFrames={PAINTED_DEPTH_FRAMES}/>
 </>;
 registerRoot(Root);

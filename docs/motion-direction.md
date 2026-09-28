@@ -79,6 +79,16 @@ Measure target centers in the untransformed UI. Account for the pointer's tip ra
 
 For a settings scene, a useful sequence is title → current option → pointer to control → changed option → Save. The camera may trail the pointer slightly, but the pointer and target should remain readable at the moment of action. Recheck coordinates after text or layout changes.
 
+When the brief supplies its own pointer image (an arrow, a hand, a stylus), put its hotspot on the tip and aim that point, not the image's corner, at every target. Give it a soft drop shadow and draw it at a fixed logical width, as `Cursor` does with `size`.
+
+## UI in depth
+
+Product moments can live inside a painted or photographic world. Render the UI moment as a transparent PNG sequence on the film's clock, with its own camera, typing, and cursor, and log its anchors per frame (for example the center of the button it clicks). A [depth film](depth-films.md#ui-in-depth) places that layer in depth (that section has the render command and the log's format): it arrives out of the depth, passes the viewer, or the camera dives through its anchor into the next scene, while focus pulls from the painting to the UI and back. A small card can instead be drawn directly as a function of time.
+
+Headings and UI stay separate beats here too: the heading, then the UI element, then the next scene.
+
+**Verification as proof.** When the claim is that something gets checked, let the checking element prove it on screen. It opens in a checking state and adds its checks one by one: the panel grows taller with its top fixed, and each row spins, then settles. It settles on the verified state, and then the camera moves through it. Give it its own beat after its heading. `VerificationBadge` is the compact version for React shots. Show only checks the product really performs.
+
 ## Typing and text
 
 Natural typing uses fixed but uneven keystroke intervals, occasional small hesitations, and short spaces. `useTyping` measures the actual font and exposes a smoothly tracked width. Use that width for camera follow; starting a separate ease for each phrase produces a repeated accelerate/stop pattern. Typing belongs inside UI; headlines use [kinetic type](kinetic-type.md).
@@ -94,6 +104,8 @@ An uncluttered type shot often needs only its heading and a strong ground. Addit
 Drive the background from the same camera as the foreground with a lower translation gain. A starting depth of 7–13% gives a distant plane; shallow zoom changes reinforce the distance. Avoid unrelated drift that moves against the foreground.
 
 Overscan keeps the enlarged image's edges outside the frame. For a centered full-stage background, `(scale - 1) × stageWidth / 2` must exceed the absolute horizontal translation; apply the equivalent condition vertically. `backgroundCoversFrame` checks that simplified case. Inspect the whole path, source aspect ratio, and transition texture transforms as well.
+
+For more depth than one background plane can give, cut the picture into planes and move a camera through them: a [depth film](depth-films.md#the-camera). Near planes grow and slide faster than far ones. Depth grows with the number of planes, not with the speed of one: stagger haze or cloud banks so the camera passes one after another, travel forward about twice as far as first feels safe, and add some sideways travel. Keyframe the path with monotone curves, so it never overshoots or stops at a key, and give every plate enough overscan to cover the frame over the whole path (the depth compositor does both).
 
 ## Transitions and effects
 

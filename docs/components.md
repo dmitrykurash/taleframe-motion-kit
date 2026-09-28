@@ -141,3 +141,16 @@ See [motion direction](motion-direction.md#motion-vocabulary) for how to use the
 ## Transitions and effects
 
 [Scene transitions](scene-transitions.md) connect React shots. The [shader transition guide](transitions.md) documents the Taleframe wrappers for pictures and footage, and the [effects guide](effects.md) documents image/video processing and their galleries. Read those APIs before deciding where to apply them; they are separate from moving React children with `CameraLayer`.
+
+## Depth films, oil, and looks
+
+`src/kit/depth` (exported from `src/kit`) is a canvas compositor for painted films made of pictures: `DepthFilm` takes shots of planes at depths, a camera per shot (`cameraPath`, `passage`, `matchCamera`), cuts through anchors, ink type (`InkLine`, `InkGroup`), UI layers in depth (`uiSequence`, `uiDrawing`), motes, and a finish. [Depth films](depth-films.md) documents it.
+
+| API | Main inputs | Purpose |
+|---|---|---|
+| `oilStyle` | `watercolor`, `{strokeScale?, looseness?, focus?}` | Watercolor settings that paint in oil ([paint in oil](effects.md#paint-in-oil)) |
+| `loadOilBrushes` | None | Load the oil brushes once before calling `applyTaleframeEffects` yourself; `TaleframeEffects` and `DepthFilm` do it for you |
+| `looseOil`, `LOOSE_OIL`, `TIGHT_OIL` | `watercolor?`, `focus?` | Oil looks: bold and loose, or at the preset's stroke size |
+| `WATERCOLOR_BROAD`, `WATERCOLOR_FINE` | — | Watercolor brushes for plates and for busy subjects |
+| `SWIRL_LENS`, `SWIRL_LENS_UI`, `PAINTED_FINISH` | — | The swirl lens and the painted finish, tuned at 4K ([named looks](effects.md#named-looks)) |
+| `paintedFinish` | `scale` (1 = 1920 × 1080, 2 = 3840 × 2160) | The painted finish scaled for the output; equals `PAINTED_FINISH` at 2 |

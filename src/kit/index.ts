@@ -24,3 +24,6 @@ export * from './morph';
 export * from './hud';
 export * from './fields';
 export * from './particles';
+export * from './oil';
+export * from './looks';
+export * from './depth';

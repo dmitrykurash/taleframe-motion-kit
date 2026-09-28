@@ -1,0 +1,41 @@
+{
+  "about": "Demo paintings for depth films. Positions are frame fractions (x, y from the top left); rx, ry are the half-sizes of an ellipse around the subject, usable as an oil focus ellipse or as the size of a travel-through. Anchors were measured by hand on the 1920 x 1080 colour pictures; the lamps and the sun were checked with tools/depth/tracks.py (measure: bright). Planes are listed far to near; disparity is the plane's median normalised depth (0 = farthest, 1 = nearest in that painting).",
+  "lake": {
+    "planes": [
+      {"name": "trees", "disparity": 0.061, "note": "the forested shores left and right, with the mist at their feet"},
+      {"name": "mist", "disparity": 0.054, "note": "soft mist banks over the water; a haze bank to pass in front of the trees"},
+      {"name": "moorings", "disparity": 0.408, "note": "the jetty and the rowing boat"},
+      {"name": "reeds", "disparity": 0.846, "note": "the reeds along the bottom edge"}
+    ],
+    "anchors": {
+      "boat": {"x": 0.315, "y": 0.74, "rx": 0.1, "ry": 0.07, "plane": "moorings", "note": "the rowing boat"},
+      "jetty": {"x": 0.11, "y": 0.7, "rx": 0.11, "ry": 0.11, "plane": "moorings", "note": "the jetty's end posts"},
+      "sun": {"x": 0.73, "y": 0.312, "rx": 0.03, "ry": 0.03, "plane": "plate", "note": "the rising sun on the far ridge"}
+    }
+  },
+  "room": {
+    "planes": [
+      {"name": "table", "disparity": 0.232, "note": "the side table with the lit lamp, a cup and a small plant"},
+      {"name": "fern", "disparity": 0.377, "note": "the potted fern, right"},
+      {"name": "chair", "disparity": 0.916, "note": "the armchair, left foreground"}
+    ],
+    "anchors": {
+      "lamp": {"x": 0.278, "y": 0.28, "rx": 0.06, "ry": 0.09, "plane": "table", "note": "the lit lamp shade"},
+      "window": {"x": 0.665, "y": 0.27, "rx": 0.12, "ry": 0.26, "plane": "plate", "note": "the open window onto the garden"},
+      "table": {"x": 0.336, "y": 0.44, "rx": 0.12, "ry": 0.24, "plane": "table", "note": "lamp, cup and plant together"}
+    }
+  },
+  "harbour": {
+    "planes": [
+      {"name": "mist", "disparity": 0.029, "note": "sea mist banks across the water"},
+      {"name": "headland", "disparity": 0.075, "note": "the lighthouse on its rocky headland, with the cottages"},
+      {"name": "boat", "disparity": 0.135, "note": "the moored fishing boat"},
+      {"name": "near", "disparity": 0.54, "note": "the harbour wall, its mooring post and the rocks in front"}
+    ],
+    "anchors": {
+      "lamp": {"x": 0.778, "y": 0.108, "rx": 0.02, "ry": 0.03, "plane": "headland", "note": "the lighthouse lamp, lit"},
+      "lighthouse": {"x": 0.779, "y": 0.21, "rx": 0.04, "ry": 0.15, "plane": "headland", "note": "the lighthouse tower"},
+      "boat": {"x": 0.375, "y": 0.53, "rx": 0.09, "ry": 0.14, "plane": "boat", "note": "the fishing boat and its mast"}
+    }
+  }
+}

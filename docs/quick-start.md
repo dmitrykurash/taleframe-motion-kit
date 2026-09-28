@@ -7,7 +7,7 @@ npm ci
 npm run studio
 ```
 
-Studio lists the registered compositions. `Motion-Reel` is a 60 fps motion-design reel made with the kit. `Motion-Showcase` is a labeled catalog of the motion vocabulary: the eight newer scene transitions, 3D space, camera moves, a speed ramp, all type presets, and the type effects. `Product-Explainer`, `Product-Launch`, and `Kit-Reel` are three films about an unnamed AI workspace and about the kit itself: a UX explainer, a dark launch, and a 9:16 social reel. `Launch-Film` is the reference editorial launch film: an editorial style sheet, type and UI shots taking turns, kinetic type, a card portal, and an expand from a clicked button. `Scene-Transitions` shows the five scene transitions between launch-film shots. `Starter` and `UI-Demo` provide a calmer fictional app walkthrough. The other galleries let you inspect motion recipes, shader transitions, and effects before choosing a treatment.
+Studio lists the registered compositions. `Motion-Reel` is a 60 fps motion-design reel made with the kit. `Motion-Showcase` is a labeled catalog of the motion vocabulary: the eight newer scene transitions, 3D space, camera moves, a speed ramp, all type presets, and the type effects. `Product-Explainer`, `Product-Launch`, and `Kit-Reel` are three films about an unnamed AI workspace and about the kit itself: a UX explainer, a dark launch, and a 9:16 social reel. `Launch-Film` is the reference editorial launch film: an editorial style sheet, type and UI shots taking turns, kinetic type, a card portal, and an expand from a clicked button. `Scene-Transitions` shows the five scene transitions between launch-film shots. `Painted-Depth` is a painted depth film: three generated paintings cut into planes and painted in oil, a camera traveling through them, cuts that pass through something in each picture, a UI card in depth, and ink type set into the pictures. `Starter` and `UI-Demo` provide a calmer fictional app walkthrough. The other galleries let you inspect motion recipes, shader transitions, and effects before choosing a treatment.
 
 ## Customize the starter
 
@@ -82,6 +82,51 @@ npm run watercolor -- public/demo/landscape-a.svg out/painted.png --width 1920 -
 ```
 
 This softens the source before painting. See the [watercolor still tool](../tools/watercolor/README.md) for settings and the [effects guide](effects.md) for processing inside a composition.
+
+## Paint a depth film
+
+A depth film is made of pictures cut into painted planes; read [depth films](depth-films.md) first. `Painted-Depth` is the worked example. It paints in oil and uses Taleframe shaders, so render it with `--gl angle`:
+
+```sh
+npm run stills -- Painted-Depth --gl angle --times 2,6,11,16 --out out/painted-depth-stills
+npm run render -- Painted-Depth --gl angle --out out/painted-depth.mp4 | tee out/painted-depth.log
+npm run qa -- out/painted-depth.mp4 --log out/painted-depth.log
+```
+
+`qa` reports the specs, the loudness, a contact sheet, and the number of `SAFEAREA` lines (type that left the 10 % border) in the log; a delivered film has none.
+
+To cut your own pictures into planes, set up the Python tools once. They need Python 3.10 or newer and a full FFmpeg on your `PATH` (for example Homebrew's; Remotion's trimmed build lacks filters they use):
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r tools/depth/requirements.txt
+```
+
+A job file describes one shot: a still painting or a stretch of footage, its subjects, planes, fill, and anchors. Copy one of `tools/depth/examples/*.json`, point `still` at your picture and `out` at a new folder under `public/`, and replace the subjects, planes, and tracks with your picture's. Run the first two steps, choose plane bands from the depth preview, then run the rest:
+
+```sh
+.venv/bin/python tools/depth/prepare.py jobs/window.json frames depth
+.venv/bin/python tools/depth/prepare.py jobs/window.json
+```
+
+`prepare.py` extracts held frames, makes depth maps and tracked mattes, cuts the planes with a filled plate, and measures anchor tracks, skipping whatever already exists. Models download on first use into the git-ignored `.cache/models/`. See the [depth tools](../tools/depth/README.md) for the job format, the footage path, and how to tune planes.
+
+The `npm run depth`, `npm run steadiness`, and `npm run oil:brushes` shortcuts call `python3`, so activate the environment first (`source .venv/bin/activate`):
+
+```sh
+npm run depth -- jobs/window.json planes tracks --force     # redo two steps
+npm run steadiness -- out/painted-depth.mp4 --reference out/previous.mp4 --shots "lake:0-118,room:158-222"
+npm run oil:brushes                                         # regenerate the oil brushes
+```
+
+For a long or 4K master, render in chunks from one bundle. An interrupted run continues where it stopped; if you changed the film since, it stops instead, and `--restart` discards the old chunks:
+
+```sh
+npm run master -- Painted-Depth out/painted-depth-master.mp4 --chunks 4 | tee out/painted-depth-master.log
+npm run verify -- out/painted-depth-master.mp4
+```
+
+Depth films are authored on a 1920 × 1080 stage; register the same film as a 3840 × 2160 composition to render it at 4K. See [validation](validation.md#check-a-long-master) for loudness, joins, a share copy, and a preview.
 
 ## When a render fails
 

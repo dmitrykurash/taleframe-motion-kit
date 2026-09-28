@@ -1,0 +1,25 @@
+{
+  "name": "lake",
+  "still": "public/demo/depth/lake/color.jpg",
+  "out": "public/demo/depth/lake",
+  "size": [1920, 1080],
+  "depth": {"variant": "small", "res": 770},
+  "subjects": {
+    "moorings": {
+      "points": [[0.31, 0.73], [0.28, 0.72], [0.37, 0.74], [0.108, 0.68], [0.1125, 0.622], [0.1875, 0.622], [0.2125, 0.667],
+                 [0.03, 0.726]],
+      "negatives": [[0.5, 0.696], [0.317, 0.845], [0.6, 0.6]]
+    }
+  },
+  "planes": [
+    {"name": "trees", "depth": [0.022, 0.04], "region": [0, 0.1, 1, 0.515], "feather": 0.008},
+    {"name": "mist", "luma": "bright", "region": [0, 0.36, 1, 0.56], "feather": 0.02},
+    {"name": "moorings", "matte": "moorings"},
+    {"name": "reeds", "depth": [0.6, 0.72], "minus": ["moorings"]}
+  ],
+  "fill": {"cut": ["trees", "moorings", "reeds"]},
+  "tracks": {
+    "sun": {"region": [0.6, 0.2, 0.85, 0.4], "measure": "bright"},
+    "moorings": {"plane": "moorings"}
+  }
+}

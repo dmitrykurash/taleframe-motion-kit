@@ -1,6 +1,6 @@
 {
   "name": "taleframe-motion-kit",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +15,12 @@
     "sequence": "node scripts/sequence.mjs",
     "check:transitions": "node tests/transitions-gpu.mjs",
     "check:scenes": "node tests/scene-transitions.mjs",
-    "check:effects": "node scripts/check-effects.mjs"
+    "check:effects": "node scripts/check-effects.mjs",
+    "master": "node scripts/master-chunked.mjs",
+    "qa": "node scripts/qa.mjs",
+    "oil:brushes": "python3 -B tools/oil/brushes.py",
+    "depth": "python3 -B tools/depth/prepare.py",
+    "steadiness": "python3 -B tools/qa/steadiness.py"
   },
   "keywords": [],
   "author": "",

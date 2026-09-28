@@ -4,8 +4,8 @@ import type { Fps } from '../../types';
 import type { Affine } from '../../types';
 import { paintEffectsActive, pigmentActive, watercolorActive, type PigmentSettings, type WatercolorSettings } from './model';
 import { INIT_PIGMENT, PAPER, RESOLVE, STEP_PIGMENT, VERTEX } from './shaders';
-import { BRUSH_FRAGMENT, BRUSH_VERTEX, PAINT_BASE, PAINT_FINISH, PAINT_FLOW, PAINT_GUIDE, PAINT_TENSOR } from './painterly';
-import { brushGrid } from './brushGrid';
+import { BRUSH_FRAGMENT, BRUSH_VERTEX, OIL_FRAGMENT, OIL_VERTEX, PAINT_BASE, PAINT_FINISH, PAINT_FLOW, PAINT_GUIDE, PAINT_TENSOR } from './painterly';
+import { brushGrid, OIL_LEVELS } from './brushGrid';
 import { paintMaterialTransform } from './material';
 import type { PaintAnchor, PaintTransport, PreparedPaintFrame } from './temporal/types';
 
@@ -18,7 +18,17 @@ type MaterialGrid = {
   flow: WebGLTexture; flowFramebuffer: WebGLFramebuffer;
   guide?: WebGLTexture; guideFramebuffer?: WebGLFramebuffer;
 };
-const UNIFORMS = ['uSource', 'uPaper', 'uMobile', 'uDeposit', 'uFlow', 'uGuide', 'uSize', 'uReference', 'uSettings', 'uSeed', 'uMode', 'uAmount', 'uGrid', 'uOrigin', 'uStroke', 'uMaterial', 'uEdgeScale', 'uPrepared', 'uGeneration', 'uTransport', 'uCurrentGuide', 'uCurrentFlow'];
+const UNIFORMS = ['uSource', 'uPaper', 'uMobile', 'uDeposit', 'uFlow', 'uGuide', 'uSize', 'uReference', 'uSettings', 'uSeed', 'uMode', 'uAmount', 'uGrid', 'uOrigin', 'uStroke', 'uMaterial', 'uEdgeScale', 'uPrepared', 'uGeneration', 'uTransport', 'uCurrentGuide', 'uCurrentFlow', 'uBrushSmall', 'uBrushLarge', 'uCanvas', 'uFocus', 'uFocusCount', 'uLoose'];
+
+/** Oil brushes (Taleframe kit): the small and large horizontal bristle brushes (R = luminance, G = mask), registered
+ * by the host before the first oil paint, since this engine renders synchronously. */
+let oilBrushSources: { small: TexImageSource; large: TexImageSource } | null = null;
+let oilBrushGeneration = 0;
+export function setOilBrushes(small: TexImageSource, large: TexImageSource): void {
+  if (oilBrushSources?.small === small && oilBrushSources.large === large) return;
+  oilBrushSources = { small, large }; oilBrushGeneration++;
+}
+export const oilBrushesRegistered = (): boolean => oilBrushSources !== null;
 
 export class PaintEffectError extends Error {
   constructor(message: string) { super(`Эффекты краски: ${message}`); this.name = 'PaintEffectError'; }
@@ -59,11 +69,12 @@ class PaintRuntime {
     };
     const vertex = shader(gl.VERTEX_SHADER, VERTEX);
     const brushVertex = shader(gl.VERTEX_SHADER, BRUSH_VERTEX);
+    const oilVertex = shader(gl.VERTEX_SHADER, OIL_VERTEX);
     try {
-      for (const source of [PAPER, INIT_PIGMENT, STEP_PIGMENT, RESOLVE, PAINT_TENSOR, PAINT_FLOW, PAINT_BASE, PAINT_FINISH, BRUSH_FRAGMENT, PAINT_GUIDE]) {
+      for (const source of [PAPER, INIT_PIGMENT, STEP_PIGMENT, RESOLVE, PAINT_TENSOR, PAINT_FLOW, PAINT_BASE, PAINT_FINISH, BRUSH_FRAGMENT, PAINT_GUIDE, OIL_FRAGMENT]) {
         const fragment = shader(gl.FRAGMENT_SHADER, source), object = gl.createProgram();
         if (!object) { gl.deleteShader(fragment); throw new PaintEffectError('не удалось выделить программу.'); }
-        gl.attachShader(object, source === BRUSH_FRAGMENT ? brushVertex : vertex); gl.attachShader(object, fragment); gl.linkProgram(object); gl.deleteShader(fragment);
+        gl.attachShader(object, source === BRUSH_FRAGMENT ? brushVertex : source === OIL_FRAGMENT ? oilVertex : vertex); gl.attachShader(object, fragment); gl.linkProgram(object); gl.deleteShader(fragment);
         if (!gl.getProgramParameter(object, gl.LINK_STATUS)) {
           const reason = gl.getProgramInfoLog(object); gl.deleteProgram(object);
           throw new PaintEffectError(reason ?? 'не удалось связать шейдер.');
@@ -73,7 +84,7 @@ class PaintRuntime {
     } catch (error) {
       for (const program of this.programs) gl.deleteProgram(program.object);
       throw error;
-    } finally { gl.deleteShader(vertex); gl.deleteShader(brushVertex); }
+    } finally { gl.deleteShader(vertex); gl.deleteShader(brushVertex); gl.deleteShader(oilVertex); }
     this.source = this.texture();
     this.transport = this.texture();
     this.vao = gl.createVertexArray()!;
@@ -146,6 +157,48 @@ class PaintRuntime {
       gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]); this.checkFramebuffer();
     }
   }
+  private oilBrushes: [WebGLTexture, WebGLTexture] | null = null;
+  private oilBrushesGeneration = 0;
+  /** Oil boxes are laid on an output-resolution canvas (crisp edges and bristles), while the guide, tensor, flow
+   * and underpainting stay on the material grid: two float targets, the canvas and its per-level snapshot. */
+  private oilTarget: { width: number; height: number; canvas: WebGLTexture; canvasFramebuffer: WebGLFramebuffer; snapshot: WebGLTexture; snapshotFramebuffer: WebGLFramebuffer } | null = null;
+  private oilCanvas(width: number, height: number) {
+    const gl = this.gl;
+    if (!this.oilTarget) this.oilTarget = { width: 0, height: 0, canvas: this.texture(), canvasFramebuffer: this.framebuffer(), snapshot: this.texture(), snapshotFramebuffer: this.framebuffer() };
+    const t = this.oilTarget;
+    if (t.width !== width || t.height !== height) {
+      for (const [texture, framebuffer] of [[t.canvas, t.canvasFramebuffer], [t.snapshot, t.snapshotFramebuffer]] as const) {
+        this.allocate(texture, width, height, true);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        gl.drawBuffers([gl.COLOR_ATTACHMENT0]); this.checkFramebuffer();
+      }
+      t.width = width; t.height = height;
+      this.bind(this.source, 0);
+    }
+    return t;
+  }
+  /** Upload the registered oil brushes (once per registration), with a full mip chain (bristles stay clean when a box is small). */
+  private oilTextures(): [WebGLTexture, WebGLTexture] {
+    if (this.oilBrushes && this.oilBrushesGeneration === oilBrushGeneration) return this.oilBrushes;
+    if (!oilBrushSources) throw new PaintEffectError('oil brushes are not registered (call loadOilBrushes() first).');
+    const gl = this.gl;
+    if (this.oilBrushes) { gl.deleteTexture(this.oilBrushes[0]); gl.deleteTexture(this.oilBrushes[1]); this.oilBrushes = null; }
+    const upload = (image: TexImageSource): WebGLTexture => {
+      const t = this.texture();
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
+      return t;
+    };
+    this.oilBrushes = [upload(oilBrushSources.small), upload(oilBrushSources.large)];
+    this.oilBrushesGeneration = oilBrushGeneration;
+    this.bind(this.source, 0);   // texture() allocates on unit 0, which holds the source frame
+    return this.oilBrushes;
+  }
   private use(index: number, reference: [number, number], values: [number, number, number, number], seed: number): Program {
     const gl = this.gl, p = this.programs[index];
     gl.useProgram(p.object);
@@ -154,6 +207,7 @@ class PaintRuntime {
     gl.uniform1i(p.uniform.uFlow, 4);
     gl.uniform1i(p.uniform.uGuide, 5);
     gl.uniform1i(p.uniform.uCurrentGuide, 6);gl.uniform1i(p.uniform.uCurrentFlow, 7);gl.uniform1i(p.uniform.uTransport, 8);
+    gl.uniform1i(p.uniform.uBrushSmall, 9);gl.uniform1i(p.uniform.uBrushLarge, 10);gl.uniform1i(p.uniform.uCanvas, 11);
     gl.uniform1i(p.uniform.uPrepared, 0);gl.uniform1f(p.uniform.uGeneration,1);
     gl.uniform2f(p.uniform.uSize, this.width, this.height); gl.uniform2fv(p.uniform.uReference, reference);
     gl.uniform4fv(p.uniform.uSettings, values); gl.uniform1ui(p.uniform.uSeed, seed >>> 0);
@@ -202,7 +256,9 @@ class PaintRuntime {
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.surfaces[0].framebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
     const base = this.use(6, reference, values, settings.seed);
     gl.uniform1f(base.uniform.uEdgeScale, settings.edgeScale ?? 0); gl.drawArrays(gl.TRIANGLES, 0, 3);
-    if (settings.strokes > 0) {
+    let painted = this.surfaces[0].mobile;
+    if (settings.style === 'oil') painted = this.oilStrokes(settings, reference, values, width, height, material);
+    else if (settings.strokes > 0) {
       // Three fixed-cost stages: broad curved brush ribbons, secondary broken
       // planes, and fine accents guided by local contrast rather than noise.
       gl.enable(gl.BLEND); gl.blendEquation(gl.FUNC_ADD);
@@ -242,10 +298,56 @@ class PaintRuntime {
       this.bind(this.grid.guide!,5);this.bind(this.grid.flow,4);
       gl.disable(gl.BLEND);
     }
-    this.bind(this.surfaces[0].mobile, 2);
+    this.bind(painted, 2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.drawBuffers([gl.BACK]); gl.viewport(0, 0, width, height);
     const program = this.use(7, reference, values, settings.seed);
     gl.uniform1f(program.uniform.uAmount, settings.amount); gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  /** Oil: one opaque bristle box per lattice cell, four lattices from coarse to detail (no prepared transport). */
+  private oilStrokes(settings: WatercolorSettings, reference: [number, number], values: [number, number, number, number], outWidth: number, outHeight: number, material?: Affine): WebGLTexture {
+    const gl = this.gl, [small, large] = this.oilTextures(), target = this.oilCanvas(outWidth, outHeight);
+    this.bind(small, 9); this.bind(large, 10);
+    // The underpainting (the base pass on the material grid), upsampled onto the output-resolution canvas.
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.surfaces[0].framebuffer); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, target.canvasFramebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+    gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, outWidth, outHeight, gl.COLOR_BUFFER_BIT, gl.LINEAR);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target.canvasFramebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+    gl.viewport(0, 0, outWidth, outHeight);
+    gl.enable(gl.BLEND); gl.blendEquation(gl.FUNC_ADD);
+    // Colour is laid over the underpainting; the alpha channel keeps the source coverage (the plane's matte).
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ZERO, gl.ONE);
+    // Focus ellipses: frame uv (top-left) -> reference pixels in the paint fields' bottom-left frame.
+    const focus = new Float32Array(16), n = Math.min(4, Math.floor((settings.focus?.length ?? 0) / 4));
+    for (let i = 0; i < n; i++) {
+      const [cx, cy, rx, ry] = settings.focus!.slice(i * 4, i * 4 + 4);
+      focus.set([cx * reference[0], (1 - cy) * reference[1], rx * reference[0], ry * reference[1]], i * 4);
+    }
+    for (let level = 0; level < OIL_LEVELS.length; level++) {
+      const { spacing, columns, rows, originX, originY } = brushGrid(reference, this.width, this.height, settings.brushSize, level, material, settings.edgeScale, true, settings.strokeScale ?? 1);
+      if (!columns || !rows) continue;
+      if (level > 0) {
+        // The next level reads the painting so far (its residual decides where finer boxes go).
+        gl.bindFramebuffer(gl.READ_FRAMEBUFFER, target.canvasFramebuffer); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, target.snapshotFramebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+        gl.blitFramebuffer(0, 0, outWidth, outHeight, 0, 0, outWidth, outHeight, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, target.canvasFramebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+        this.bind(target.snapshot, 11);
+      }
+      const program = this.use(10, reference, values, (settings.seed + level * 977) >>> 0);
+      gl.uniform4fv(program.uniform.uFocus, focus); gl.uniform1i(program.uniform.uFocusCount, n);
+      gl.uniform1f(program.uniform.uLoose, settings.looseness ?? 1);
+      gl.uniform3f(program.uniform.uGrid, columns, rows, spacing);
+      gl.uniform2i(program.uniform.uOrigin, originX, originY);
+      gl.uniform4f(program.uniform.uStroke, spacing, level, settings.strokes, 1);
+      gl.uniform1f(program.uniform.uEdgeScale, settings.edgeScale ?? 0);
+      gl.uniformMatrix3fv(program.uniform.uMaterial, false, material
+        ? [material[0], material[1], 0, material[2], material[3], 0, material[4], material[5], 1]
+        : [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+      gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, columns * rows);
+    }
+    gl.disable(gl.BLEND);
+    gl.viewport(0, 0, this.width, this.height);
+    return target.canvas;
   }
   private effect(input: Canvas, settings: WatercolorSettings | PigmentSettings, mode: 0 | 1, projectWidth: number, projectHeight: number, previous: boolean, material?: Affine, prepared?:PreparedPaintFrame): void {
     const gl = this.gl, width = input.width, height = input.height;
@@ -269,8 +371,10 @@ class PaintRuntime {
     this.resize(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)), mode);
     gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST); gl.disable(gl.SCISSOR_TEST); gl.bindVertexArray(this.vao);
     const reference: [number, number] = [projectWidth * 1080 / Math.min(projectWidth, projectHeight), projectHeight * 1080 / Math.min(projectWidth, projectHeight)];
+    const oil = mode === 0 && (settings as WatercolorSettings).style === 'oil';
+    // Oil has no wetness and no paper: the reconstruction's wet edges and paper relief stay off.
     const values: [number, number, number, number] = mode === 0
-      ? [(settings as WatercolorSettings).wetness, (settings as WatercolorSettings).detail, settings.paper, (settings as WatercolorSettings).brushSize]
+      ? [oil ? 0 : (settings as WatercolorSettings).wetness, (settings as WatercolorSettings).detail, oil ? 0 : settings.paper, (settings as WatercolorSettings).brushSize]
       : [(settings as PigmentSettings).granulation, (settings as PigmentSettings).settling, settings.paper, 0];
     const key = `${this.width}/${this.height}/${reference[0]}/${reference[1]}/${settings.seed}`;
     gl.viewport(0, 0, this.width, this.height);
@@ -312,6 +416,11 @@ class PaintRuntime {
     const gl = this.gl; if (this.idle) clearTimeout(this.idle);
     for (const p of this.programs) gl.deleteProgram(p.object);
     gl.deleteTexture(this.source);gl.deleteTexture(this.transport);
+    if (this.oilBrushes) { gl.deleteTexture(this.oilBrushes[0]); gl.deleteTexture(this.oilBrushes[1]); this.oilBrushes = null; }
+    if (this.oilTarget) {
+      const t = this.oilTarget; gl.deleteTexture(t.canvas); gl.deleteTexture(t.snapshot);
+      gl.deleteFramebuffer(t.canvasFramebuffer); gl.deleteFramebuffer(t.snapshotFramebuffer); this.oilTarget = null;
+    }
     for(const a of this.anchors.values()){gl.deleteTexture(a.guide);gl.deleteTexture(a.flow);}this.anchors.clear();
     for (const grid of this.grids) {
       if (!grid) continue;

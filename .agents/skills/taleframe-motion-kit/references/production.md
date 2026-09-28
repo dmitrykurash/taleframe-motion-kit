@@ -47,11 +47,13 @@ Use original logo geometry and actual UI typography. A separate display font can
 
 Keep backgrounds quiet where the viewer needs to read UI. Put loud color in the type shots. Place stronger details toward the edges, simplify the image, or soften the source when appropriate. If painting an already blurred source, apply the blur before the painted treatment so the brush detail remains intact.
 
-If generating assets, use the tools available in the agent's environment or supplied files. Store final assets in the project and record prompts/settings when useful. Rendering supplied assets does not depend on an image-generation service.
+If generating assets, use the tools available in the agent's environment or supplied files. Store final assets in the project and record prompts/settings when useful. Rendering supplied assets does not depend on an image-generation service. Check every generated picture at full size for people, lettering, and logos nobody asked for, and record its tool and prompt beside it (`public/demo/depth/PROVENANCE.md` is an example).
 
 ## Choose motion and transitions
 
 Give each move a reason: follow a line of text, guide the eye to a control, reveal a result, or connect shots. Let the audience reach the target before the next important change. Accelerate hard and settle long; blur fast moves.
+
+In a film made of pictures, a [depth film](../../../../docs/depth-films.md) cuts by traveling through something in the picture (a lit window, a lamp) on a beat, or by a match cut on it; UI beats in it end with the camera diving through the element on screen.
 
 Default to hard cuts. Use a scene transition where it carries meaning (click → `expand`, word → `portal`, element → `zoom`, section → `slice`, technical hit → `glitch`), limit a film to two or three kinds, and never repeat a kind back to back. The busiest phase of a transition should not obscure essential copy. Treat grain, paint, halftone, and similar treatments as deliberate style choices, not a required stack.
 
@@ -61,6 +63,7 @@ Default to hard cuts. Use a scene transition where it carries meaning (click →
 - Would any shot pass for a slide? Is any headline small, centered, and alone on an empty frame?
 - Is there text over UI that the brief did not ask for?
 - Does the typography fit with the actual font and copy? Is the final revealed line held long enough to read?
+- Over pictures, does all type stay inside the 10 % border for its whole life (zero `SAFEAREA` in a depth film's render log)? Are headings and UI separate beats?
 - Are typing intervals varied and camera follow continuous?
 - Does the cursor tip land inside its target at the action frame? Do hover, press, selection, and save appear in the right order?
 - Does the background move consistently with the foreground and cover the frame throughout the camera path?

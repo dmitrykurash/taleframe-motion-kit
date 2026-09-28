@@ -1,6 +1,6 @@
 ---
 name: taleframe-motion-kit
-description: Create or revise product launches, app demonstration videos, and motion reels with Taleframe. Use its Remotion components, camera and cursor choreography, kinetic typography, scene transitions with motion blur, and Taleframe shader transitions and effects to deliver editable films and verified exports that look like modern launch films, not presentations.
+description: Create or revise product launches, app demonstration videos, motion reels, and painted depth films with Taleframe. Use its Remotion components, camera and cursor choreography, kinetic typography, scene transitions with motion blur, Taleframe shader transitions and effects (watercolor and oil), and a multiplane compositor for paintings and footage to deliver editable films and verified exports that look like modern launch films, not presentations.
 ---
 
 # Taleframe
@@ -13,8 +13,8 @@ These hold for every film unless the brief explicitly asks otherwise. Details an
 
 1. **A launch film, not a keynote.** No shot behaves like a slide (fade in, hold, fade out on an empty frame). Something is always arriving, holding for reading, or leaving; motion carries across cuts.
 2. **Read the style and commit.** Infer the style from the brief (named references, adjectives, brand assets, audience, music, platform), pick a style family, write a 5–8 line style sheet into the brief, and apply it to every shot.
-3. **Type and UI take turns.** A type shot states one idea; a UI shot proves it. No headlines or captions over UI unless the task needs a short attached label or the brief asks for text on or beside the product.
-4. **Kinetic typography.** Big (160–420 px display on the 1920 × 1080 stage), short (1–6 words), tight, and moving with meaning: `MaskReveal`, `Slam`, `WordRoll`, `WordSequence`, `Counter`, `Scramble`, `TrackIn`. Hold long enough to read.
+3. **Type and UI take turns.** A type shot states one idea; a UI shot proves it. No headlines or captions over UI unless the task needs a short attached label or the brief asks for text on or beside the product. In a painted film too: the heading, then the UI element, then the next scene.
+4. **Kinetic typography.** Big (160–420 px display on the 1920 × 1080 stage), short (1–6 words), tight, and moving with meaning: `MaskReveal`, `Slam`, `WordRoll`, `WordSequence`, `Counter`, `Scramble`, `TrackIn`. Hold long enough to read. Over pictures and in cinematic or painted styles, keep type out of the outer 10 % of the frame for its whole life; only full-frame type devices and entrances from off screen cross it.
 5. **Cuts first, designed transitions second.** Default to hard cuts on action or beat. Use `zoom`, `portal`, `expand`, `slice`, or `glitch` when a transition carries meaning; two or three kinds per film, never the same one twice in a row. Never cube, flip, page-curl, mosaic, twirl, constant-speed pushes, or a dissolve between every shot.
 
 ## Choose the film around the brief
@@ -33,6 +33,17 @@ For a real product, use its components, screenshots, or recordings. Read [app ad
 - Read [motion direction](../../../docs/motion-direction.md) for camera, cursor, typing, parallax, and the motion vocabulary: springs, camera moves, handheld and hits, arcs, staggers, `Enter`, `SpeedRamp`, and 3D `Space`. Choose a motion palette per film (one signature move, two or three supporting ones, one surprise) and do not repeat a move in neighboring shots. Wrap fast moves in `MotionBlur`.
 - Derive every visible state from frame time and fixed inputs. Cursor, camera, state changes, and textures must agree on a direct seek. Avoid animation timers, wall clocks, unseeded randomness, and live service calls inside rendered scenes.
 - Reuse `src/kit` primitives; keep product-specific UI and content in project files. Preserve approved user choices.
+
+## Painted films in depth
+
+Choose a [depth film](../../../docs/depth-films.md) when the film is made of pictures (paintings, stills, footage) and should feel handmade and deep, or when a few UI beats need a painted world around them. Keep UI-led launches on React shots. `Painted-Depth` is the worked example: its style sheet and shots are in `src/examples/depth/film.ts`, and `src/examples/PaintedDepth.tsx` wraps them in a composition. [Film language](../../../docs/film-language.md#9-painted-films-in-depth) has the rules.
+
+- Cut pictures into planes with the [depth tools](../../../tools/depth/README.md), for exactly the held frames the edit uses. Leave a subject with an imperfect matte or no real parallax in its plate.
+- Pick one painted look per film, watercolor or oil ([paint in oil](../../../docs/effects.md#paint-in-oil), [named looks](../../../docs/effects.md#named-looks)). Put oil focus ellipses on faces, hands, and the prop the scene is about. Keep watercolor one flag away.
+- Every cut passes through something in the picture, on a beat, at the full frame rate; pictures hold on twos.
+- Compose ink type per scene around the subject, inside the 10 % border: the render must log zero `SAFEAREA`.
+- A depth film overrides non-negotiables 4 and 5 where they differ: ink groups of about 100–160 px (secondary at least 48 px) at neutral tracking, the ink's soft shadow and scrim, a `dissolve` exit for a secondary group, and a travel-through on every cut instead of hard cuts ([exceptions in a depth film](../../../docs/film-language.md#9-painted-films-in-depth)).
+- Render with `npm run render -- ID --gl angle --out out/x.mp4 | tee out/x.log`, then check it with `npm run qa -- out/x.mp4 --log out/x.log` (without `--log`, `SAFEAREA` goes uncounted), held-frame steadiness, and 100 % crops ([validation](../../../docs/validation.md#depth-films-and-painted-looks)). Render long masters in chunks with `npm run master`, teeing its log the same way.
 
 ## Review and deliver
 

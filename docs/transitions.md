@@ -87,6 +87,23 @@ Import `TransitionCanvasSource` from the same component file and use `from={outg
 
 For custom web fonts used by a callback, load the font in your project and pass a font request, for example `fonts={['500 48px "DM Sans"']}`. The render waits for both font and image loading. Missing media, missing requested fonts, unsupported names, and WebGL errors stop the export with a useful error rather than silently producing a different picture.
 
+## Travel through the picture
+
+In a film made of paintings or footage, a cut can pass *through* something in the picture: a lit window, a lantern, a lamp. Six shaders open from a point you choose: `watercolor`, `ink`, `engraving`, `prism`, `ripple`, and `godrays` take a `center` param, `{x, y}` in frame fractions from the top left. Put it on the thing the viewer passes through, and land the cut on a beat.
+
+```tsx
+<TaleframeTransition kind="ink" from={staticFile('room.jpg')} to={staticFile('garden.jpg')}
+  fromFrame={48} durationInFrames={36} params={{center: {x: 0.62, y: 0.38}}}/>  // through the lit window
+```
+
+When the camera moves during the cut, the center has to move with the anchor. A [depth film](depth-films.md#transitions-on-anchors) does that: each cut's `center(t)` follows a tracked anchor through the shot's camera.
+
+- **Open from the anchor.** The outgoing camera accelerates into the anchor; the incoming shot starts pushed in at its own anchor and eases back (`passage`).
+- **Match cut from camera maths.** Compute the incoming camera that puts its anchor exactly on the outgoing anchor's screen position, at the same size (`matchCamera`), start there, and ease to the shot's own path. Two lamps, a window and a doorway, a moon and a lantern: the shapes lock, then the new picture opens around them.
+- **Dive through UI.** When a UI layer sits over the picture, the camera dives through the element on screen (a button, a badge, a window) and the next picture opens from that point.
+- **Run the transition at the full frame rate.** Pictures may hold on twos for a handmade look, but a transition and the camera inside it run on the live 24 fps clock, or the travel stutters.
+- **Vary the passage.** A different shader for each cut (ink through a window, watercolor through a lamp, engraving across a headland), each with a reason.
+
 ## Render and check
 
 Use the included render script, which enables Chromium software WebGL2 by default. Start with a few gallery stills, then check a short video on your machine. GPU drivers can cause small pixel differences across systems. Every transition uses frame time and fixed seeds, so seeking within the same environment remains repeatable.

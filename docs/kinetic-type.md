@@ -160,5 +160,28 @@ Hold at least 0.4 s plus 0.06 s per character after the last word lands, and tim
 | Cinematic | `TrackIn` titles in small caps or an elegant serif, `blur` by line, `Shine`, slow fades only here, long holds |
 | Modern typographic | The `weight` preset and `Breathe` on a variable font, `turn` and `flip` in 3D, one face in several weights |
 | Motion-design reel | `TypeWall` with width variants, `ParticleText`, `Scramble` labels under a `Viewfinder`, type under a `SelectionBox`, medium weights |
+| Handmade, painted | [Ink type](#ink-type-in-depth-films) set into the picture in a depth film: Instrument Serif groups composed around the subject, a wet ink front, a slow drift toward the viewer, a lift upward |
 
 **Motion-Showcase** plays all 18 presets on two walls (each word is its preset's name), the stagger orders, `TextSwap`, and the type effects, each named by a label. **Motion-Reel** uses `TypeWall`, `ParticleText`, `SelectionBox`, and `Scramble` in a motion-design reel. The **Scene-Transitions** composition uses `MaskReveal`, `WordRoll`, and `Counter` between UI shots. **Product-Explainer**, **Product-Launch**, and **Kit-Reel** use every component above. Each pairs a grotesk with one serif-italic line, and Kit-Reel gives each idea its own face: Inter, Instrument Serif, Geist Mono, and DM Sans Black.
+
+## Ink type in depth films
+
+A [depth film](depth-films.md) sets its type into the painting with its own canvas type engine, not with the React components above. The options are in [type in depth](depth-films.md#type-in-depth); this is how to use them well.
+
+- **Words ink in, then lift off.** A ragged wet front inks the words in with a small rack focus, optionally sliding them in from the right. They leave upward, as pigment lifting off the page.
+- **Every line approaches.** Each group drifts toward the viewer for its whole life: a continuous exponential zoom of about 10–14 % about the group's center (or a pivot), on top of an optional slow drift. Run type on the live clock, even when the pictures hold on twos, so the drift stays smooth.
+- **Compose each scene.** Big and small, together and apart, placed around the subject so the type frames the picture instead of covering it. One scene might set a large group top left drifting right and a small one bottom right drifting left, with the subject between them. Give a few lines their own gesture (a stamp, a flight, a rush past the lens, a glint), not all of them.
+- **Keep it readable.** Over bright paper or sky, add a soft, wide `scrim` behind the group. Let nearer planes pass in front of a line (`occlusion`) only where the words still read.
+- **Keep the 10 % border.** Every visible word's real ink box stays inside 10–90 % of the frame for its whole life, including the group's drift and growth and the word's own gesture (a stamp, a slide from the right, a flight). A group set against the border pivots so it grows away from it. The engine checks every frame and logs every excursion as `SAFEAREA`; `npm run qa -- out/film.mp4 --log out/film.log` counts them, and a delivered render has none. Only a rush past the lens and a group with `safeArea: false` (a deliberate full-frame effect or an entrance from off screen) are exempt.
+- **Headings and UI take turns.** A heading, then the UI element, then the next scene. Never set a heading over a UI layer.
+
+## Place type from a marked wireframe
+
+When a reviewer marks screenshots of a render with red text ("this line here, this size"), measure the marks instead of guessing:
+
+1. Register each screenshot to its frame of the render: SIFT features away from the red marks, a similarity transform fitted with OpenCV's `estimateAffinePartial2D`.
+2. Measure the red letters of each line: left and right edges, cap top, baseline.
+3. Set the size from the font: size = (baseline − cap top) ÷ the font's cap height in em (Instrument Serif: 0.72).
+4. Move any line that reaches into the 10 % border back to just inside it.
+
+The tools are `tools/depth/wireframe/register.py`, `tools/depth/wireframe/measure.py`, and `tools/depth/measure_font.py`. See [place type from a marked wireframe](../tools/depth/README.md#place-type-from-a-marked-wireframe) for the commands.

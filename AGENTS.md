@@ -11,5 +11,6 @@ Every film follows [film language](docs/film-language.md) unless the brief says 
 - Follow the user's scope and requested review points. Continue authorized work through delivery without adding blanket approval gates.
 - For code changes, run `npm run check`. For films, inspect representative stills and action/transition frames, render the master, derive its preview, verify the encoded file, and inspect frames from that file.
 - Keep credentials, account data, dependency folders, and temporary render caches out of version control. Record asset and product-source provenance where it matters.
+- For painted films made of pictures, read [depth films](docs/depth-films.md). The Python preparation tools in `tools/` run in a local `.venv` and download models into `.cache/`; both stay out of version control. Run one GPU model job at a time, and render depth films with `--gl angle`.
 
-The [README](README.md) has a copy-paste starting prompt. [Quick start](docs/quick-start.md) lists commands; [components](docs/components.md) maps the reusable API; [transitions](docs/transitions.md) and [effects](docs/effects.md) describe their supported settings.
+The [README](README.md) has a copy-paste starting prompt. [Quick start](docs/quick-start.md) lists commands; [components](docs/components.md) maps the reusable API; [transitions](docs/transitions.md) and [effects](docs/effects.md) describe their supported settings; [validation](docs/validation.md) lists the checks before delivery.

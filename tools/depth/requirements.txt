@@ -1,0 +1,16 @@
+# Python side of the depth-film tools (tools/depth, tools/qa, tools/oil). Python 3.10 or newer.
+#   python3 -m venv .venv && .venv/bin/pip install -r tools/depth/requirements.txt
+# Checked with Python 3.12, torch 2.14, transformers 5.17 on Apple silicon (MPS).
+torch>=2.4
+torchvision>=0.19        # BiRefNet's model code
+transformers>=4.56       # Sam2VideoModel (SAM 2.1 video tracking)
+huggingface_hub>=0.24
+safetensors>=0.4
+accelerate>=0.30
+timm>=1.0                # BiRefNet's model code
+kornia>=0.7              # BiRefNet's model code
+einops>=0.7              # BiRefNet's model code
+numpy>=1.26
+opencv-python-headless>=4.9
+pillow>=10
+fonttools>=4.40          # measure_font.py (add brotli to read .woff2)

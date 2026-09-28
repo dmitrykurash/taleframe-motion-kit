@@ -8,12 +8,17 @@ export interface BrushGrid {
 
 /** Geometry is bounded by visible pixels and a fixed per-pass ceiling, even
  * for a tiny preview, an extreme aspect ratio or a manually typed brush size. */
-export function brushGrid(reference: readonly [number, number], width: number, height: number, brushSize: number, level: number, material?: Affine, edgeScale = 0): BrushGrid {
-  const cell = 9 + 48 * Math.sqrt(brushSize);
-  const segments = [6, 4, 1][level];
-  const instanceLimit = Math.min(80000, Math.floor(480000 / (2 * (segments + 1))));
+/** Oil (Taleframe kit): four lattices of single boxes, coarse, body, accent and detail, as fractions of the brush cell. */
+export const OIL_LEVELS = [1, .45, .2, .1];
+
+export function brushGrid(reference: readonly [number, number], width: number, height: number, brushSize: number, level: number, material?: Affine, edgeScale = 0, oil = false, oilScale = 1): BrushGrid {
+  // Oil may scale its whole stroke family (every level's lattice and so every box) by oilScale.
+  const cell = (9 + 48 * Math.sqrt(brushSize)) * (oil ? oilScale : 1);
+  const segments = oil ? 1 : [6, 4, 1][level];
+  // Oil boxes are 4 vertices each; the fine levels may use a denser lattice (most cells cull themselves).
+  const instanceLimit = oil ? (level >= 2 ? 240000 : 80000) : Math.min(80000, Math.floor(480000 / (2 * (segments + 1))));
   let budget = Math.max(256, Math.min(instanceLimit, Math.floor(width * height / 5)));
-  let spacing = Math.max(2.5, cell * [1, .43, .10][level], Math.sqrt(reference[0] * reference[1] / budget));
+  let spacing = Math.max(2.5, cell * (oil ? OIL_LEVELS : [1, .43, .10])[level], Math.sqrt(reference[0] * reference[1] / budget));
   const peripheral = Number.isFinite(edgeScale) ? Math.max(0, Math.min(4, edgeScale)) : 0;
   if (material || peripheral > 0) {
     const empty = (): BrushGrid => ({ spacing, columns: 0, rows: 0, segments, originX: 0, originY: 0 });

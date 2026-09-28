@@ -12,6 +12,8 @@ This uses the kit's bundled FFmpeg and creates `frame-000000.png`, `frame-000001
 
 `--fps` defaults to 30 and sets the sequence's sampling rate. With only `--width` or `--height`, aspect ratio is preserved. Specifying both resizes to those exact dimensions. Omit both to retain the source's decoded dimensions. The manifest reports the actual width, height, frame count, and sequence rate. Use those values below. PNG sequences take more disk space than compressed video; extract the clip and size you intend to use. The bundled FFmpeg has no fps filter, so this portable extractor uses accurate seeks at each requested timestamp with two workers. Extraction can take longer than a single video decode. The source must report a finite duration.
 
+To cut footage into painted planes that a camera travels through, use the [depth tools](../tools/depth/README.md#prepare-footage) instead: they extract only the held frames the edit shows and write the planes, fills, and anchor tracks a [depth film](depth-films.md) reads.
+
 ## Process a video background
 
 ```tsx
