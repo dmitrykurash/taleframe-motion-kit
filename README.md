@@ -6,16 +6,6 @@ Films made with the kit follow one [film language](docs/film-language.md): a lau
 
 The kit is a Remotion project with editable examples and instructions for coding agents. Use it directly or ask an agent to turn your brief and assets into a film. It runs from this repository; no adjacent app or Taleframe checkout is required.
 
-![Launch-film example](docs/images/launch-film.png)
-
-![The five scene transitions](docs/images/scene-transitions.jpg)
-
-![Frames from the demo films: a UX explainer, a dark launch, and a vertical reel about the kit](docs/images/demo-films.jpg)
-
-![Frames from Motion-Showcase: a tiles transition, floating UI in 3D, the type presets, and a marquee](docs/images/motion-showcase.jpg)
-
-![Frames from Motion-Reel: a bouncing ball, type under a selection box, a pattern field, a type wall, particle type, one UI shape morphing through states, and a bento-grid recap](docs/images/motion-reel.jpg)
-
 ![A frame from Painted-Depth: a sitting room in loose oil, with ink type set around the lamp and the window](docs/images/painted-depth.jpg)
 
 [Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.5.0) or open the examples in Studio.
