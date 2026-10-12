@@ -1,6 +1,7 @@
 export * from './motion';
 export * from './clock';
 export * from './MotionBlur';
+export * from './exposure';
 export * from './typing';
 export * from './typography';
 export * from './text';

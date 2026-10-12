@@ -18,7 +18,11 @@ The kit is a Remotion project with editable examples and instructions for coding
 
 ![A frame from Painted-Depth: a sitting room in loose oil, with ink type set around the lamp and the window](docs/images/painted-depth.jpg)
 
-[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.3.0) or open the examples in Studio.
+[Watch the sample films](https://github.com/dmitrykurash/taleframe-motion-kit/releases/tag/v1.5.0) or open the examples in Studio.
+
+## What's new in 1.5.0
+
+- **High-resolution renders.** `render` takes `--scale`, `--range` and `--crf`. `PassedMotionBlur` and `blurPasses` render a film's motion blur in passes at `--scale 2`, where all samples at once overrun the browser and pieces of the picture silently go missing; `tools/hires/average.py` joins the passes and `tools/qa/compare.py` checks a render against one you trust. `stopmotionExposure` keeps a stop-motion finish's exposure on the painting and off flat interface. See [high-resolution renders](docs/high-resolution.md).
 
 ## What's new in 1.4.0
 
@@ -115,7 +119,7 @@ The supplied examples use Inter, DM Sans, Geist, Geist Mono, Anybody, and Instru
 | [tools/depth](tools/depth/README.md) | Python tools that cut pictures into planes for depth films |
 | [tools/qa](tools/qa/README.md), [tools/oil](tools/oil/README.md) | Held-frame steadiness; the procedural oil brushes |
 
-Start with [film language](docs/film-language.md) for the rules every film follows, then [components](docs/components.md) to build shots, [kinetic type](docs/kinetic-type.md), [scene transitions](docs/scene-transitions.md), [motion direction](docs/motion-direction.md), and [app adapters](docs/app-adapters.md) for authentic UI. The [shader transition guide](docs/transitions.md), [effects guide](docs/effects.md), [video-footage guide](docs/video-sources.md), and [validation guide](docs/validation.md) cover their respective workflows. [Depth films](docs/depth-films.md) covers painted films made of pictures.
+Start with [film language](docs/film-language.md) for the rules every film follows, then [components](docs/components.md) to build shots, [kinetic type](docs/kinetic-type.md), [scene transitions](docs/scene-transitions.md), [motion direction](docs/motion-direction.md), and [app adapters](docs/app-adapters.md) for authentic UI. The [shader transition guide](docs/transitions.md), [effects guide](docs/effects.md), [video-footage guide](docs/video-sources.md), and [validation guide](docs/validation.md) cover their respective workflows. [Depth films](docs/depth-films.md) covers painted films made of pictures, and [high-resolution renders](docs/high-resolution.md) covers 4K.
 
 Keep the full repository when handing it to another person or agent. Copying only the skill does not install the components, example assets, or renderer.
 

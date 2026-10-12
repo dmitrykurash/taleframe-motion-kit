@@ -14,7 +14,7 @@ const [mode, id, ...flags] = args;
 if (!['video', 'stills'].includes(mode)) throw new Error('Mode must be video or stills.');
 const options = {};
 for (let i = 0; i < flags.length; i += 2) {
-  if (!/^--(props|out|times|gl|concurrency)$/.test(flags[i]) || !flags[i + 1]) throw new Error(`Invalid option: ${flags[i]}`);
+  if (!/^--(props|out|times|gl|concurrency|entry|scale|range|crf)$/.test(flags[i]) || !flags[i + 1]) throw new Error(`Invalid option: ${flags[i]}`);
   options[flags[i].slice(2)] = flags[i + 1];
 }
 if (options.times && mode !== 'stills') throw new Error('--times applies only to stills.');
@@ -30,7 +30,10 @@ if (!options.gl) console.log('Using software WebGL (--gl swangle) for repeatable
 const output = path.resolve(options.out || (mode === 'video' ? `out/${id}.mp4` : `out/${id}-stills`));
 if (mode === 'video' && !output.endsWith('.mp4')) throw new Error('Video output must end in .mp4.');
 await fs.mkdir(mode === 'video' ? path.dirname(output) : output, {recursive: true});
-const serveUrl = await bundle({entryPoint: path.join(root, 'src/index.tsx'), publicDir: path.join(root, 'public')});
+// --entry picks another file with a registerRoot (a gallery, a single shot); --scale 2 renders at twice the size: stills for inspection, a video in 4K.
+const scale = Number(options.scale || 1);
+if (!(scale > 0 && scale <= 4)) throw new Error('--scale must be between 0 and 4.');
+const serveUrl = await bundle({entryPoint: path.resolve(root, options.entry || 'src/index.tsx'), publicDir: path.join(root, 'public')});
 try {
   const composition = await selectComposition({serveUrl, id, inputProps, chromiumOptions});
   const report = {composition: id, width: composition.width, height: composition.height, fps: composition.fps,
@@ -44,7 +47,7 @@ try {
     const frames = [];
     for (const time of times) {
       const frame = Math.round(time * composition.fps), filename = `frame-${String(frame).padStart(5, '0')}.png`;
-      await renderStill({serveUrl, composition, inputProps, chromiumOptions, onBrowserLog, frame, output: path.join(output, filename), imageFormat: 'png', scale: 1});
+      await renderStill({serveUrl, composition, inputProps, chromiumOptions, onBrowserLog, frame, output: path.join(output, filename), imageFormat: 'png', scale});
       frames.push({requestedSeconds: time, frame, file: filename});
       console.log(`Still ${time}s → ${filename}`);
     }
@@ -54,9 +57,17 @@ try {
     await fs.writeFile(path.join(output, 'index.html'), `<!doctype html><meta charset="utf-8"><title>Frame review</title><style>body{margin:24px;background:#eee;font:16px system-ui}main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}figure{margin:0}img{width:100%;display:block}figcaption{padding:8px}</style><main>${cards}</main>`);
   } else {
     let step = -1;
-    await renderMedia({serveUrl, composition, inputProps, chromiumOptions, onBrowserLog, outputLocation: output,
-      codec: 'h264', crf: 15, pixelFormat: 'yuv420p', colorSpace: 'bt709', imageFormat: 'png',
-      scale: 1, concurrency, x264Preset: 'medium',
+    // --range 8-10.5 renders only that stretch of film time (seconds); frame numbers in the file then start at 0,
+    // so remember the offset when reading frame numbers from it.
+    let frameRange = null;
+    if (options.range) {
+      const [from, to] = options.range.split('-').map(Number);
+      if (!(from >= 0 && to > from)) throw new Error('--range must be FROM-TO in seconds, e.g. 8-10.5');
+      frameRange = [Math.round(from * composition.fps), Math.min(composition.durationInFrames - 1, Math.round(to * composition.fps) - 1)];
+    }
+    await renderMedia({serveUrl, composition, inputProps, chromiumOptions, onBrowserLog, outputLocation: output, frameRange,
+      codec: 'h264', crf: Number(options.crf || 15), pixelFormat: 'yuv420p', colorSpace: 'bt709', imageFormat: 'png',
+      scale, concurrency, x264Preset: 'medium',
       onProgress: ({progress}) => {const next = Math.floor(progress * 20); if (next !== step) {step = next; console.log(`${Math.round(progress * 100)}%`);}},
     });
     await fs.writeFile(`${output}.render.json`, JSON.stringify(report, null, 2) + '\n');

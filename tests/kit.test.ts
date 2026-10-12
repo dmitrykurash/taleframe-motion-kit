@@ -67,3 +67,16 @@ test('starter rejects invalid geometry, unsupported fields, and overflowing text
   assert.throws(() => validateStarterProps({...defaultStarterProps, prompt: 'x'.repeat(101)}));
   assert.throws(() => validateStarterProps({...defaultStarterProps, accent: 'red'}));
 });
+
+test('motion blur passes: every sample once, no pass over its share', async () => {
+  const {blurPasses, shutterOffsets} = await import('../src/kit/MotionBlur');
+  for (let n = 6; n <= 32; n++) {
+    const {passes, own} = blurPasses(n, 4);
+    assert.ok(own <= Math.max(1, n / 4) && passes * own >= n && passes <= 7, `n=${n}`);
+    const all = Array.from({length: passes}, (_, k) => shutterOffsets(own, .5, 60, (k + .5) / passes)).flat().sort((a, b) => a - b);
+    const direct = shutterOffsets(passes * own, .5, 60);
+    all.forEach((v, i) => assert.ok(Math.abs(v - direct[i]) < 1e-12));
+  }
+  assert.deepEqual(blurPasses(1), {passes: 1, own: 1});
+  assert.deepEqual(shutterOffsets(1, .5, 60), [0]);
+});

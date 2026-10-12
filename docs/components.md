@@ -86,7 +86,9 @@ In these components `letterSpacing` is in em. See [kinetic type](kinetic-type.md
 | `planShots` | `shots` | Cut times and transition windows; throws when they do not fit |
 | `SceneTransition` | `kind`, `from`, `to`, `start`, `duration?`, options | One transition between two React scenes |
 | `SCENE_TRANSITIONS` | — | Names, default lengths, alignment, and intended use per kind |
-| `MotionBlur` | `children: (time) => node`, `shutter?`, `samples?` | Temporal motion blur for any opaque picture |
+| `MotionBlur` | `children: (time) => node`, `shutter?`, `samples?`, `phase?` | Temporal motion blur for any opaque picture |
+| `PassedMotionBlur`, `blurPasses` | `pass?`, `dense?` + `MotionBlur` props | The same blur rendered in passes for `--scale 2` ([high-resolution renders](high-resolution.md)) |
+| `stopmotionExposure` | `(settings, frame, fps)` | The finish's exposure gain for a frame, to give to a painted layer only |
 | `shutterOffsets`, `samplesForStreak` | — | Sample times inside the shutter; sample count for a streak length |
 | `useTime`, `TimeShift` | `by` (seconds) | The film clock, and a scoped offset of it (motion-blur samples use this) |
 | `curves`, `overshoot` | — | Shared launch-film easing: `punchIn`, `punchOut`, `snap`, `open`, `glide` |
